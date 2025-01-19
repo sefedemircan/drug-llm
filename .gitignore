@@ -1,0 +1,58 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+.env/
+.venv/
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Local development settings
+.env
+.env.local
+
+# Model dosyaları ve cache
+*.pth
+*.pt
+*.bin
+*.ckpt
+.cache/
+wandb/
+
+# Log dosyaları
+*.log
+logs/
+
+# Dataset dosyaları
+*.csv
+*.parquet
+*.json
+*.jsonl
+
+# Sistem dosyaları
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/

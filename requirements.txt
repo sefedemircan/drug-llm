@@ -1,0 +1,9 @@
+streamlit==1.31.1
+torch==2.2.0
+transformers==4.37.2
+accelerate==0.27.2
+peft==0.7.1
+bitsandbytes-windows==0.41.1
+unsloth
+einops
+flash-attn 

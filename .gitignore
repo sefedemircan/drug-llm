@@ -1,58 +1,55 @@
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-# C extensions
 *.so
-
-# Distribution / packaging
-dist/
-build/
-*.egg-info/
-
-# Virtual environments
-venv/
+.Python
 env/
-.env/
-.venv/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# IDE specific files
+# Virtual Environment
+venv/
+ENV/
+.env
+
+# IDE
 .idea/
 .vscode/
 *.swp
 *.swo
 
-# Jupyter Notebook
-.ipynb_checkpoints
-*.ipynb_checkpoints/
+# Streamlit
+.streamlit/
 
-# Local development settings
-.env
-.env.local
-
-# Model dosyaları ve cache
-*.pth
-*.pt
+# Model dosyaları
 *.bin
+*.pt
+*.pth
 *.ckpt
-.cache/
-wandb/
+*.safetensors
 
-# Log dosyaları
-*.log
+# Logs
 logs/
+*.log
 
-# Dataset dosyaları
-*.csv
-*.parquet
-*.json
-*.jsonl
-
-# Sistem dosyaları
+# OS
 .DS_Store
 Thumbs.db
 
 # Jupyter Notebook
 .ipynb_checkpoints
 *.ipynb_checkpoints/
+.qodo

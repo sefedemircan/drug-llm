@@ -40,6 +40,7 @@ export default function Shell() {
           transition: 'width 0.3s ease',
           position: 'relative',
           zIndex: 1001,
+          boxShadow: opened ? '2px 0 5px rgba(0,0,0,0.03)' : 'none',
         }}
       >
         {opened && <ChatSidebar />}
@@ -59,6 +60,7 @@ export default function Shell() {
             position: 'sticky',
             top: 0,
             zIndex: 1000,
+            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
           }}
         >
           <Group>
@@ -70,7 +72,7 @@ export default function Shell() {
             >
               {opened ? <IconChevronLeft size={18} /> : <IconChevronRight size={18} />}
             </ActionIcon>
-            <Title order={3} style={{ fontSize: "20px", color: "var(--text-title)" }}>İlaç Bilgi Chatbotu</Title>
+            <Title order={3} style={{ fontSize: "20px", color: "var(--text-title)" }}>DrugLLM</Title>
           </Group>
         </Box>
 

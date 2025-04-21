@@ -30,33 +30,34 @@ const chatHistory = [
 
 export default function ChatSidebar() {
   return (
-    <Box style={{ height: '100%', padding: '0 8px' }}>
+    <Box style={{ height: '100%', backgroundColor: 'var(--sidebar-bg)' }}>
       <Box 
         style={{ 
           height: '60px', 
           display: 'flex', 
           alignItems: 'center',
           borderBottom: '1px solid var(--border-color)',
-          padding: '0 8px'
+          padding: '0 16px',
+          backgroundColor: 'var(--sidebar-header-bg)',
         }}
       >
         <Text 
           style={{ 
             fontSize: '20px', 
             fontWeight: 500,
-            color: 'var(--text-title)',
+            color: 'var(--primary)',
           }}
         >
-          İlaç Bilgi Chatbotu
+          DrugLLM
         </Text>
       </Box>
       
-      <Stack h="calc(100% - 60px)" py="md" style={{ overflowY: 'auto' }}>
-        <Text size="sm" fw={600} mb="xs" pl={8} style={{ color: 'var(--text-muted)' }}>Sohbet Geçmişi</Text>
+      <Stack h="calc(100% - 60px)" py="md" px="md" style={{ overflowY: 'auto' }}>
+        <Text size="sm" fw={600} mb="xs" style={{ color: 'var(--text-muted)' }}>Sohbet Geçmişi</Text>
         
         {chatHistory.map((group) => (
           <div key={group.date}>
-            <Text size="sm" fw={500} mb="xs" pl={8} style={{ color: 'var(--text-muted)' }}>{group.date}</Text>
+            <Text size="sm" fw={500} mb="xs" style={{ color: 'var(--text-muted)' }}>{group.date}</Text>
             
             {group.chats.map((chat) => (
               <NavLink
@@ -75,7 +76,7 @@ export default function ChatSidebar() {
               />
             ))}
             
-            {group.date !== 'Önceki 7 Gün' && <Divider my="sm" />}
+            {group.date !== 'Önceki 7 Gün' && <Divider my="sm" color="var(--border-color-light)" />}
           </div>
         ))}
       </Stack>

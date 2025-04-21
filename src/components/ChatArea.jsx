@@ -87,7 +87,6 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0 }) {
       <Box 
         style={{ 
           backgroundColor: 'var(--chat-bg)',
-          borderTop: '1px solid var(--border-color)',
           position: 'absolute',
           bottom: 0,
           left: 0,

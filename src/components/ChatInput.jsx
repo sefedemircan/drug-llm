@@ -42,9 +42,8 @@ export default function ChatInput({ onSendMessage }) {
 
   return (
     <Paper
-      p="sm"
-      radius="xl"
       withBorder
+      radius="xl"
       style={{ 
         backgroundColor: 'var(--background-white)',
         boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
@@ -52,7 +51,11 @@ export default function ChatInput({ onSendMessage }) {
         border: '1px solid var(--border-color)',
         position: 'relative',
         minHeight: '70px',
-        width: '100%'
+        width: '100%',
+        paddingTop: '12px',
+        paddingBottom: '12px',
+        paddingLeft: '12px',
+        paddingRight: '12px'
       }}
     >
       <form onSubmit={handleSubmit} style={{ height: '100%' }}>
@@ -83,7 +86,7 @@ export default function ChatInput({ onSendMessage }) {
             </ActionIcon>
             
             <Textarea
-              placeholder="İlaçlar hakkında bir soru sorun... (Shift+Enter ile yeni satır)"
+              placeholder="Ask anything"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -97,7 +100,10 @@ export default function ChatInput({ onSendMessage }) {
               styles={{
                 input: { 
                   border: 'none',
-                  padding: isMobile ? '12px 0' : '15px 0',
+                  paddingTop: isMobile ? '12px' : '15px',
+                  paddingBottom: isMobile ? '12px' : '15px',
+                  paddingLeft: 0,
+                  paddingRight: 0,
                   backgroundColor: 'transparent',
                   fontSize: isMobile ? '14px' : '16px',
                   color: 'var(--text-body)',
@@ -113,7 +119,7 @@ export default function ChatInput({ onSendMessage }) {
               }}
             />
 
-            <Group spacing={isMobile ? 4 : 8} mt="lg" mr={isMobile ? "xs" : "md"}>
+            <Group spacing={isMobile ? 4 : 8} style={{ marginTop: isMobile ? '16px' : '20px', marginRight: isMobile ? '8px' : '16px' }}>
               <ActionIcon
                 radius="xl"
                 variant="transparent"
@@ -157,7 +163,10 @@ export default function ChatInput({ onSendMessage }) {
                   backgroundColor: activeMode === 'search' ? 'var(--primary-light)' : 'var(--chat-bg)',
                   color: activeMode === 'search' ? 'var(--primary)' : 'var(--text-body)',
                   border: '1px solid var(--border-color)',
-                  padding: isMobile ? '2px 8px' : '4px 12px',
+                  paddingTop: isMobile ? '2px' : '4px',
+                  paddingBottom: isMobile ? '2px' : '4px',
+                  paddingLeft: isMobile ? '8px' : '12px',
+                  paddingRight: isMobile ? '8px' : '12px',
                   height: isMobile ? '26px' : '30px',
                   minWidth: isMobile ? 'auto' : undefined,
                   '&:hover': {
@@ -186,7 +195,10 @@ export default function ChatInput({ onSendMessage }) {
                   backgroundColor: activeMode === 'reason' ? 'var(--primary-light)' : 'var(--chat-bg)',
                   color: activeMode === 'reason' ? 'var(--primary)' : 'var(--text-body)',
                   border: '1px solid var(--border-color)',
-                  padding: isMobile ? '2px 8px' : '4px 12px',
+                  paddingTop: isMobile ? '2px' : '4px',
+                  paddingBottom: isMobile ? '2px' : '4px',
+                  paddingLeft: isMobile ? '8px' : '12px',
+                  paddingRight: isMobile ? '8px' : '12px',
                   height: isMobile ? '26px' : '30px',
                   minWidth: isMobile ? 'auto' : undefined,
                   '&:hover': {

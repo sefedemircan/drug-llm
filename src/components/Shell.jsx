@@ -1,15 +1,17 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import { Box, Burger, Group, Title, Flex, ActionIcon, Portal, Overlay } from '@mantine/core';
+import { Box, Burger, Group, Title, Flex, ActionIcon, Portal, Overlay, Button } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconChevronLeft, IconChevronRight, IconX } from '@tabler/icons-react';
+import { IconChevronLeft, IconChevronRight, IconX, IconLogout } from '@tabler/icons-react';
 import ChatSidebar from './ChatSidebar';
 import ChatArea from './ChatArea';
+import { useAuth } from '../context/AuthContext';
 
 export default function Shell() {
   const [opened, { toggle, close, open }] = useDisclosure(true);
   const [isMobile, setIsMobile] = useState(false);
+  const { logout } = useAuth();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -111,6 +113,7 @@ export default function Shell() {
             top: 0,
             zIndex: 999,
             boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+            justifyContent: 'space-between',
           }}
         >
           <Group>
@@ -124,6 +127,15 @@ export default function Shell() {
             </ActionIcon>
             <Title order={3} style={{ fontSize: "20px", color: "var(--text-title)" }}>DrugLLM</Title>
           </Group>
+          
+          <Button 
+            variant="subtle" 
+            color="gray" 
+            leftSection={<IconLogout size={16} />}
+            onClick={logout}
+          >
+            Çıkış Yap
+          </Button>
         </Box>
 
         {/* Chat Area */}

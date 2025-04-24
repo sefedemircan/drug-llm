@@ -1,0 +1,24 @@
+"use client";
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../../context/AuthContext';
+import Shell from '../../components/Shell';
+
+export default function ChatPage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+  // Yükleme durumunda veya kullanıcı doğrulanmadıysa içerik göstermeyelim
+  if (loading || !user) {
+    return <div>Yükleniyor...</div>;
+  }
+
+  return <Shell />;
+} 

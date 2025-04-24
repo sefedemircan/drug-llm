@@ -34,3 +34,25 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Kurulum
+
+1. Bağımlılıkları yükleyin:
+```bash
+npm install
+```
+
+2. Supabase hesabı oluşturun ve yeni bir proje oluşturun: [Supabase](https://supabase.com)
+
+3. `.env.local` dosyasını oluşturun ve Supabase proje bilgilerinizi ekleyin:
+```
+NEXT_PUBLIC_SUPABASE_URL=https://your-supabase-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
+
+4. Geliştirme sunucusunu başlatın:
+```bash
+npm run dev
+```
+
+5. Tarayıcınızda [http://localhost:3000](http://localhost:3000) adresini açın.

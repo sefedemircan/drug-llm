@@ -33,12 +33,17 @@ import {
 } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { useMediaQuery } from '@mantine/hooks';
 
 // SearchParams'ı işleyecek component
 function AuthPageContent() {
   const theme = useMantineTheme();
   const searchParams = useSearchParams();
   const tabFromUrl = searchParams.get('tab');
+  
+  // Responsive tasarım için useMediaQuery ekle
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isSmallMobile = useMediaQuery('(max-width: 480px)');
   
   const [activeTab, setActiveTab] = useState(tabFromUrl === 'signup' ? 'signup' : 'login');
   const [email, setEmail] = useState('');
@@ -100,10 +105,11 @@ function AuthPageContent() {
         minHeight: '100vh',
         background: `linear-gradient(135deg, ${theme.colors.primary[0]}, ${theme.colors.neutral[1]})`,
         display: 'flex',
-        alignItems: 'center'
+        alignItems: 'center',
+        padding: isSmallMobile ? '10px' : (isMobile ? '20px' : '0')
       }}
     >
-      <Container size="md" py={40}>
+      <Container size={isMobile ? "xs" : "md"} py={isMobile ? 20 : 40}>
         <Paper
           radius="lg"
           shadow="md"
@@ -111,47 +117,54 @@ function AuthPageContent() {
           style={{ 
             overflow: 'hidden',
             display: 'flex',
-            flexDirection: 'row',
-            minHeight: '550px'
+            flexDirection: isMobile ? 'column' : 'row',
+            minHeight: isMobile ? 'auto' : '550px'
           }}
         >
           {/* Sol taraf - bilgi paneli */}
           <Box 
             style={{
               background: `linear-gradient(135deg, ${theme.colors.primary[7]}, ${theme.colors.primary[9]})`,
-              flex: '0 0 40%',
-              padding: '40px 30px',
+              flex: isMobile ? '1' : '0 0 40%',
+              padding: isSmallMobile ? '25px 20px' : (isMobile ? '30px 25px' : '40px 30px'),
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
-              color: 'white'
+              color: 'white',
+              // Mobilde daha az yükseklik oluştur
+              minHeight: isMobile ? '200px' : 'auto'
             }}
           >
             <div>
-              <Title order={2} mb="xl">DrugLLM</Title>
-              <Title order={3} mb="md">İlaç Bilgilerine Anında Erişim</Title>
-              <Text mb="xl" opacity={0.8}>
-                DrugLLM&apos;e hoş geldiniz! İlaçlar hakkında detaylı bilgilere erişmek için giriş yapın veya yeni bir hesap oluşturun.
-              </Text>
+              <Title order={2} mb={isMobile ? "md" : "xl"}>DrugLLM</Title>
+              <Title order={3} mb="md" size={isMobile ? "h4" : "h3"}>İlaç Bilgilerine Anında Erişim</Title>
               
-              <Stack spacing="xl" mt={50}>
-                {features.map((feature, index) => (
-                  <Group key={index} spacing="md">
-                    <ThemeIcon 
-                      size={44} 
-                      radius="md" 
-                      color={theme.colors.secondary[4]}
-                      variant="filled"
-                    >
-                      {feature.icon}
-                    </ThemeIcon>
-                    <div>
-                      <Text weight={700} size="sm">{feature.title}</Text>
-                      <Text size="xs" opacity={0.8}>{feature.description}</Text>
-                    </div>
-                  </Group>
-                ))}
-              </Stack>
+              {!isSmallMobile && (
+                <Text mb={isMobile ? "md" : "xl"} opacity={0.8} size={isMobile ? "sm" : "md"}>
+                  DrugLLM&apos;e hoş geldiniz! İlaçlar hakkında detaylı bilgilere erişmek için giriş yapın veya yeni bir hesap oluşturun.
+                </Text>
+              )}
+              
+              {!isMobile && (
+                <Stack spacing="xl" mt={50}>
+                  {features.map((feature, index) => (
+                    <Group key={index} spacing="md">
+                      <ThemeIcon 
+                        size={44} 
+                        radius="md" 
+                        color={theme.colors.secondary[4]}
+                        variant="filled"
+                      >
+                        {feature.icon}
+                      </ThemeIcon>
+                      <div>
+                        <Text weight={700} size="sm">{feature.title}</Text>
+                        <Text size="xs" opacity={0.8}>{feature.description}</Text>
+                      </div>
+                    </Group>
+                  ))}
+                </Stack>
+              )}
             </div>
             
             <div>
@@ -161,7 +174,7 @@ function AuthPageContent() {
                 variant="white"
                 color="dark" 
                 leftSection={<IconArrowLeft size={16} />}
-                size="sm"
+                size={isMobile ? "xs" : "sm"}
               >
                 Ana Sayfaya Dön
               </Button>
@@ -171,8 +184,8 @@ function AuthPageContent() {
           {/* Sağ taraf - form */}
           <Box 
             style={{
-              flex: '1 1 60%',
-              padding: '40px',
+              flex: '1',
+              padding: isSmallMobile ? '25px 20px' : (isMobile ? '30px 25px' : '40px'),
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center'
@@ -187,7 +200,7 @@ function AuthPageContent() {
               styles={{
                 tab: {
                   fontWeight: 500,
-                  fontSize: '15px',
+                  fontSize: isSmallMobile ? '14px' : '15px',
                   paddingTop: '12px',
                   paddingBottom: '12px',
                 },
@@ -196,16 +209,17 @@ function AuthPageContent() {
                 }
               }}
             >
-              <Tabs.List grow mb="xl">
+              <Tabs.List grow mb={isMobile ? "md" : "xl"}>
                 <Tabs.Tab value="login">Giriş Yap</Tabs.Tab>
                 <Tabs.Tab value="signup">Hesap Oluştur</Tabs.Tab>
               </Tabs.List>
 
               <form onSubmit={handleSubmit}>
-                <Stack spacing="lg">
+                <Stack spacing={isMobile ? "md" : "lg"}>
                   <Title 
                     order={2} 
-                    mb="md" 
+                    mb="md"
+                    size={isMobile ? "h3" : "h2"}
                     style={{ 
                       color: theme.colors.primary[8],
                       fontWeight: 600 
@@ -232,7 +246,7 @@ function AuthPageContent() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    size="md"
+                    size={isMobile ? "sm" : "md"}
                     styles={{
                       label: { fontWeight: 500, marginBottom: '6px' }
                     }}
@@ -245,7 +259,7 @@ function AuthPageContent() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    size="md"
+                    size={isMobile ? "sm" : "md"}
                     styles={{
                       label: { fontWeight: 500, marginBottom: '6px' }
                     }}
@@ -270,7 +284,7 @@ function AuthPageContent() {
                     loading={loading}
                     fullWidth
                     mt="md"
-                    size="md"
+                    size={isMobile ? "sm" : "md"}
                     color={activeTab === 'login' ? 'primary.6' : 'secondary.6'}
                     styles={{
                       root: {
@@ -290,29 +304,22 @@ function AuthPageContent() {
                   />
                   
                   <Button
-                    leftSection={<IconBrandGoogle size={18} />}
+                    leftSection={<IconBrandGoogle size={isMobile ? 16 : 18} />}
                     variant="outline"
                     color={activeTab === 'login' ? 'primary.6' : 'secondary.6'}
                     fullWidth
-                    size="md"
-                    styles={{
-                      root: {
-                        boxShadow: `0 4px 14px ${activeTab === 'login' 
-                          ? theme.colors.primary[2] 
-                          : theme.colors.secondary[2]}`
-                      }
-                    }}
+                    size={isMobile ? "sm" : "md"}
                   >
                     Google ile {activeTab === 'login' ? 'Giriş Yap' : 'Hesap Oluştur'}
                   </Button>
                   
-                  <Text color="dimmed" size="sm" align="center">
+                  <Text color="dimmed" size={isMobile ? "xs" : "sm"} align="center">
                     {activeTab === 'login' 
                       ? 'Hesabınız yok mu? '
                       : 'Zaten hesabınız var mı? '}
                     <Anchor 
                       component="button" 
-                      size="sm" 
+                      size={isMobile ? "xs" : "sm"}
                       onClick={() => setActiveTab(activeTab === 'login' ? 'signup' : 'login')}
                     >
                       {activeTab === 'login' ? 'Hemen kaydolun' : 'Giriş yapın'}

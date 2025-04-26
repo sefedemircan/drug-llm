@@ -11,10 +11,12 @@ import {
   Button,
   Burger,
   Container,
+  ActionIcon,
 } from '@mantine/core';
 import { 
   IconPill,
   IconMenu2,
+  IconX,
 } from '@tabler/icons-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -256,6 +258,7 @@ const Navbar = () => {
           inner: { height: '100vh' },
           root: { zIndex: 2000 }
         }}
+        closeButtonProps={{ display: 'none' }}
       >
         <Stack gap={isSmallMobile ? "md" : "xl"}>
           {/* Logo ve Kapat */}
@@ -264,14 +267,14 @@ const Navbar = () => {
               <IconPill size={isSmallMobile ? 20 : 24} />
               <Text fw={600} size={isSmallMobile ? "md" : "lg"}>DrugLLM</Text>
             </div>
-            <Button 
+            <ActionIcon 
               variant="subtle" 
               onClick={close} 
               radius="xl"
-              size={isSmallMobile ? "xs" : "sm"}
+              size={isSmallMobile ? "md" : "lg"}
             >
-              Kapat
-            </Button>
+              <IconX size={isSmallMobile ? 18 : 20} />
+            </ActionIcon>
           </Group>
 
           <Stack gap={isSmallMobile ? "xs" : "md"}>

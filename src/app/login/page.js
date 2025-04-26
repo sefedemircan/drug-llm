@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { 
   TextInput, 
@@ -34,7 +34,8 @@ import {
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
-export default function AuthPage() {
+// SearchParams'ı işleyecek component
+function AuthPageContent() {
   const theme = useMantineTheme();
   const searchParams = useSearchParams();
   const tabFromUrl = searchParams.get('tab');
@@ -324,5 +325,14 @@ export default function AuthPage() {
         </Paper>
       </Container>
     </Box>
+  );
+}
+
+// Ana component
+export default function AuthPage() {
+  return (
+    <Suspense fallback={<div>Yükleniyor...</div>}>
+      <AuthPageContent />
+    </Suspense>
   );
 } 

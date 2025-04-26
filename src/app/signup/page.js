@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function SignupPage() {
+function SignupContent() {
   const router = useRouter();
 
   useEffect(() => {
@@ -11,4 +11,12 @@ export default function SignupPage() {
   }, [router]);
 
   return null;
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div>Yönlendiriliyor...</div>}>
+      <SignupContent />
+    </Suspense>
+  );
 } 

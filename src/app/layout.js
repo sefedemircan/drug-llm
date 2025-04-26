@@ -3,7 +3,6 @@ import { MantineProvider, createTheme } from '@mantine/core';
 import "@mantine/core/styles.css";
 import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
-import Navbar from "../components/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -89,7 +88,6 @@ export default function RootLayout({ children }) {
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <MantineProvider theme={theme} defaultColorScheme="light">
           <AuthProvider>
-            <Navbar />
             {children}
           </AuthProvider>
         </MantineProvider>

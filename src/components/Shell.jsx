@@ -3,15 +3,17 @@
 import { useState, useEffect } from 'react';
 import { Box, Burger, Group, Title, Flex, ActionIcon, Portal, Overlay, Button } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconChevronLeft, IconChevronRight, IconX, IconLogout } from '@tabler/icons-react';
+import { IconChevronLeft, IconChevronRight, IconX, IconLogout, IconUser } from '@tabler/icons-react';
 import ChatSidebar from './ChatSidebar';
 import ChatArea from './ChatArea';
 import { useAuth } from '../context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 export default function Shell() {
   const [opened, { toggle, close, open }] = useDisclosure(true);
   const [isMobile, setIsMobile] = useState(false);
   const { logout } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -41,6 +43,10 @@ export default function Shell() {
       document.body.style.overflow = 'auto';
     };
   }, [isMobile, opened]);
+
+  const handleProfileClick = () => {
+    router.push('/profile');
+  };
 
   return (
     <Flex h="100vh" style={{ overflow: 'hidden' }}>
@@ -128,14 +134,25 @@ export default function Shell() {
             <Title order={3} style={{ fontSize: "20px", color: "var(--text-title)" }}>DrugLLM</Title>
           </Group>
           
-          <Button 
-            variant="subtle" 
-            color="gray" 
-            leftSection={<IconLogout size={16} />}
-            onClick={logout}
-          >
-            Çıkış Yap
-          </Button>
+          <Group spacing="sm">
+            <Button 
+              variant="subtle" 
+              color="blue" 
+              leftSection={<IconUser size={16} />}
+              onClick={handleProfileClick}
+            >
+              Profil
+            </Button>
+            
+            <Button 
+              variant="subtle" 
+              color="gray" 
+              leftSection={<IconLogout size={16} />}
+              onClick={logout}
+            >
+              Çıkış Yap
+            </Button>
+          </Group>
         </Box>
 
         {/* Chat Area */}

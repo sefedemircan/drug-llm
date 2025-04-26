@@ -68,19 +68,39 @@ function AuthPageContent() {
     setMessage(null);
 
     try {
+      console.log(`${activeTab === 'login' ? 'Giriş' : 'Kayıt'} işlemi başlatılıyor...`);
+      
       if (activeTab === 'login') {
         const result = await login(email, password);
         if (result?.error) {
+          console.error('Giriş hatası:', result.error);
           setMessage({ type: 'error', content: result.error });
         }
       } else {
+        if (password.length < 6) {
+          setMessage({ type: 'error', content: 'Şifre en az 6 karakter olmalıdır' });
+          setLoading(false);
+          return;
+        }
+        
+        console.log('Kayıt işlemi için AuthContext.signup çağrılıyor');
         const result = await signup(email, password);
+        console.log('Kayıt sonucu:', result);
+        
         if (result?.error) {
+          console.error('Kayıt hatası:', result.error);
           setMessage({ type: 'error', content: result.error });
         } else if (result?.success) {
+          console.log('Kayıt başarılı:', result.success);
           setMessage({ type: 'success', content: result.success });
         }
       }
+    } catch (error) {
+      console.error(`${activeTab === 'login' ? 'Giriş' : 'Kayıt'} işlemi sırasında beklenmeyen hata:`, error);
+      setMessage({ 
+        type: 'error', 
+        content: `İşlem sırasında bir hata oluştu: ${error.message}` 
+      });
     } finally {
       setLoading(false);
     }

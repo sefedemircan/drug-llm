@@ -43,15 +43,32 @@ export function AuthProvider({ children }) {
 
   const signup = async (email, password) => {
     try {
-      // Sadece kullanıcı kaydı oluştur, profiles tablosuna ekleme trigger ile otomatik olarak yapılacak
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      console.log('Signup başlatılıyor:', { email });
       
-      if (error) throw error;
+      // Sadece email ve password ile kayıt olma işlemi
+      const { data, error } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/login`
+        }
+      });
       
-      // Kaydın başarılı olduğunu bildir
+      if (error) {
+        console.error('Supabase Auth signup hatası:', error);
+        throw error;
+      }
+      
+      console.log('Signup başarılı:', data);
+      
+      // Kayıt işlemi başarılı, e-posta onayı gerekiyorsa bildir
+      if (data?.user?.identities?.length === 0) {
+        return { error: 'Bu e-posta adresi zaten kullanılıyor.' };
+      }
+      
       return { success: 'Kayıt başarılı! E-posta adresinizi kontrol edin.' };
     } catch (error) {
-      console.error('Signup error:', error);
+      console.error('Signup error detayları:', error);
       return { error: error.message };
     }
   };

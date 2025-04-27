@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '../utils/supabase';
+import { supabaseWithRetry } from '../utils/supabase';
 import { useRouter } from 'next/navigation';
 
 const AuthContext = createContext();
@@ -9,43 +9,45 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
-    // Mevcut kullanıcıyı kontrol et
+    let mounted = true;
+
     const getUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-      setLoading(false);
+      try {
+        const { data: { session } } = await supabaseWithRetry.auth.getSession();
+        if (mounted) {
+          setUser(session?.user ?? null);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Oturum bilgisi alınamadı:', error);
+        if (mounted) {
+          setError('Oturum bilgisi alınamadı. Lütfen sayfayı yenileyin.');
+          setLoading(false);
+        }
+      }
     };
 
     getUser();
 
-    // Auth değişikliklerini dinle
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setUser(session?.user ?? null);
+    const { data: { subscription } } = supabaseWithRetry.auth.onAuthStateChange(async (event, session) => {
+      if (mounted) {
+        setUser(session?.user ?? null);
+        setLoading(false);
 
-      // Kullanıcı onaylandığında verileri kaydet
-      if (event === 'SIGNED_IN' && session?.user) {
-        try {
-          // Kullanıcının metadata'sından profil ve sağlık bilgilerini al
-          const { profileData, healthData } = session.user.user_metadata;
+        if (event === 'SIGNED_IN' && session?.user) {
+          try {
+            const { profileData, healthData } = session.user.user_metadata;
 
-          if (profileData) {
-            try {
-              // Profil bilgilerini kaydet
-              const { error: profileError } = await supabase
+            if (profileData) {
+              const { error: profileError } = await supabaseWithRetry
                 .from('user_profile')
                 .upsert({
                   user_id: session.user.id,
-                  full_name: profileData.full_name,
-                  birth_date: profileData.birth_date,
-                  gender: profileData.gender,
-                  height: profileData.height,
-                  weight: profileData.weight,
-                  phone: profileData.phone,
-                  address: profileData.address,
-                  emergency_contact: profileData.emergency_contact,
+                  ...profileData,
                   updated_at: new Date().toISOString()
                 }, {
                   onConflict: 'user_id'
@@ -53,82 +55,73 @@ export function AuthProvider({ children }) {
 
               if (profileError) {
                 console.error('Profil bilgileri kaydedilirken hata:', profileError);
+                setError('Profil bilgileri kaydedilemedi. Lütfen daha sonra tekrar deneyin.');
               }
-            } catch (error) {
-              console.error('Profil bilgileri işlenirken hata:', error);
             }
-          }
 
-          if (healthData) {
-            try {
-              // Sağlık bilgilerini kaydet
-              const { error: healthError } = await supabase
+            if (healthData) {
+              const { error: healthError } = await supabaseWithRetry
                 .from('health_info')
                 .upsert({
                   user_id: session.user.id,
-                  blood_type: healthData.blood_type || null,
-                  chronic_diseases: healthData.chronic_diseases || [],
-                  current_medications: healthData.current_medications || [],
-                  drug_allergies: healthData.drug_allergies || [],
-                  food_allergies: healthData.food_allergies || [],
-                  medical_history: healthData.medical_history || null,
-                  family_history: healthData.family_history || null,
-                  lifestyle_info: healthData.lifestyle_info || null,
+                  ...healthData,
                   updated_at: new Date().toISOString()
                 }, {
-                  onConflict: 'user_id',
-                  ignoreDuplicates: true
+                  onConflict: 'user_id'
                 });
 
               if (healthError) {
                 console.error('Sağlık bilgileri kaydedilirken hata:', healthError);
-              } else {
-                console.log('Sağlık bilgileri başarıyla kaydedildi');
+                setError('Sağlık bilgileri kaydedilemedi. Lütfen daha sonra tekrar deneyin.');
               }
-            } catch (error) {
-              console.error('Sağlık bilgileri işlenirken hata:', error);
             }
+          } catch (error) {
+            console.error('Veri kaydetme hatası:', error);
+            setError('Veriler kaydedilemedi. Lütfen daha sonra tekrar deneyin.');
           }
-        } catch (error) {
-          console.error('Veri kaydetme hatası:', error);
         }
       }
     });
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
   }, []);
 
   const login = async (email, password) => {
     try {
-      console.log('Login başlatılıyor:', { email });
+      setLoading(true);
+      setError(null);
       
-      const { data, error } = await supabase.auth.signInWithPassword({ 
+      const { data, error } = await supabaseWithRetry.auth.signInWithPassword({ 
         email, 
         password 
       });
       
       if (error) {
         console.error('Login hatası:', error);
+        setError(error.message);
         return { error: error.message };
       }
       
-      console.log('Login başarılı:', data);
       router.push('/chat');
       return { success: 'Giriş başarılı!' };
     } catch (error) {
       console.error('Login error detayları:', error);
+      setError(error.message);
       return { error: error.message };
+    } finally {
+      setLoading(false);
     }
   };
 
   const signup = async (email, password, profileData, healthData) => {
     try {
-      console.log('Signup başlatılıyor:', { email });
+      setLoading(true);
+      setError(null);
       
-      // Sadece email ve password ile kayıt olma işlemi
-      const { data: authData, error: authError } = await supabase.auth.signUp({ 
+      const { data: authData, error: authError } = await supabaseWithRetry.auth.signUp({ 
         email, 
         password,
         options: {
@@ -142,33 +135,49 @@ export function AuthProvider({ children }) {
       
       if (authError) {
         console.error('Supabase Auth signup hatası:', authError);
+        setError(authError.message);
         throw authError;
       }
       
-      console.log('Signup başarılı:', authData);
-      
-      // Kayıt işlemi başarılı, e-posta onayı gerekiyorsa bildir
       if (authData?.user?.identities?.length === 0) {
+        setError('Bu e-posta adresi zaten kullanılıyor.');
         return { error: 'Bu e-posta adresi zaten kullanılıyor.' };
       }
       
       return { success: 'Kayıt başarılı! E-posta adresinizi kontrol edin.' };
     } catch (error) {
       console.error('Signup error detayları:', error);
+      setError(error.message);
       return { error: error.message };
+    } finally {
+      setLoading(false);
     }
   };
 
   const logout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (!error) {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const { error } = await supabaseWithRetry.auth.signOut();
+      if (error) {
+        setError(error.message);
+        return;
+      }
+      
       router.push('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const value = {
     user,
     loading,
+    error,
     login,
     signup,
     logout,
@@ -179,5 +188,9 @@ export function AuthProvider({ children }) {
 }
 
 export const useAuth = () => {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 }; 

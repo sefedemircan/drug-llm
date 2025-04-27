@@ -32,18 +32,11 @@ export function AuthProvider({ children }) {
           const { profileData, healthData } = session.user.user_metadata;
 
           if (profileData) {
-            // Önce mevcut kayıt var mı kontrol et
-            const { data: existingProfile } = await supabase
-              .from('user_profile')
-              .select('id')
-              .eq('user_id', session.user.id)
-              .single();
-
-            if (!existingProfile) {
+            try {
               // Profil bilgilerini kaydet
               const { error: profileError } = await supabase
                 .from('user_profile')
-                .insert({
+                .upsert({
                   user_id: session.user.id,
                   full_name: profileData.full_name,
                   birth_date: profileData.birth_date,
@@ -53,29 +46,25 @@ export function AuthProvider({ children }) {
                   phone: profileData.phone,
                   address: profileData.address,
                   emergency_contact: profileData.emergency_contact,
-                  created_at: new Date().toISOString(),
                   updated_at: new Date().toISOString()
+                }, {
+                  onConflict: 'user_id'
                 });
 
               if (profileError) {
                 console.error('Profil bilgileri kaydedilirken hata:', profileError);
               }
+            } catch (error) {
+              console.error('Profil bilgileri işlenirken hata:', error);
             }
           }
 
           if (healthData) {
-            // Önce mevcut kayıt var mı kontrol et
-            const { data: existingHealth } = await supabase
-              .from('health_info')
-              .select('id')
-              .eq('user_id', session.user.id)
-              .single();
-
-            if (!existingHealth) {
+            try {
               // Sağlık bilgilerini kaydet
               const { error: healthError } = await supabase
                 .from('health_info')
-                .insert({
+                .upsert({
                   user_id: session.user.id,
                   blood_type: healthData.blood_type,
                   chronic_diseases: healthData.chronic_diseases,
@@ -85,13 +74,16 @@ export function AuthProvider({ children }) {
                   medical_history: healthData.medical_history,
                   family_history: healthData.family_history,
                   lifestyle_info: healthData.lifestyle_info,
-                  created_at: new Date().toISOString(),
                   updated_at: new Date().toISOString()
+                }, {
+                  onConflict: 'user_id'
                 });
 
               if (healthError) {
                 console.error('Sağlık bilgileri kaydedilirken hata:', healthError);
               }
+            } catch (error) {
+              console.error('Sağlık bilgileri işlenirken hata:', error);
             }
           }
         } catch (error) {

@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import Shell from '../../components/Shell';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 export default function ChatPage() {
   const { user, loading } = useAuth();
@@ -17,7 +18,7 @@ export default function ChatPage() {
 
   // Yükleme durumunda veya kullanıcı doğrulanmadıysa içerik göstermeyelim
   if (loading || !user) {
-    return <div>Yükleniyor...</div>;
+    return <LoadingSpinner fullScreen message="Oturum bilgileriniz kontrol ediliyor" />;
   }
 
   return <Shell />;

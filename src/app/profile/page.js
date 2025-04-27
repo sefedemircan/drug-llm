@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../utils/supabase';
+import LoadingSpinner from '../../components/LoadingSpinner';
 import { 
   Box, 
   Container, 
@@ -512,12 +513,15 @@ export default function ProfilePage() {
   };
 
   if (loading || !user) {
-    return <div>Yükleniyor...</div>;
+    return <LoadingSpinner fullScreen message="Profiliniz yükleniyor" />;
   }
 
   return (
     <Container size="md" py="xl">
-      <LoadingOverlay visible={pageLoading} label={`Yükleniyor (${loadingStep})`} />
+      <LoadingOverlay 
+        visible={pageLoading}
+        loader={<LoadingSpinner message={`Yükleniyor (${loadingStep})`} />}
+      />
       
       <Title order={2} mb="md">Kullanıcı Bilgilerim</Title>
       <Text color="dimmed" mb="xl">

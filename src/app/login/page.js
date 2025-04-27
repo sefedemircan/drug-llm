@@ -34,6 +34,7 @@ import {
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useMediaQuery } from '@mantine/hooks';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 // SearchParams'ı işleyecek component
 function AuthPageContent() {
@@ -358,7 +359,7 @@ function AuthPageContent() {
 // Ana component
 export default function AuthPage() {
   return (
-    <Suspense fallback={<div>Yükleniyor...</div>}>
+    <Suspense fallback={<LoadingSpinner fullScreen message="Sayfa yükleniyor" />}>
       <AuthPageContent />
     </Suspense>
   );

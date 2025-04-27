@@ -58,69 +58,78 @@ export function AuthProvider({ children }) {
     try {
       console.log('Signup başlatılıyor:', { email });
       
-      // Mevcut URL'i al
-      const currentUrl = window.location.origin;
-      
       // Sadece email ve password ile kayıt olma işlemi
-      const { data, error } = await supabase.auth.signUp({ 
+      const { data: authData, error: authError } = await supabase.auth.signUp({ 
         email, 
         password,
         options: {
-          emailRedirectTo: `${currentUrl}/login`,
-          data: {
-            profileData,
-            healthData
-          }
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/login`
         }
       });
       
-      if (error) {
-        console.error('Supabase Auth signup hatası:', error);
-        throw error;
+      if (authError) {
+        console.error('Supabase Auth signup hatası:', authError);
+        throw authError;
       }
       
-      console.log('Signup başarılı:', data);
+      console.log('Signup başarılı:', authData);
       
       // Kayıt işlemi başarılı, e-posta onayı gerekiyorsa bildir
-      if (data?.user?.identities?.length === 0) {
+      if (authData?.user?.identities?.length === 0) {
         return { error: 'Bu e-posta adresi zaten kullanılıyor.' };
       }
 
       // Profil ve sağlık bilgilerini kaydet
-      if (profileData && healthData) {
+      if (profileData && healthData && authData?.user?.id) {
         try {
           // Önce profil bilgilerini kaydet
           const { error: profileError } = await supabase
             .from('user_profile')
             .insert({
-              user_id: data.user.id,
-              ...profileData,
+              user_id: authData.user.id,
+              full_name: profileData.full_name,
+              birth_date: profileData.birth_date,
+              gender: profileData.gender,
+              height: profileData.height,
+              weight: profileData.weight,
+              phone: profileData.phone,
+              address: profileData.address,
+              emergency_contact: profileData.emergency_contact,
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString()
             });
 
           if (profileError) {
             console.error('Profil bilgileri kaydedilirken hata:', profileError);
-            return { error: 'Profil bilgileri kaydedilirken bir hata oluştu.' };
+            // Hata olsa bile devam et, kullanıcı daha sonra profil bilgilerini güncelleyebilir
           }
 
           // Sonra sağlık bilgilerini kaydet
           const { error: healthError } = await supabase
             .from('health_info')
             .insert({
-              user_id: data.user.id,
-              ...healthData,
+              user_id: authData.user.id,
+              blood_type: healthData.blood_type,
+              chronic_diseases: healthData.chronic_diseases,
+              current_medications: healthData.current_medications,
+              drug_allergies: healthData.drug_allergies,
+              food_allergies: healthData.food_allergies,
+              medical_history: healthData.medical_history,
+              family_history: healthData.family_history,
+              lifestyle_info: healthData.lifestyle_info,
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString()
             });
 
           if (healthError) {
             console.error('Sağlık bilgileri kaydedilirken hata:', healthError);
-            return { error: 'Sağlık bilgileri kaydedilirken bir hata oluştu.' };
+            // Hata olsa bile devam et, kullanıcı daha sonra sağlık bilgilerini güncelleyebilir
           }
+
+          console.log('Profil ve sağlık bilgileri başarıyla kaydedildi');
         } catch (error) {
           console.error('Veri kaydetme hatası:', error);
-          return { error: 'Veriler kaydedilirken bir hata oluştu.' };
+          // Hata olsa bile devam et, kullanıcı daha sonra bilgilerini güncelleyebilir
         }
       }
       

@@ -66,21 +66,24 @@ export function AuthProvider({ children }) {
                 .from('health_info')
                 .upsert({
                   user_id: session.user.id,
-                  blood_type: healthData.blood_type,
-                  chronic_diseases: healthData.chronic_diseases,
-                  current_medications: healthData.current_medications,
-                  drug_allergies: healthData.drug_allergies,
-                  food_allergies: healthData.food_allergies,
-                  medical_history: healthData.medical_history,
-                  family_history: healthData.family_history,
-                  lifestyle_info: healthData.lifestyle_info,
+                  blood_type: healthData.blood_type || null,
+                  chronic_diseases: healthData.chronic_diseases || [],
+                  current_medications: healthData.current_medications || [],
+                  drug_allergies: healthData.drug_allergies || [],
+                  food_allergies: healthData.food_allergies || [],
+                  medical_history: healthData.medical_history || null,
+                  family_history: healthData.family_history || null,
+                  lifestyle_info: healthData.lifestyle_info || null,
                   updated_at: new Date().toISOString()
                 }, {
-                  onConflict: 'user_id'
+                  onConflict: 'user_id',
+                  ignoreDuplicates: true
                 });
 
               if (healthError) {
                 console.error('Sağlık bilgileri kaydedilirken hata:', healthError);
+              } else {
+                console.log('Sağlık bilgileri başarıyla kaydedildi');
               }
             } catch (error) {
               console.error('Sağlık bilgileri işlenirken hata:', error);

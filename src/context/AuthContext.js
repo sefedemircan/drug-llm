@@ -33,15 +33,28 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      console.log('Login başlatılıyor:', { email });
+      
+      const { data, error } = await supabase.auth.signInWithPassword({ 
+        email, 
+        password 
+      });
+      
+      if (error) {
+        console.error('Login hatası:', error);
+        return { error: error.message };
+      }
+      
+      console.log('Login başarılı:', data);
       router.push('/chat');
+      return { success: 'Giriş başarılı!' };
     } catch (error) {
+      console.error('Login error detayları:', error);
       return { error: error.message };
     }
   };
 
-  const signup = async (email, password) => {
+  const signup = async (email, password, profileData, healthData) => {
     try {
       console.log('Signup başlatılıyor:', { email });
       
@@ -64,6 +77,33 @@ export function AuthProvider({ children }) {
       // Kayıt işlemi başarılı, e-posta onayı gerekiyorsa bildir
       if (data?.user?.identities?.length === 0) {
         return { error: 'Bu e-posta adresi zaten kullanılıyor.' };
+      }
+
+      // Profil ve sağlık bilgilerini kaydet
+      if (profileData && healthData) {
+        const { error: profileError } = await supabase
+          .from('user_profile')
+          .insert({
+            user_id: data.user.id,
+            ...profileData
+          });
+
+        if (profileError) {
+          console.error('Profil bilgileri kaydedilirken hata:', profileError);
+          return { error: 'Profil bilgileri kaydedilirken bir hata oluştu.' };
+        }
+
+        const { error: healthError } = await supabase
+          .from('health_info')
+          .insert({
+            user_id: data.user.id,
+            ...healthData
+          });
+
+        if (healthError) {
+          console.error('Sağlık bilgileri kaydedilirken hata:', healthError);
+          return { error: 'Sağlık bilgileri kaydedilirken bir hata oluştu.' };
+        }
       }
       
       return { success: 'Kayıt başarılı! E-posta adresinizi kontrol edin.' };

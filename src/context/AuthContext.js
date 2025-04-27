@@ -33,11 +33,15 @@ export function AuthProvider({ children }) {
 
           if (profileData) {
             // Önce mevcut kayıt var mı kontrol et
-            const { data: existingProfile } = await supabase
+            const { data: existingProfile, error: profileCheckError } = await supabase
               .from('user_profile')
-              .select('id')
+              .select('*')
               .eq('user_id', session.user.id)
-              .single();
+              .maybeSingle();
+
+            if (profileCheckError) {
+              console.error('Profil kontrolü sırasında hata:', profileCheckError);
+            }
 
             if (!existingProfile) {
               // Profil bilgilerini kaydet
@@ -65,11 +69,15 @@ export function AuthProvider({ children }) {
 
           if (healthData) {
             // Önce mevcut kayıt var mı kontrol et
-            const { data: existingHealth } = await supabase
+            const { data: existingHealth, error: healthCheckError } = await supabase
               .from('health_info')
-              .select('id')
+              .select('*')
               .eq('user_id', session.user.id)
-              .single();
+              .maybeSingle();
+
+            if (healthCheckError) {
+              console.error('Sağlık bilgileri kontrolü sırasında hata:', healthCheckError);
+            }
 
             if (!existingHealth) {
               // Sağlık bilgilerini kaydet

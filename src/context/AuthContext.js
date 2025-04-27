@@ -58,12 +58,19 @@ export function AuthProvider({ children }) {
     try {
       console.log('Signup başlatılıyor:', { email });
       
+      // Mevcut URL'i al
+      const currentUrl = window.location.origin;
+      
       // Sadece email ve password ile kayıt olma işlemi
       const { data, error } = await supabase.auth.signUp({ 
         email, 
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/login`
+          emailRedirectTo: `${currentUrl}/login`,
+          data: {
+            profileData,
+            healthData
+          }
         }
       });
       
@@ -81,28 +88,39 @@ export function AuthProvider({ children }) {
 
       // Profil ve sağlık bilgilerini kaydet
       if (profileData && healthData) {
-        const { error: profileError } = await supabase
-          .from('user_profile')
-          .insert({
-            user_id: data.user.id,
-            ...profileData
-          });
+        try {
+          // Önce profil bilgilerini kaydet
+          const { error: profileError } = await supabase
+            .from('user_profile')
+            .insert({
+              user_id: data.user.id,
+              ...profileData,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            });
 
-        if (profileError) {
-          console.error('Profil bilgileri kaydedilirken hata:', profileError);
-          return { error: 'Profil bilgileri kaydedilirken bir hata oluştu.' };
-        }
+          if (profileError) {
+            console.error('Profil bilgileri kaydedilirken hata:', profileError);
+            return { error: 'Profil bilgileri kaydedilirken bir hata oluştu.' };
+          }
 
-        const { error: healthError } = await supabase
-          .from('health_info')
-          .insert({
-            user_id: data.user.id,
-            ...healthData
-          });
+          // Sonra sağlık bilgilerini kaydet
+          const { error: healthError } = await supabase
+            .from('health_info')
+            .insert({
+              user_id: data.user.id,
+              ...healthData,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            });
 
-        if (healthError) {
-          console.error('Sağlık bilgileri kaydedilirken hata:', healthError);
-          return { error: 'Sağlık bilgileri kaydedilirken bir hata oluştu.' };
+          if (healthError) {
+            console.error('Sağlık bilgileri kaydedilirken hata:', healthError);
+            return { error: 'Sağlık bilgileri kaydedilirken bir hata oluştu.' };
+          }
+        } catch (error) {
+          console.error('Veri kaydetme hatası:', error);
+          return { error: 'Veriler kaydedilirken bir hata oluştu.' };
         }
       }
       

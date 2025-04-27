@@ -22,8 +22,64 @@ export function AuthProvider({ children }) {
     getUser();
 
     // Auth değişikliklerini dinle
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       setUser(session?.user ?? null);
+
+      // Kullanıcı onaylandığında verileri kaydet
+      if (event === 'SIGNED_IN' && session?.user) {
+        try {
+          // Kullanıcının metadata'sından profil ve sağlık bilgilerini al
+          const { profileData, healthData } = session.user.user_metadata;
+
+          if (profileData) {
+            // Profil bilgilerini kaydet
+            const { error: profileError } = await supabase
+              .from('user_profile')
+              .insert({
+                user_id: session.user.id,
+                full_name: profileData.full_name,
+                birth_date: profileData.birth_date,
+                gender: profileData.gender,
+                height: profileData.height,
+                weight: profileData.weight,
+                phone: profileData.phone,
+                address: profileData.address,
+                emergency_contact: profileData.emergency_contact,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              });
+
+            if (profileError) {
+              console.error('Profil bilgileri kaydedilirken hata:', profileError);
+            }
+          }
+
+          if (healthData) {
+            // Sağlık bilgilerini kaydet
+            const { error: healthError } = await supabase
+              .from('health_info')
+              .insert({
+                user_id: session.user.id,
+                blood_type: healthData.blood_type,
+                chronic_diseases: healthData.chronic_diseases,
+                current_medications: healthData.current_medications,
+                drug_allergies: healthData.drug_allergies,
+                food_allergies: healthData.food_allergies,
+                medical_history: healthData.medical_history,
+                family_history: healthData.family_history,
+                lifestyle_info: healthData.lifestyle_info,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              });
+
+            if (healthError) {
+              console.error('Sağlık bilgileri kaydedilirken hata:', healthError);
+            }
+          }
+        } catch (error) {
+          console.error('Veri kaydetme hatası:', error);
+        }
+      }
     });
 
     return () => {
@@ -81,60 +137,6 @@ export function AuthProvider({ children }) {
       // Kayıt işlemi başarılı, e-posta onayı gerekiyorsa bildir
       if (authData?.user?.identities?.length === 0) {
         return { error: 'Bu e-posta adresi zaten kullanılıyor.' };
-      }
-
-      // Profil ve sağlık bilgilerini kaydet
-      if (profileData && healthData && authData?.user?.id) {
-        try {
-          // Önce profil bilgilerini kaydet
-          const { error: profileError } = await supabase
-            .from('user_profile')
-            .insert({
-              user_id: authData.user.id,
-              full_name: profileData.full_name,
-              birth_date: profileData.birth_date,
-              gender: profileData.gender,
-              height: profileData.height,
-              weight: profileData.weight,
-              phone: profileData.phone,
-              address: profileData.address,
-              emergency_contact: profileData.emergency_contact,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            });
-
-          if (profileError) {
-            console.error('Profil bilgileri kaydedilirken hata:', profileError);
-            // Hata olsa bile devam et, kullanıcı daha sonra profil bilgilerini güncelleyebilir
-          }
-
-          // Sonra sağlık bilgilerini kaydet
-          const { error: healthError } = await supabase
-            .from('health_info')
-            .insert({
-              user_id: authData.user.id,
-              blood_type: healthData.blood_type,
-              chronic_diseases: healthData.chronic_diseases,
-              current_medications: healthData.current_medications,
-              drug_allergies: healthData.drug_allergies,
-              food_allergies: healthData.food_allergies,
-              medical_history: healthData.medical_history,
-              family_history: healthData.family_history,
-              lifestyle_info: healthData.lifestyle_info,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            });
-
-          if (healthError) {
-            console.error('Sağlık bilgileri kaydedilirken hata:', healthError);
-            // Hata olsa bile devam et, kullanıcı daha sonra sağlık bilgilerini güncelleyebilir
-          }
-
-          console.log('Profil ve sağlık bilgileri başarıyla kaydedildi');
-        } catch (error) {
-          console.error('Veri kaydetme hatası:', error);
-          // Hata olsa bile devam et, kullanıcı daha sonra bilgilerini güncelleyebilir
-        }
       }
       
       return { success: 'Kayıt başarılı! E-posta adresinizi kontrol edin.' };

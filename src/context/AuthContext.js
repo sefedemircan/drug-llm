@@ -32,6 +32,7 @@ export function AuthProvider({ children }) {
           const { profileData, healthData } = session.user.user_metadata;
 
           if (profileData) {
+<<<<<<< HEAD
             // Önce mevcut kayıt var mı kontrol et
             const { data: existingProfile, error: profileCheckError } = await supabase
               .from('user_profile')
@@ -42,32 +43,34 @@ export function AuthProvider({ children }) {
             if (profileCheckError) {
               console.error('Profil kontrolü sırasında hata:', profileCheckError);
             }
+=======
+            // Profil bilgilerini kaydet
+            const { error: profileError } = await supabase
+              .from('user_profile')
+              .upsert({
+                user_id: session.user.id,
+                full_name: profileData.full_name,
+                birth_date: profileData.birth_date,
+                gender: profileData.gender,
+                height: profileData.height,
+                weight: profileData.weight,
+                phone: profileData.phone,
+                address: profileData.address,
+                emergency_contact: profileData.emergency_contact,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              }, {
+                onConflict: 'user_id'
+              });
+>>>>>>> 22fc371f0df6b36d6760d7478ab545e040932428
 
-            if (!existingProfile) {
-              // Profil bilgilerini kaydet
-              const { error: profileError } = await supabase
-                .from('user_profile')
-                .insert({
-                  user_id: session.user.id,
-                  full_name: profileData.full_name,
-                  birth_date: profileData.birth_date,
-                  gender: profileData.gender,
-                  height: profileData.height,
-                  weight: profileData.weight,
-                  phone: profileData.phone,
-                  address: profileData.address,
-                  emergency_contact: profileData.emergency_contact,
-                  created_at: new Date().toISOString(),
-                  updated_at: new Date().toISOString()
-                });
-
-              if (profileError) {
-                console.error('Profil bilgileri kaydedilirken hata:', profileError);
-              }
+            if (profileError) {
+              console.error('Profil bilgileri kaydedilirken hata:', profileError);
             }
           }
 
           if (healthData) {
+<<<<<<< HEAD
             // Önce mevcut kayıt var mı kontrol et
             const { data: existingHealth, error: healthCheckError } = await supabase
               .from('health_info')
@@ -78,28 +81,29 @@ export function AuthProvider({ children }) {
             if (healthCheckError) {
               console.error('Sağlık bilgileri kontrolü sırasında hata:', healthCheckError);
             }
+=======
+            // Sağlık bilgilerini kaydet
+            const { error: healthError } = await supabase
+              .from('health_info')
+              .upsert({
+                user_id: session.user.id,
+                blood_type: healthData.blood_type,
+                chronic_diseases: healthData.chronic_diseases,
+                current_medications: healthData.current_medications,
+                drug_allergies: healthData.drug_allergies,
+                food_allergies: healthData.food_allergies,
+                medical_history: healthData.medical_history,
+                family_history: healthData.family_history,
+                lifestyle_info: healthData.lifestyle_info,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              }, {
+                onConflict: 'user_id'
+              });
+>>>>>>> 22fc371f0df6b36d6760d7478ab545e040932428
 
-            if (!existingHealth) {
-              // Sağlık bilgilerini kaydet
-              const { error: healthError } = await supabase
-                .from('health_info')
-                .insert({
-                  user_id: session.user.id,
-                  blood_type: healthData.blood_type,
-                  chronic_diseases: healthData.chronic_diseases,
-                  current_medications: healthData.current_medications,
-                  drug_allergies: healthData.drug_allergies,
-                  food_allergies: healthData.food_allergies,
-                  medical_history: healthData.medical_history,
-                  family_history: healthData.family_history,
-                  lifestyle_info: healthData.lifestyle_info,
-                  created_at: new Date().toISOString(),
-                  updated_at: new Date().toISOString()
-                });
-
-              if (healthError) {
-                console.error('Sağlık bilgileri kaydedilirken hata:', healthError);
-              }
+            if (healthError) {
+              console.error('Sağlık bilgileri kaydedilirken hata:', healthError);
             }
           }
         } catch (error) {

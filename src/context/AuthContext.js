@@ -32,48 +32,66 @@ export function AuthProvider({ children }) {
           const { profileData, healthData } = session.user.user_metadata;
 
           if (profileData) {
-            // Profil bilgilerini kaydet
-            const { error: profileError } = await supabase
+            // Önce mevcut kayıt var mı kontrol et
+            const { data: existingProfile } = await supabase
               .from('user_profile')
-              .insert({
-                user_id: session.user.id,
-                full_name: profileData.full_name,
-                birth_date: profileData.birth_date,
-                gender: profileData.gender,
-                height: profileData.height,
-                weight: profileData.weight,
-                phone: profileData.phone,
-                address: profileData.address,
-                emergency_contact: profileData.emergency_contact,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
-              });
+              .select('id')
+              .eq('user_id', session.user.id)
+              .single();
 
-            if (profileError) {
-              console.error('Profil bilgileri kaydedilirken hata:', profileError);
+            if (!existingProfile) {
+              // Profil bilgilerini kaydet
+              const { error: profileError } = await supabase
+                .from('user_profile')
+                .insert({
+                  user_id: session.user.id,
+                  full_name: profileData.full_name,
+                  birth_date: profileData.birth_date,
+                  gender: profileData.gender,
+                  height: profileData.height,
+                  weight: profileData.weight,
+                  phone: profileData.phone,
+                  address: profileData.address,
+                  emergency_contact: profileData.emergency_contact,
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString()
+                });
+
+              if (profileError) {
+                console.error('Profil bilgileri kaydedilirken hata:', profileError);
+              }
             }
           }
 
           if (healthData) {
-            // Sağlık bilgilerini kaydet
-            const { error: healthError } = await supabase
+            // Önce mevcut kayıt var mı kontrol et
+            const { data: existingHealth } = await supabase
               .from('health_info')
-              .insert({
-                user_id: session.user.id,
-                blood_type: healthData.blood_type,
-                chronic_diseases: healthData.chronic_diseases,
-                current_medications: healthData.current_medications,
-                drug_allergies: healthData.drug_allergies,
-                food_allergies: healthData.food_allergies,
-                medical_history: healthData.medical_history,
-                family_history: healthData.family_history,
-                lifestyle_info: healthData.lifestyle_info,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
-              });
+              .select('id')
+              .eq('user_id', session.user.id)
+              .single();
 
-            if (healthError) {
-              console.error('Sağlık bilgileri kaydedilirken hata:', healthError);
+            if (!existingHealth) {
+              // Sağlık bilgilerini kaydet
+              const { error: healthError } = await supabase
+                .from('health_info')
+                .insert({
+                  user_id: session.user.id,
+                  blood_type: healthData.blood_type,
+                  chronic_diseases: healthData.chronic_diseases,
+                  current_medications: healthData.current_medications,
+                  drug_allergies: healthData.drug_allergies,
+                  food_allergies: healthData.food_allergies,
+                  medical_history: healthData.medical_history,
+                  family_history: healthData.family_history,
+                  lifestyle_info: healthData.lifestyle_info,
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString()
+                });
+
+              if (healthError) {
+                console.error('Sağlık bilgileri kaydedilirken hata:', healthError);
+              }
             }
           }
         } catch (error) {

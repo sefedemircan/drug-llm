@@ -119,12 +119,23 @@ export function AuthProvider({ children }) {
         return { error: error.message };
       }
       
+      if (!data?.user) {
+        console.error('Kullanıcı bilgisi alınamadı');
+        return { error: 'Giriş yapılamadı. Lütfen tekrar deneyin.' };
+      }
+
       console.log('Login başarılı:', data);
+      
+      // Kullanıcı bilgilerini güncelle
+      setUser(data.user);
+      
+      // Chat sayfasına yönlendir
       router.push('/chat');
+      
       return { success: 'Giriş başarılı!' };
     } catch (error) {
       console.error('Login error detayları:', error);
-      return { error: error.message };
+      return { error: error.message || 'Giriş yapılırken bir hata oluştu.' };
     }
   };
 

@@ -121,6 +121,12 @@ function AuthPageContent() {
         const result = await login(email, password);
         if (result?.error) {
           setMessage({ type: 'error', content: result.error });
+          setLoading(false);
+          return;
+        }
+        if (result?.success) {
+          setMessage({ type: 'success', content: result.success });
+          // Yönlendirme AuthContext'te yapılıyor
         }
       } else {
         if (step === 1) {

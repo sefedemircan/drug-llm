@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import { Box, Burger, Group, Title, Flex, ActionIcon, Portal, Overlay, Button } from '@mantine/core';
+import { Box, Burger, Group, Title, Flex, ActionIcon, Portal, Overlay, Button, Transition } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronLeft, IconChevronRight, IconX, IconLogout, IconUser } from '@tabler/icons-react';
 import ChatSidebar from './ChatSidebar';
@@ -12,13 +12,16 @@ import { useRouter } from 'next/navigation';
 export default function Shell() {
   const [opened, { toggle, close, open }] = useDisclosure(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [isSmallMobile, setIsSmallMobile] = useState(false);
   const { logout } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     const checkMobile = () => {
       const mobile = window.innerWidth < 768;
+      const smallMobile = window.innerWidth < 480;
       setIsMobile(mobile);
+      setIsSmallMobile(smallMobile);
       if (mobile) close();
       else open();
     };
@@ -48,6 +51,13 @@ export default function Shell() {
     router.push('/profile');
   };
 
+  // Mobilde chat area'dan sidebar'ı açmak için
+  const handleOpenSidebar = () => {
+    if (isMobile) {
+      open();
+    }
+  };
+
   return (
     <Flex h="100vh" style={{ overflow: 'hidden' }}>
       {/* Mobile Sidebar Overlay */}
@@ -63,46 +73,63 @@ export default function Shell() {
       )}
       
       {/* Sidebar */}
-      <Box
-        style={{
-          width: opened ? (isMobile ? '100%' : '300px') : '0px',
-          height: '100vh',
-          backgroundColor: 'var(--sidebar-bg)',
-          borderRight: opened ? '1px solid var(--border-color)' : 'none',
-          overflow: 'hidden',
-          transition: isMobile ? 'all 0.3s ease' : 'width 0.3s ease',
-          position: isMobile && opened ? 'fixed' : 'relative',
-          zIndex: 1001,
-          boxShadow: opened ? '2px 0 5px rgba(0,0,0,0.03)' : 'none',
-          left: 0,
-          top: 0,
-        }}
+      <Transition
+        mounted={opened}
+        transition="slide-right"
+        duration={300}
+        timingFunction="ease"
       >
-        {opened && (
-          <>
-            {isMobile && (
-              <ActionIcon 
-                style={{
-                  position: 'absolute',
-                  top: '12px',
-                  right: '12px',
-                  zIndex: 1002,
-                }}
-                radius="xl"
-                color="gray"
-                variant="subtle"
-                onClick={close}
-              >
-                <IconX size={20} />
-              </ActionIcon>
+        {(styles) => (
+          <Box
+            style={{
+              width: opened ? (isMobile ? '100%' : '300px') : '0px',
+              height: '100vh',
+              backgroundColor: 'var(--sidebar-bg)',
+              borderRight: opened ? '1px solid var(--border-color)' : 'none',
+              overflow: 'hidden',
+              position: isMobile && opened ? 'fixed' : 'relative',
+              zIndex: 1001,
+              boxShadow: opened ? '2px 0 5px rgba(0,0,0,0.03)' : 'none',
+              left: 0,
+              top: 0,
+              ...styles
+            }}
+          >
+            {opened && (
+              <>
+                {isMobile && (
+                  <ActionIcon 
+                    style={{
+                      position: 'absolute',
+                      top: '12px',
+                      right: '12px',
+                      zIndex: 1002,
+                    }}
+                    radius="xl"
+                    color="gray"
+                    variant="subtle"
+                    onClick={close}
+                  >
+                    <IconX size={20} />
+                  </ActionIcon>
+                )}
+                <ChatSidebar isMobile={isMobile} onClose={close} />
+              </>
             )}
-            <ChatSidebar />
-          </>
+          </Box>
         )}
-      </Box>
+      </Transition>
 
       {/* Main Content */}
-      <Box style={{ flex: 1, height: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+      <Box style={{ 
+        flex: 1, 
+        height: '100vh', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        position: 'relative',
+        width: isMobile ? '100%' : `calc(100% - ${opened ? '300px' : '0px'})`,
+        transition: 'width 0.3s ease'
+      }}>
         {/* Header */}
         <Box
           style={{
@@ -128,36 +155,54 @@ export default function Shell() {
               color="primary"
               onClick={toggle} 
               aria-label={opened ? "Kenar çubuğunu kapat" : "Kenar çubuğunu aç"}
+              style={{ 
+                display: isMobile && opened ? 'none' : 'flex' 
+              }}
             >
               {opened && !isMobile ? <IconChevronLeft size={18} /> : <IconChevronRight size={18} />}
             </ActionIcon>
-            <Title order={3} style={{ fontSize: "20px", color: "var(--text-title)" }}>DrugLLM</Title>
+            <Title order={3} style={{ fontSize: isSmallMobile ? "18px" : "20px", color: "var(--text-title)" }}>DrugLLM</Title>
           </Group>
           
           <Group spacing="sm">
-            <Button 
-              variant="subtle" 
-              color="blue" 
-              leftSection={<IconUser size={16} />}
-              onClick={handleProfileClick}
-            >
-              Profil
-            </Button>
+            {!isSmallMobile && (
+              <Button 
+                variant="subtle" 
+                color="blue" 
+                leftSection={<IconUser size={16} />}
+                onClick={handleProfileClick}
+              >
+                Profil
+              </Button>
+            )}
             
             <Button 
               variant="subtle" 
               color="gray" 
               leftSection={<IconLogout size={16} />}
               onClick={logout}
+              style={{
+                padding: isSmallMobile ? '0 8px' : undefined
+              }}
             >
-              Çıkış Yap
+              {isSmallMobile ? '' : 'Çıkış Yap'}
             </Button>
           </Group>
         </Box>
 
         {/* Chat Area */}
-        <Box style={{ flex: 1, overflow: 'hidden' }}>
-          <ChatArea isMobile={isMobile} navbarOpened={opened} sidebarWidth={opened && !isMobile ? 300 : 0} />
+        <Box style={{ 
+          flex: 1, 
+          overflow: 'hidden', 
+          width: '100%',
+          transition: 'width 0.3s ease, marginLeft 0.3s ease'
+        }}>
+          <ChatArea 
+            isMobile={isMobile}
+            navbarOpened={opened} 
+            sidebarWidth={opened && !isMobile ? 300 : 0} 
+            onOpenSidebar={handleOpenSidebar}
+          />
         </Box>
       </Box>
     </Flex>

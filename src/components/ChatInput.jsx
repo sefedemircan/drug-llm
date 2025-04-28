@@ -13,11 +13,13 @@ import {
   IconSend
 } from '@tabler/icons-react';
 
-export default function ChatInput({ onSendMessage }) {
+export default function ChatInput({ onSendMessage, isMobile }) {
   const [message, setMessage] = useState('');
   const [activeMode, setActiveMode] = useState(null);
   const theme = useMantineTheme();
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  // Eğer isMobile prop olarak geçilmezse, hook ile kontrol ediyoruz
+  const isSmallScreen = useMediaQuery('(max-width: 768px)');
+  const isActuallyMobile = isMobile !== undefined ? isMobile : isSmallScreen;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -48,21 +50,23 @@ export default function ChatInput({ onSendMessage }) {
         backgroundColor: 'var(--background-white)',
         marginBottom: '0px',
         position: 'relative',
-        minHeight: '70px',
+        minHeight: isActuallyMobile ? '60px' : '70px',
         width: '100%',
-        paddingTop: '12px',
-        paddingBottom: '12px',
-        paddingLeft: '16px',
-        paddingRight: '16px'
+        paddingTop: isActuallyMobile ? '8px' : '12px',
+        paddingBottom: isActuallyMobile ? '8px' : '12px',
+        paddingLeft: isActuallyMobile ? '12px' : '16px',
+        paddingRight: isActuallyMobile ? '12px' : '16px'
       }}
     >
       <form onSubmit={handleSubmit} style={{ height: '100%' }}>
         <Flex direction="column" style={{ height: '100%', position: 'relative' }}>
-          <Group align="center" wrap="nowrap" spacing="xs" style={{ marginBottom: isMobile ? '40px' : '32px' }}>
+          <Group align="center" wrap="nowrap" spacing="xs" style={{ 
+            marginBottom: isActuallyMobile ? '35px' : '32px'
+          }}>
             <ActionIcon 
               variant="filled"
               color="blue.4"
-              size={isMobile ? "md" : "lg"}
+              size={isActuallyMobile ? "md" : "lg"}
               radius="xl"
               style={{
                 border: 'none',
@@ -82,7 +86,7 @@ export default function ChatInput({ onSendMessage }) {
                 }
               })}
             >
-              <IconPlus size={isMobile ? 20 : 22} stroke={2} color="white" />
+              <IconPlus size={isActuallyMobile ? 18 : 22} stroke={2} color="white" />
             </ActionIcon>
             
             <Textarea
@@ -90,22 +94,22 @@ export default function ChatInput({ onSendMessage }) {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
-              size="md"
+              size={isActuallyMobile ? "sm" : "md"}
               autosize
               maxRows={6}
-              minRows={isMobile ? 1 : 2}
+              minRows={isActuallyMobile ? 1 : 2}
               style={{ 
                 flex: 1,
               }}
               styles={{
                 input: { 
                   border: 'none',
-                  paddingTop: isMobile ? '12px' : '15px',
-                  paddingBottom: isMobile ? '12px' : '15px',
+                  paddingTop: isActuallyMobile ? '10px' : '15px',
+                  paddingBottom: isActuallyMobile ? '10px' : '15px',
                   paddingLeft: 0,
                   paddingRight: 0,
                   backgroundColor: 'transparent',
-                  fontSize: isMobile ? '14px' : '16px',
+                  fontSize: isActuallyMobile ? '14px' : '16px',
                   color: 'var(--text-body)',
                   resize: 'none',
                   overflow: 'auto',
@@ -120,19 +124,24 @@ export default function ChatInput({ onSendMessage }) {
               }}
             />
 
-            <Group spacing={isMobile ? 4 : 8} style={{ marginTop: isMobile ? '16px' : '20px', marginRight: isMobile ? '8px' : '16px' }}>
-              <ActionIcon
-                radius="xl"
-                variant="subtle"
-                style={{
-                  color: 'var(--primary)',
-                  backgroundColor: 'var(--primary-light)',
-                  height: '40px',
-                  width: '40px',
-                }}
-              >
-                <IconMicrophone size={isMobile ? 18 : 20} stroke={1.5} />
-              </ActionIcon>
+            <Group spacing={isActuallyMobile ? 4 : 8} style={{ 
+              marginTop: isActuallyMobile ? '12px' : '20px', 
+              marginRight: isActuallyMobile ? '4px' : '16px' 
+            }}>
+              {!isActuallyMobile && (
+                <ActionIcon
+                  radius="xl"
+                  variant="subtle"
+                  style={{
+                    color: 'var(--primary)',
+                    backgroundColor: 'var(--primary-light)',
+                    height: '40px',
+                    width: '40px',
+                  }}
+                >
+                  <IconMicrophone size={isActuallyMobile ? 16 : 20} stroke={1.5} />
+                </ActionIcon>
+              )}
 
               <ActionIcon
                 radius="xl"
@@ -141,8 +150,8 @@ export default function ChatInput({ onSendMessage }) {
                 disabled={!message.trim()}
                 style={{
                   background: message.trim() ? 'var(--primary)' : 'var(--border-color)',
-                  height: '40px',
-                  width: '40px',
+                  height: isActuallyMobile ? '36px' : '40px',
+                  width: isActuallyMobile ? '36px' : '40px',
                   boxShadow: message.trim() ? '0 2px 4px rgba(0,0,0,0.2)' : 'none',
                   transition: 'all 0.2s ease',
                 }}
@@ -153,20 +162,21 @@ export default function ChatInput({ onSendMessage }) {
                   }
                 })}
               >
-                <IconSend size={isMobile ? 18 : 20} stroke={1.5} color="white" />
+                <IconSend size={isActuallyMobile ? 16 : 20} stroke={1.5} color="white" />
               </ActionIcon>
             </Group>
           </Group>
           
+          {/* Mobil görünümde butonları küçült ve sadece ikonları göster */}
           <Group 
-            spacing={isMobile ? 4 : 8} 
+            spacing={isActuallyMobile ? 4 : 8} 
             style={{ 
               position: 'absolute', 
-              bottom: '8px', 
-              left: isMobile ? '8px' : '16px',
+              bottom: isActuallyMobile ? '5px' : '8px', 
+              left: isActuallyMobile ? '6px' : '16px',
               maxWidth: '100%',
               overflow: 'auto',
-              flexWrap: isMobile ? 'nowrap' : 'wrap'
+              flexWrap: 'nowrap'
             }}
           >
             <Button
@@ -178,12 +188,12 @@ export default function ChatInput({ onSendMessage }) {
                   backgroundColor: activeMode === 'search' ? 'var(--primary-light)' : '#F0F4F8',
                   color: activeMode === 'search' ? 'var(--primary)' : 'var(--text-body)',
                   border: 'none',
-                  paddingTop: isMobile ? '2px' : '4px',
-                  paddingBottom: isMobile ? '2px' : '4px',
-                  paddingLeft: isMobile ? '8px' : '12px',
-                  paddingRight: isMobile ? '8px' : '12px',
-                  height: isMobile ? '30px' : '34px',
-                  minWidth: isMobile ? 'auto' : undefined,
+                  paddingTop: isActuallyMobile ? '2px' : '4px',
+                  paddingBottom: isActuallyMobile ? '2px' : '4px',
+                  paddingLeft: isActuallyMobile ? '6px' : '12px',
+                  paddingRight: isActuallyMobile ? '6px' : '12px',
+                  height: isActuallyMobile ? '28px' : '34px',
+                  minWidth: isActuallyMobile ? 'auto' : undefined,
                   fontWeight: 600,
                   '&:hover': {
                     backgroundColor: 'var(--primary-light)'
@@ -192,14 +202,14 @@ export default function ChatInput({ onSendMessage }) {
                 inner: {
                   display: 'flex',
                   alignItems: 'center',
-                  gap: isMobile ? '2px' : '4px',
-                  fontSize: isMobile ? '12px' : '14px'
+                  gap: isActuallyMobile ? '2px' : '4px',
+                  fontSize: isActuallyMobile ? '11px' : '14px'
                 }
               }}
               onClick={() => handleModeSelect('search')}
             >
-              <IconWorld size={isMobile ? 14 : 16} stroke={1.5} /> 
-              {isMobile ? '' : 'Search'}
+              <IconWorld size={isActuallyMobile ? 14 : 16} stroke={1.5} /> 
+              {isActuallyMobile ? '' : 'Search'}
             </Button>
 
             <Button
@@ -211,12 +221,12 @@ export default function ChatInput({ onSendMessage }) {
                   backgroundColor: activeMode === 'reason' ? 'var(--primary-light)' : '#F0F4F8',
                   color: activeMode === 'reason' ? 'var(--primary)' : 'var(--text-body)',
                   border: 'none',
-                  paddingTop: isMobile ? '2px' : '4px',
-                  paddingBottom: isMobile ? '2px' : '4px',
-                  paddingLeft: isMobile ? '8px' : '12px',
-                  paddingRight: isMobile ? '8px' : '12px',
-                  height: isMobile ? '30px' : '34px',
-                  minWidth: isMobile ? 'auto' : undefined,
+                  paddingTop: isActuallyMobile ? '2px' : '4px',
+                  paddingBottom: isActuallyMobile ? '2px' : '4px',
+                  paddingLeft: isActuallyMobile ? '6px' : '12px',
+                  paddingRight: isActuallyMobile ? '6px' : '12px',
+                  height: isActuallyMobile ? '28px' : '34px',
+                  minWidth: isActuallyMobile ? 'auto' : undefined,
                   fontWeight: 600,
                   '&:hover': {
                     backgroundColor: 'var(--primary-light)'
@@ -225,14 +235,14 @@ export default function ChatInput({ onSendMessage }) {
                 inner: {
                   display: 'flex',
                   alignItems: 'center',
-                  gap: isMobile ? '2px' : '4px',
-                  fontSize: isMobile ? '12px' : '14px'
+                  gap: isActuallyMobile ? '2px' : '4px',
+                  fontSize: isActuallyMobile ? '11px' : '14px'
                 }
               }}
               onClick={() => handleModeSelect('reason')}
             >
-              <IconBulb size={isMobile ? 14 : 16} stroke={1.5} /> 
-              {isMobile ? '' : 'Reason'}
+              <IconBulb size={isActuallyMobile ? 14 : 16} stroke={1.5} /> 
+              {isActuallyMobile ? '' : 'Reason'}
             </Button>
 
             <ActionIcon
@@ -242,11 +252,11 @@ export default function ChatInput({ onSendMessage }) {
                 backgroundColor: '#F0F4F8',
                 border: 'none',
                 color: 'var(--text-muted)',
-                height: isMobile ? '30px' : '34px',
-                width: isMobile ? '30px' : '34px'
+                height: isActuallyMobile ? '28px' : '34px',
+                width: isActuallyMobile ? '28px' : '34px'
               }}
             >
-              <IconDotsCircleHorizontal size={isMobile ? 14 : 16} stroke={1.5} />
+              <IconDotsCircleHorizontal size={isActuallyMobile ? 14 : 16} stroke={1.5} />
             </ActionIcon>
           </Group>
         </Flex>

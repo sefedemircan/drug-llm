@@ -33,7 +33,7 @@ export default function ChatMessage({ message }) {
             boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
           }}
         >
-          {isBot ? <IconRobot size={14} /> : <IconUser size={14} />}
+          {isBot ? <IconRobot size={14} color="white" /> : <IconUser size={14} color="white" />}
         </Avatar>
         <Text fw={600} size="xs" style={{ color: isBot ? 'var(--primary)' : 'var(--secondary)' }}>
           {isBot ? 'İlaç Asistanı' : 'Siz'}

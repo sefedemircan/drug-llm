@@ -199,7 +199,7 @@ export default function ChatInput({ onSendMessage }) {
               onClick={() => handleModeSelect('search')}
             >
               <IconWorld size={isMobile ? 14 : 16} stroke={1.5} /> 
-              {isMobile ? '' : 'Arama'}
+              {isMobile ? '' : 'Search'}
             </Button>
 
             <Button
@@ -232,7 +232,7 @@ export default function ChatInput({ onSendMessage }) {
               onClick={() => handleModeSelect('reason')}
             >
               <IconBulb size={isMobile ? 14 : 16} stroke={1.5} /> 
-              {isMobile ? '' : 'Neden'}
+              {isMobile ? '' : 'Reason'}
             </Button>
 
             <ActionIcon

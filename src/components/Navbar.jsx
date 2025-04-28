@@ -105,7 +105,7 @@ const Navbar = () => {
     padding: isTablet ? '12px 18px' : '15px 25px',
     fontWeight: 500,
     fontSize: isTablet ? '14px' : '15px',
-    color: '#333',
+    color: 'var(--primary)',
     textDecoration: 'none',
     display: 'flex',
     alignItems: 'center',

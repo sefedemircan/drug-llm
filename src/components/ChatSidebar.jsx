@@ -52,9 +52,9 @@ export default function ChatSidebar({ isMobile, onClose }) {
           display: 'flex', 
           alignItems: 'center',
           justifyContent: 'space-between',
-          borderBottom: '1px solid var(--border-color)',
+          borderBottom: 'none',
           padding: '0 16px',
-          backgroundColor: 'var(--sidebar-header-bg)',
+          backgroundColor: 'transparent',
         }}
       >
         <Text 
@@ -63,6 +63,7 @@ export default function ChatSidebar({ isMobile, onClose }) {
             fontFamily: 'var(--font-geist-sans, Arial, Helvetica, sans-serif)',
             fontWeight: 700,
             color: 'var(--primary)',
+            
           }}
         >
           {isMobile ? "Sohbetler" : "DrugLLM"}

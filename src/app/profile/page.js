@@ -136,9 +136,9 @@ export default function ProfilePage() {
       }}
     >
       <Container size="lg" py={isMobile ? "md" : "xl"}>
-        <LoadingOverlay 
-          visible={pageLoading}
-          loader={<LoadingSpinner message={`Yükleniyor (${loadingStep})`} />}
+      <LoadingOverlay 
+        visible={pageLoading}
+        loader={<LoadingSpinner message={`Yükleniyor (${loadingStep})`} />}
           overlayProps={{ radius: "sm", blur: 2 }}
         />
         
@@ -190,8 +190,8 @@ export default function ProfilePage() {
           >
             Bilgileriniz ilaç tavsiyelerini kişiselleştirmek için kullanılacak ve güvenle saklanacaktır.
           </Alert>
-          
-          {error && (
+      
+      {error && (
             <Alert 
               icon={<IconAlertCircle size={16} />} 
               title="Hata" 
@@ -200,15 +200,15 @@ export default function ProfilePage() {
               radius="md"
               withBorder
             >
-              {error}
-            </Alert>
-          )}
-          
-          {success && (
+          {error}
+        </Alert>
+      )}
+      
+      {success && (
             <Alert title="Başarılı" color="green" mb="md" radius="md" withBorder>
-              {success}
-            </Alert>
-          )}
+          {success}
+        </Alert>
+      )}
         </Box>
         
         {/* Kullanıcı Profil Kartı */}
@@ -262,7 +262,7 @@ export default function ProfilePage() {
             </Grid.Col>
             
             <Grid.Col span={isMobile ? 12 : 8}>
-              {profileData && (
+      {profileData && (
                 <div>
                   <Group position="apart" mb="md">
                     <Title order={4} style={{ fontWeight: 700, color: 'var(--primary)' }}>
@@ -443,12 +443,12 @@ export default function ProfilePage() {
         
         {/* Alt Butonlar */}
         <Group position="apart" mt="xl">
-          <Button 
+        <Button 
             variant="light" 
             color="blue"
             radius="md"
             leftSection={<IconArrowLeft size={16} />}
-            onClick={() => router.push('/chat')}
+          onClick={() => router.push('/chat')}
             size={isMobile ? "sm" : "md"}
           >
             Sohbete Dön
@@ -462,9 +462,9 @@ export default function ProfilePage() {
             size={isMobile ? "sm" : "md"}
           >
             Bilgileri Güncelle
-          </Button>
-        </Group>
-      </Container>
+        </Button>
+      </Group>
+    </Container>
     </Box>
   );
 }

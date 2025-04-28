@@ -3,10 +3,9 @@
 import { Button, Container, Title, Text, Group, Card, SimpleGrid, Box, ThemeIcon, Divider, Badge, Grid, BackgroundImage, Center, useMantineTheme, Accordion, Avatar, Footer, Stack, ActionIcon } from '@mantine/core';
 import { IconPill, IconStethoscope, IconHeartbeat, IconSearch, IconRobot, IconShield, IconCloudComputing, IconDeviceMobile, IconChevronRight, IconBrandTwitter, IconBrandFacebook, IconBrandInstagram, IconBrandYoutube, IconQuestionMark, IconStar, IconUser, IconMessage, IconArrowUp } from '@tabler/icons-react';
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useMediaQuery } from '@mantine/hooks';
 import Navbar from "../components/Navbar";
-import ScrollToTop from "../components/ScrollToTop";
 
 export default function Home() {
   const theme = useMantineTheme();
@@ -14,10 +13,6 @@ export default function Home() {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const isSmallMobile = useMediaQuery('(max-width: 480px)');
   
-  // Sayfa yüklendiğinde scroll pozisyonunu en üste getir
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   const features = [
     {
@@ -109,46 +104,14 @@ export default function Home() {
     }
   ];
 
-  // Sayfa başına dönme fonksiyonu
-  const scrollToTop = () => {
-    if (typeof window !== 'undefined') {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    }
-  };
-
   return (
     <Box style={{ 
       background: `linear-gradient(180deg, #F5F9FF 0%, white 100%)`,
-      minHeight: '100vh'
+      minHeight: '100vh',
+      position: 'relative'
     }}>
       <Navbar />
-      <Button
-        onClick={scrollToTop}
-        style={{
-          position: 'fixed',
-          bottom: '20px',
-          right: '20px',
-          zIndex: 1000,
-          borderRadius: '50%',
-          width: '50px',
-          height: '50px',
-          padding: 0,
-          backgroundColor: 'var(--primary)',
-          boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
-          transition: 'all 0.3s ease',
-          border: 'none',
-          '&:hover': {
-            transform: 'translateY(-3px)',
-            boxShadow: '0 6px 15px rgba(0,0,0,0.25)',
-          }
-        }}
-      >
-        <IconArrowUp size={24} stroke={2} />
-      </Button>
-      <ScrollToTop />
+      
       <Container size="lg" py={isMobile ? 20 : 40} style={{ margin: '0 auto', maxWidth: '1200px' }}>
         {/* Hero Section - Modern ve Enerji Dolu */}
         <Box 
@@ -727,7 +690,7 @@ export default function Home() {
           <Container>
             <Group position="apart" align="center">
               <Text size="sm" color="dimmed">
-                © 2023 DrugLLM. Tüm hakları saklıdır.
+                © 2025 DrugLLM. Tüm hakları saklıdır.
               </Text>
               
               <Group spacing="md">

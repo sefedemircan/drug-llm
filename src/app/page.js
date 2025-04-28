@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Container, Title, Text, Group, Card, SimpleGrid, Box, ThemeIcon, Divider, Badge, Grid, BackgroundImage, Center, useMantineTheme, Accordion, Avatar, Footer, Stack } from '@mantine/core';
+import { Button, Container, Title, Text, Group, Card, SimpleGrid, Box, ThemeIcon, Divider, Badge, Grid, BackgroundImage, Center, useMantineTheme, Accordion, Avatar, Footer, Stack, ActionIcon } from '@mantine/core';
 import { IconPill, IconStethoscope, IconHeartbeat, IconSearch, IconRobot, IconShield, IconCloudComputing, IconDeviceMobile, IconChevronRight, IconBrandTwitter, IconBrandFacebook, IconBrandInstagram, IconBrandYoutube, IconQuestionMark, IconStar, IconUser, IconMessage, IconArrowUp } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useEffect } from 'react';
@@ -21,22 +21,22 @@ export default function Home() {
 
   const features = [
     {
-      icon: <IconPill size={24} />,
+      icon: <IconPill size={28} />,
       title: 'İlaç Bilgisi',
       description: 'Kullandığınız ilaçlar hakkında detaylı bilgiler edinebilirsiniz.'
     },
     {
-      icon: <IconStethoscope size={24} />,
+      icon: <IconStethoscope size={28} />,
       title: 'Yan Etki Analizi',
       description: 'İlaçların potansiyel yan etkileri hakkında bilgi alabilirsiniz.'
     },
     {
-      icon: <IconHeartbeat size={24} />,
+      icon: <IconHeartbeat size={28} />,
       title: 'Etkileşim Kontrolü',
       description: 'Farklı ilaçlar arasındaki etkileşimleri kontrol edebilirsiniz.'
     },
     {
-      icon: <IconSearch size={24} />,
+      icon: <IconSearch size={28} />,
       title: 'Akıllı Arama',
       description: 'İlaç ismi veya etken madde ile arama yapabilirsiniz.'
     }
@@ -121,7 +121,7 @@ export default function Home() {
 
   return (
     <Box style={{ 
-      background: `linear-gradient(180deg, ${theme.colors.neutral[1]} 0%, white 100%)`,
+      background: `linear-gradient(180deg, #F5F9FF 0%, white 100%)`,
       minHeight: '100vh'
     }}>
       <Navbar />
@@ -136,66 +136,71 @@ export default function Home() {
           width: '50px',
           height: '50px',
           padding: 0,
-          backgroundColor: theme.colors.primary[6],
+          backgroundColor: 'var(--primary)',
+          boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
+          transition: 'all 0.3s ease',
+          border: 'none',
           '&:hover': {
-            backgroundColor: theme.colors.primary[7],
+            transform: 'translateY(-3px)',
+            boxShadow: '0 6px 15px rgba(0,0,0,0.25)',
           }
         }}
       >
-        <IconArrowUp size={24} />
+        <IconArrowUp size={24} stroke={2} />
       </Button>
       <ScrollToTop />
       <Container size="lg" py={isMobile ? 20 : 40} style={{ margin: '0 auto', maxWidth: '1200px' }}>
-        {/* Hero Section - Responsive */}
+        {/* Hero Section - Modern ve Enerji Dolu */}
         <Box 
           mb={isMobile ? 40 : 80} 
+          className="home-hero"
           style={{ 
-            position: 'relative',
-            background: `linear-gradient(135deg, ${theme.colors.primary[8]}, ${theme.colors.primary[4]})`,
-            borderRadius: isMobile ? '12px' : '16px',
-            padding: isMobile ? (isSmallMobile ? '40px 20px' : '50px 30px') : '70px 50px',
-            overflow: 'hidden',
-            color: 'white',
-            boxShadow: '0 20px 40px rgba(10, 36, 99, 0.2)'
+            padding: isMobile ? (isSmallMobile ? '40px 20px' : '60px 30px') : '80px 50px',
+            zIndex: 2,
           }}
         >
-          {/* Decorative elements */}
-          <div style={{
-            position: 'absolute',
-            top: '10%',
-            right: '15%',
-            width: isMobile ? '150px' : '300px',
-            height: isMobile ? '150px' : '300px',
-            background: 'rgba(255, 255, 255, 0.05)',
-            borderRadius: '50%',
-            filter: 'blur(40px)',
-            display: isSmallMobile ? 'none' : 'block'
-          }} />
-          <div style={{
-            position: 'absolute',
-            bottom: '5%',
-            left: '10%',
-            width: isMobile ? '100px' : '200px',
-            height: isMobile ? '100px' : '200px',
-            background: 'rgba(62, 146, 204, 0.2)',
-            borderRadius: '50%',
-            filter: 'blur(30px)',
-            display: isSmallMobile ? 'none' : 'block'
-          }} />
-
           <Group position={isMobile ? "center" : "apart"} align="flex-start" style={{ position: 'relative', zIndex: 2 }}>
             <Box style={{ maxWidth: isMobile ? '100%' : '590px', textAlign: isMobile ? 'center' : 'left' }}>
-              <Badge color="secondary" variant="filled" size={isMobile ? "md" : "lg"} radius="sm" mb="md">YENİ</Badge>
+              <Badge 
+                color="secondary" 
+                variant="filled" 
+                size={isMobile ? "md" : "lg"} 
+                radius="sm" 
+                mb="md"
+                style={{
+                  background: 'var(--secondary)',
+                  color: 'white',
+                  boxShadow: '0 4px 12px rgba(0, 200, 83, 0.25)',
+                  transform: 'translateY(0)',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 6px 15px rgba(0, 200, 83, 0.3)',
+                  }
+                }}
+              >
+                YENİ
+              </Badge>
               <Title order={1} mb="md" style={{ 
-                fontSize: isSmallMobile ? '2.5rem' : (isMobile ? '3rem' : '4rem'), 
+                fontSize: isSmallMobile ? '2.5rem' : (isMobile ? '3.25rem' : '4.5rem'), 
                 fontWeight: 900,
                 background: 'linear-gradient(to right, #ffffff, #d0e8ff)',
                 WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent'
+                WebkitTextFillColor: 'transparent',
+                letterSpacing: '-0.02em',
+                lineHeight: 1.1,
+                marginBottom: '24px',
+                textShadow: '0 10px 30px rgba(0,0,0,0.15)'
               }}>
                 DrugLLM
               </Title>
-              <Text size={isMobile ? "md" : "lg"} mb={isMobile ? "lg" : "xl"} style={{ fontWeight: 300, letterSpacing: '0.3px' }}>
+              <Text size={isMobile ? "md" : "xl"} mb={isMobile ? "lg" : "xl"} style={{ 
+                fontWeight: 400, 
+                letterSpacing: '0.3px',
+                lineHeight: 1.6,
+                color: 'rgba(255,255,255,0.9)',
+                marginBottom: '32px'
+              }}>
                 Yapay zeka destekli ilaç bilgi asistanınız ile ilaçlarınız hakkında güvenilir bilgilere anında erişin.
               </Text>
               <Group spacing="md" position={isMobile ? "center" : "left"}>
@@ -204,9 +209,22 @@ export default function Home() {
                   href="/login"
                   size={isMobile ? "md" : "lg"} 
                   radius="md"
-                  color="secondary"
+                  className="cta-button"
                   style={{ 
-                    boxShadow: '0 4px 15px rgba(255, 140, 97, 0.3)'
+                    backgroundColor: 'var(--secondary)',
+                    color: 'white',
+                    padding: isMobile ? '0 20px' : '0 24px',
+                    height: isMobile ? '42px' : '48px',
+                    fontWeight: 600,
+                    letterSpacing: '0.3px',
+                    boxShadow: '0 8px 15px rgba(0, 200, 83, 0.25)',
+                    border: 'none',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      backgroundColor: 'var(--secondary)',
+                      transform: 'translateY(-3px)',
+                      boxShadow: '0 12px 20px rgba(0, 200, 83, 0.35)',
+                    }
                   }}
                 >
                   Giriş Yap
@@ -216,266 +234,531 @@ export default function Home() {
                   href="/login?tab=signup"
                   size={isMobile ? "md" : "lg"}
                   radius="md"
-                  variant="white"
-                  color="dark"
+                  className="cta-button"
+                  style={{
+                    backgroundColor: 'rgba(255,255,255,0.15)',
+                    backdropFilter: 'blur(10px)',
+                    color: 'white',
+                    padding: isMobile ? '0 20px' : '0 24px',
+                    height: isMobile ? '42px' : '48px',
+                    fontWeight: 500,
+                    letterSpacing: '0.3px',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255,255,255,0.25)',
+                      transform: 'translateY(-3px)',
+                      boxShadow: '0 12px 20px rgba(0,0,0,0.15)',
+                    }
+                  }}
                 >
                   Hesap Oluştur
                 </Button>
               </Group>
-              <Text size={isMobile ? "xs" : "sm"} mt="lg" style={{ opacity: 0.7 }}>
+              <Text size={isMobile ? "xs" : "sm"} mt="lg" style={{ opacity: 0.8, fontWeight: 400 }}>
                 *Tamamen ücretsiz, kayıt gerektiren bir hizmettir.
               </Text>
             </Box>
             
-            {/* Sağdaki Hap Görseli - Mobilde Gizlendi */}
+            {/* Sağdaki Animasyonlu İlaç İkonu */}
             {!isMobile && (
               <Box style={{ 
                 display: 'flex', 
                 justifyContent: 'center', 
                 alignItems: 'center', 
-                position: 'relative' 
+                position: 'relative',
+                zIndex: 2
               }}>
                 <div style={{ 
-                  width: '280px', 
-                  height: '280px',
+                  width: '320px', 
+                  height: '320px',
                   background: 'rgba(255, 255, 255, 0.1)',
                   borderRadius: '50%',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  boxShadow: '0 0 40px rgba(255, 255, 255, 0.1)'
+                  boxShadow: '0 0 60px rgba(255, 255, 255, 0.2)',
+                  animation: 'pulse 5s infinite ease-in-out',
+                  position: 'relative',
+                  overflow: 'hidden'
                 }}>
-                  <IconPill size={160} stroke={1} style={{ color: 'white', opacity: 0.9 }} />
+                  <div style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 60%)',
+                    transform: 'rotate(45deg)',
+                  }} />
+                  <IconPill size={180} stroke={1.5} style={{ 
+                    color: 'white', 
+                    opacity: 0.95,
+                    filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.4))',
+                    animation: 'float 4s infinite ease-in-out',
+                  }} />
                 </div>
               </Box>
             )}
           </Group>
         </Box>
 
-        {/* Özellikler - 2x2 Grid Mobil, 4x1 Desktop */}
-        <Box mb={isMobile ? 40 : 80}>
-          <Title order={2} align="center" mb={isMobile ? "md" : "xl"} style={{ color: theme.colors.primary[7] }}>
-            Nasıl Yardımcı Olabiliriz?
-          </Title>
-          
-          <SimpleGrid cols={isMobile ? 1 : (isSmallMobile ? 1 : 4)} spacing={isMobile ? "md" : "lg"}>
-            {features.map((feature, index) => (
-              <Card key={index} p="lg" radius="md" shadow="sm" style={{ height: '100%' }}>
-                <ThemeIcon size={56} radius="md" color="secondary" mb="md">
-                  {feature.icon}
-                </ThemeIcon>
-                <Text fw={700} size="lg" mb="xs">{feature.title}</Text>
-                <Text size="sm" color="dimmed">{feature.description}</Text>
-              </Card>
-            ))}
-          </SimpleGrid>
+        {/* Features Section - Responsive & Modern */}
+        <Box className="home-section light" style={{ padding: isMobile ? '40px 0' : '80px 0' }}>
+          <Container>
+            <Box mb={isMobile ? 30 : 60} style={{ textAlign: 'center' }}>
+              <Title order={2} mb="md" className="gradient-text" style={{ 
+                fontSize: isMobile ? '1.75rem' : '2.5rem',
+                fontWeight: 800,
+                letterSpacing: '-0.02em'
+              }}>
+                Neler Yapabilirsin?
+              </Title>
+              <Text size={isMobile ? "sm" : "md"} style={{ 
+                maxWidth: '700px', 
+                margin: '0 auto',
+                color: 'var(--text-muted)'
+              }}>
+                DrugLLM, ilaçlar hakkında bilgi sahibi olmanızı sağlayan gelişmiş özelliklere sahiptir
+              </Text>
+            </Box>
+            
+            <SimpleGrid cols={isMobile ? 1 : (isSmallMobile ? 1 : 4)} spacing={isMobile ? "xl" : 30}>
+              {features.map((feature, index) => (
+                <Card 
+                  key={index} 
+                  p="xl" 
+                  radius="md" 
+                  shadow="sm" 
+                  className="card-hover"
+                  style={{ 
+                    background: 'white',
+                    height: '100%',
+                    border: '1px solid var(--border-color-light)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: isMobile ? 'center' : 'flex-start',
+                    textAlign: isMobile ? 'center' : 'left',
+                  }}
+                >
+                  <Box 
+                    className="feature-icon"
+                    style={{
+                      width: '64px',
+                      height: '64px',
+                      borderRadius: '16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center', 
+                      marginBottom: '16px',
+                      background: 'linear-gradient(135deg, var(--primary-light) 0%, #BBDEFB 100%)',
+                      color: 'var(--primary)',
+                      boxShadow: '0 8px 16px rgba(25, 118, 210, 0.15)'
+                    }}
+                  >
+                    {feature.icon}
+                  </Box>
+                  
+                  <Title order={4} mb="sm" style={{ 
+                    fontSize: '1.1rem',
+                    fontWeight: 700,
+                    color: 'var(--text-title)'
+                  }}>
+                    {feature.title}
+                  </Title>
+                  
+                  <Text size="sm" style={{ 
+                    color: 'var(--text-body)',
+                    lineHeight: 1.6
+                  }}>
+                    {feature.description}
+                  </Text>
+                </Card>
+              ))}
+            </SimpleGrid>
+          </Container>
         </Box>
 
-        {/* Teknolojiler - İnteraktif Kartlar */}
-        <Box mb={isMobile ? 40 : 80} px={isMobile ? 0 : "md"}>
-          <Title order={2} align="center" mb={isMobile ? "md" : "xl"}>
-            Modern Teknoloji
-          </Title>
-          
-          <SimpleGrid cols={isMobile ? 1 : (isSmallMobile ? 1 : 4)} spacing={isMobile ? "md" : "lg"}>
-            {technologies.map((tech, index) => (
-              <Card 
-                key={index} 
-                p="xl" 
-                radius="md" 
-                style={{ 
-                  borderLeft: `4px solid ${theme.colors.primary[5]}`,
-                  height: '100%',
-                  transition: 'transform 0.2s, box-shadow 0.2s'
-                }}
-                sx={{
-                  '&:hover': {
-                    transform: 'translateY(-5px)',
-                    boxShadow: '0 10px 20px rgba(0, 0, 0, 0.1)'
-                  }
-                }}
-              >
-                <ThemeIcon size={48} radius="md" color="secondary" variant="light" mb="md">
-                  {tech.icon}
-                </ThemeIcon>
-                <Text fw={700} size="lg" mb="xs">{tech.title}</Text>
-                <Text size="sm" color="dimmed">{tech.description}</Text>
-              </Card>
-            ))}
-          </SimpleGrid>
-        </Box>
-
-        {/* SSS - Accordion */}
-        <Box mb={isMobile ? 40 : 80}>
-          <Title order={2} align="center" mb={isMobile ? "lg" : "xl"}>
-            Sıkça Sorulan Sorular
-          </Title>
-          
-          <Accordion variant="separated" radius="md">
-            {faqs.map((faq, index) => (
-              <Accordion.Item key={index} value={`item-${index}`}>
-                <Accordion.Control>
-                  <Text fw={600}>{faq.question}</Text>
-                </Accordion.Control>
-                <Accordion.Panel>
-                  <Text size="sm">{faq.answer}</Text>
-                </Accordion.Panel>
-              </Accordion.Item>
-            ))}
-          </Accordion>
-        </Box>
-
-        {/* Kullanıcı Görüşleri */}
-        <Box mb={isMobile ? 40 : 80}>
-          <Title order={2} align="center" mb={isMobile ? "md" : "xl"}>
-            Kullanıcılarımız Ne Diyor?
-          </Title>
-          
-          <SimpleGrid cols={isMobile ? 1 : 3} spacing={isMobile ? "lg" : "xl"}>
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} p="lg" radius="md" shadow="sm" style={{ height: '100%' }}>
-                <Card.Section p="md">
-                  <Group position="apart">
-                    <Group>
-                      <Avatar src={testimonial.image} size={isMobile ? 50 : 60} radius="xl" />
-                      <div>
-                        <Text fw={700} size="md">{testimonial.name}</Text>
-                        <Text size="xs" color="dimmed">{testimonial.role}</Text>
-                      </div>
-                    </Group>
-                    <ThemeIcon variant="light" color="primary" size="lg" radius="xl">
-                      <IconStar size={20} />
-                    </ThemeIcon>
-                  </Group>
-                </Card.Section>
-                <Text pt="md" size="sm" style={{ fontStyle: 'italic' }}>&quot;{testimonial.content}&quot;</Text>
-              </Card>
-            ))}
-          </SimpleGrid>
-        </Box>
-
-        {/* CTA Bölümü */}
+        {/* Technology Section - Modern */}
         <Box 
-          py={isMobile ? "xl" : 50} 
-          px={isMobile ? "md" : 60} 
-          mb={isMobile ? 30 : 50} 
-          style={{
-            background: `linear-gradient(135deg, ${theme.colors.secondary[7]}, ${theme.colors.secondary[5]})`,
-            borderRadius: '12px',
-            color: 'white',
-            textAlign: 'center'
+          className="home-section primary-light"
+          style={{ 
+            padding: isMobile ? '40px 0' : '80px 0',
+            marginTop: isMobile ? '20px' : '40px',
           }}
         >
-          <Title order={2} mb="lg" style={{ fontSize: isMobile ? '1.8rem' : '2.5rem' }}>Hemen Kullanmaya Başlayın</Title>
-          <Text size={isMobile ? "sm" : "md"} mb="xl" style={{ maxWidth: '700px', margin: '0 auto' }}>
-            DrugLLM ile ilaçlarınız hakkında güvenilir bilgilere anında erişin. Ücretsiz hesap oluşturarak tüm özelliklere erişebilirsiniz.
-          </Text>
-          <Group position="center" spacing="md">
-            <Button 
-              component={Link}
-              href="/chat"
-              size={isMobile ? "md" : "lg"} 
-              radius="md" 
-              color="white"
-              styles={{
-                root: { 
-                  color: theme.colors.secondary[7],
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    backgroundColor: theme.colors.secondary[1],
-                    transform: 'translateY(-2px)'
-                  }
-                }
+          <Container>
+            <Box mb={isMobile ? 30 : 60} style={{ textAlign: 'center', position: 'relative', zIndex: 2 }}>
+              <Title order={2} mb="md" className="gradient-text" style={{ 
+                fontSize: isMobile ? '1.75rem' : '2.5rem',
+                fontWeight: 800,
+                letterSpacing: '-0.02em',
+              }}>
+                Teknolojinin Gücü
+              </Title>
+              <Text size={isMobile ? "sm" : "md"} style={{ 
+                maxWidth: '700px', 
+                margin: '0 auto',
+                color: 'var(--text-muted)'
+              }}>
+                Gelişmiş yapay zeka algoritmalarımız sayesinde sağlık bilgilerine erişim artık çok daha kolay
+              </Text>
+            </Box>
+            
+            <SimpleGrid cols={isMobile ? 1 : 4} spacing={isMobile ? "xl" : 30}>
+              {technologies.map((tech, index) => (
+                <Card 
+                  key={index} 
+                  p="xl" 
+                  radius="lg" 
+                  shadow="sm"
+                  className="card-hover"
+                  style={{ 
+                    background: 'white',
+                    height: '100%',
+                    border: '1px solid var(--border-color-light)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: isMobile ? 'center' : 'flex-start',
+                    textAlign: isMobile ? 'center' : 'left',
+                    position: 'relative',
+                    zIndex: 2,
+                    overflow: 'hidden',
+                  }}
+                >
+                  <Box 
+                    style={{
+                      width: '64px',
+                      height: '64px',
+                      borderRadius: '16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center', 
+                      marginBottom: '16px',
+                      background: 'linear-gradient(135deg, var(--primary-light) 0%, #BBDEFB 100%)',
+                      color: 'var(--primary)',
+                      boxShadow: '0 8px 16px rgba(25, 118, 210, 0.15)'
+                    }}
+                  >
+                    {tech.icon}
+                  </Box>
+                  
+                  <Title order={4} mb="sm" style={{ 
+                    fontSize: '1.1rem',
+                    fontWeight: 700,
+                    color: 'var(--text-title)'
+                  }}>
+                    {tech.title}
+                  </Title>
+                  
+                  <Text size="sm" style={{ 
+                    color: 'var(--text-body)',
+                    lineHeight: 1.6
+                  }}>
+                    {tech.description}
+                  </Text>
+                </Card>
+              ))}
+            </SimpleGrid>
+          </Container>
+        </Box>
+
+        {/* FAQ Section - Modern */}
+        <Box className="home-section light" style={{ padding: isMobile ? '40px 0' : '80px 0' }}>
+          <Container>
+            <Box mb={isMobile ? 30 : 60} style={{ textAlign: 'center' }}>
+              <Title order={2} mb="md" className="gradient-text" style={{ 
+                fontSize: isMobile ? '1.75rem' : '2.5rem',
+                fontWeight: 800,
+                letterSpacing: '-0.02em'
+              }}>
+                Sık Sorulan Sorular
+              </Title>
+              <Text size={isMobile ? "sm" : "md"} style={{ 
+                maxWidth: '700px', 
+                margin: '0 auto',
+                color: 'var(--text-muted)'
+              }}>
+                DrugLLM ile ilgili merak ettiğiniz soruların cevaplarını burada bulabilirsiniz
+              </Text>
+            </Box>
+            
+            <Box style={{ 
+              maxWidth: '800px', 
+              margin: '0 auto',
+              background: 'white',
+              borderRadius: '16px',
+              overflow: 'hidden',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
+              border: '1px solid var(--border-color-light)'
+            }}>
+              <Accordion variant="separated">
+                {faqs.map((faq, index) => (
+                  <Accordion.Item 
+                    key={index} 
+                    value={`item-${index}`}
+                    style={{ 
+                      border: 'none',
+                      backgroundColor: 'white',
+                      borderBottom: index < faqs.length - 1 ? '1px solid var(--border-color-light)' : 'none'
+                    }}
+                  >
+                    <Accordion.Control
+                      style={{
+                        fontWeight: 600,
+                        fontSize: '1rem',
+                        color: 'var(--text-title)',
+                        padding: '20px 24px',
+                      }}
+                    >
+                      {faq.question}
+                    </Accordion.Control>
+                    <Accordion.Panel 
+                      style={{
+                        color: 'var(--text-body)',
+                        padding: '0 24px 20px',
+                        fontSize: '0.95rem',
+                        lineHeight: 1.6,
+                      }}
+                    >
+                      {faq.answer}
+                    </Accordion.Panel>
+                  </Accordion.Item>
+                ))}
+              </Accordion>
+            </Box>
+          </Container>
+        </Box>
+
+        {/* Testimonials Section - Modern */}
+        <Box 
+          className="home-section primary-light"
+          style={{ 
+            padding: isMobile ? '40px 0' : '80px 0',
+            position: 'relative',
+            overflow: 'hidden'
+          }}
+        >
+          <Container>
+            <Box mb={isMobile ? 30 : 60} style={{ textAlign: 'center', position: 'relative', zIndex: 2 }}>
+              <Title order={2} mb="md" className="gradient-text" style={{ 
+                fontSize: isMobile ? '1.75rem' : '2.5rem',
+                fontWeight: 800,
+                letterSpacing: '-0.02em'
+              }}>
+                Kullanıcı Yorumları
+              </Title>
+              <Text size={isMobile ? "sm" : "md"} style={{ 
+                maxWidth: '700px', 
+                margin: '0 auto',
+                color: 'var(--text-muted)'
+              }}>
+                DrugLLM&apos;i kullanan profesyoneller ve hastalar ne diyor?
+              </Text>
+            </Box>
+            
+            <SimpleGrid cols={isMobile ? 1 : 3} spacing={isMobile ? "xl" : 30}>
+              {testimonials.map((testimonial, index) => (
+                <Card 
+                  key={index} 
+                  p={0}
+                  radius="lg"
+                  className="testimonial-card"
+                  style={{ position: 'relative', zIndex: 2 }}
+                >
+                  <Box p="lg">
+                    <Group position="apart" mb="md" align="flex-start">
+                      <Group>
+                        <Avatar
+                          src={testimonial.image}
+                          size="lg"
+                          radius="xl"
+                          style={{ border: '3px solid white', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}
+                        />
+                        <Box>
+                          <Text fw={700} size="sm" style={{ color: 'var(--text-title)' }}>
+                            {testimonial.name}
+                          </Text>
+                          <Text size="xs" style={{ color: 'var(--primary)' }}>
+                            {testimonial.role}
+                          </Text>
+                        </Box>
+                      </Group>
+                      <ThemeIcon 
+                        size={36} 
+                        radius="xl" 
+                        style={{ 
+                          backgroundColor: 'var(--primary-light)',
+                          color: 'var(--primary)'
+                        }}
+                      >
+                        <IconStar size={20} fill="var(--primary)" stroke={0} />
+                      </ThemeIcon>
+                    </Group>
+                    
+                    <Text 
+                      size="sm" 
+                      style={{ 
+                        lineHeight: 1.6,
+                        color: 'var(--text-body)',
+                        fontStyle: 'italic',
+                        position: 'relative',
+                        paddingLeft: '8px'
+                      }}
+                      component="div"
+                    >
+                      <div style={{ 
+                        position: 'absolute',
+                        left: '-6px',
+                        top: 0,
+                        bottom: 0,
+                        width: '4px',
+                        borderRadius: '4px',
+                        background: 'linear-gradient(180deg, var(--primary) 0%, var(--primary-light) 100%)'
+                      }} />
+                      &ldquo;{testimonial.content}&rdquo;
+                    </Text>
+                  </Box>
+                </Card>
+              ))}
+            </SimpleGrid>
+          </Container>
+        </Box>
+
+        {/* CTA Section - Modern & Energetic */}
+        <Box 
+          className="home-section light"
+          style={{ 
+            padding: isMobile ? '40px 0' : '80px 0',
+            position: 'relative',
+            marginBottom: isMobile ? '20px' : '40px'
+          }}
+        >
+          <Container>
+            <Card 
+              p={isMobile ? "xl" : 50} 
+              radius="lg" 
+              shadow="md"
+              style={{ 
+                background: 'linear-gradient(135deg, var(--primary) 0%, #1565C0 100%)',
+                border: 'none',
+                position: 'relative',
+                overflow: 'hidden'
               }}
             >
-              Şimdi Başla <IconChevronRight size={16} style={{ marginLeft: 5 }} />
-            </Button>
-            <Button 
-              component={Link}
-              href="/about"
-              size={isMobile ? "md" : "lg"} 
-              radius="md" 
-              variant="outline" 
-              color="white"
-            >
-              Daha Fazla Bilgi
-            </Button>
-          </Group>
+              <div style={{
+                position: 'absolute',
+                top: '-50px',
+                right: '-50px',
+                width: '200px',
+                height: '200px',
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.1)',
+                zIndex: 1
+              }} />
+              
+              <Box style={{ position: 'relative', zIndex: 2 }}>
+                <Group position={isMobile ? "center" : "apart"} align="center">
+                  <Box style={{ maxWidth: '600px', textAlign: isMobile ? 'center' : 'left' }}>
+                    <Title order={3} mb="md" style={{ 
+                      color: 'white',
+                      fontSize: isMobile ? '1.5rem' : '2rem',
+                      fontWeight: 700
+                    }}>
+                      Hemen Başlayın!
+                    </Title>
+                    <Text color="white" opacity={0.9} mb="xl" size={isMobile ? "sm" : "md"}>
+                      Ücretsiz hesabınızı oluşturun ve ilaçlar hakkında detaylı bilgilere hemen ulaşın. Sağlığınız için doğru bilgi her zaman önemlidir.
+                    </Text>
+                    
+                    <Button
+                      component={Link}
+                      href="/login?tab=signup"
+                      size="lg"
+                      radius="md"
+                      className="cta-button"
+                      style={{ 
+                        backgroundColor: 'var(--secondary)',
+                        color: 'white',
+                        padding: '0 32px',
+                        height: '50px',
+                        fontWeight: 600,
+                        boxShadow: '0 10px 20px rgba(0, 200, 83, 0.25)',
+                        border: 'none',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          backgroundColor: 'var(--secondary)',
+                          transform: 'translateY(-3px)',
+                          boxShadow: '0 15px 25px rgba(0, 200, 83, 0.35)',
+                        }
+                      }}
+                    >
+                      Ücretsiz Hesap Oluştur
+                    </Button>
+                  </Box>
+                  
+                  {!isMobile && (
+                    <ThemeIcon 
+                      size={200} 
+                      radius="xl"
+                      style={{ 
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        boxShadow: '0 15px 30px rgba(0, 0, 0, 0.1)',
+                        color: 'white'
+                      }}
+                    >
+                      <IconMessage size={100} stroke={1} />
+                    </ThemeIcon>
+                  )}
+                </Group>
+              </Box>
+            </Card>
+          </Container>
         </Box>
-        
-        {/* Footer */}
-        <footer style={{ 
-          padding: isMobile ? '20px 0' : '40px 0', 
-          borderTop: '1px solid #eaeaea',
-          marginTop: '20px'
-        }}>
-          <Grid gutter={isMobile ? "md" : "xl"}>
-            <Grid.Col span={isMobile ? 12 : 6}>
-              <Group spacing="xs" mb={isMobile ? "md" : 0}>
-                <IconPill size={24} color={theme.colors.primary[7]} />
-                <Text fw={700} size="lg" color={theme.colors.primary[7]}>DrugLLM</Text>
-              </Group>
-              <Text size="sm" color="dimmed" style={{ maxWidth: '400px', marginTop: '10px' }}>
-                Yapay zeka destekli ilaç bilgi asistanınız ile ilaçlarınız hakkında güvenilir bilgilere anında erişin.
+
+        {/* Footer - Simple & Modern */}
+        <Box 
+          style={{ 
+            borderTop: '1px solid var(--border-color-light)',
+            padding: isMobile ? '30px 0' : '40px 0',
+            backgroundColor: 'white'
+          }}
+        >
+          <Container>
+            <Group position="apart" align="center">
+              <Text size="sm" color="dimmed">
+                © 2023 DrugLLM. Tüm hakları saklıdır.
               </Text>
               
-              <Group spacing="xs" mt="lg">
-                <ThemeIcon variant="light" color="gray" radius="xl" size="md">
-                  <IconBrandTwitter size={16} />
-                </ThemeIcon>
-                <ThemeIcon variant="light" color="gray" radius="xl" size="md">
-                  <IconBrandFacebook size={16} />
-                </ThemeIcon>
-                <ThemeIcon variant="light" color="gray" radius="xl" size="md">
-                  <IconBrandInstagram size={16} />
-                </ThemeIcon>
-                <ThemeIcon variant="light" color="gray" radius="xl" size="md">
-                  <IconBrandYoutube size={16} />
-                </ThemeIcon>
+              <Group spacing="md">
+                <ActionIcon 
+                  size="lg" 
+                  radius="xl"
+                  variant="light" 
+                  color="primary"
+                >
+                  <IconBrandTwitter size={18} />
+                </ActionIcon>
+                <ActionIcon 
+                  size="lg" 
+                  radius="xl"
+                  variant="light" 
+                  color="primary"
+                >
+                  <IconBrandFacebook size={18} />
+                </ActionIcon>
+                <ActionIcon 
+                  size="lg" 
+                  radius="xl"
+                  variant="light" 
+                  color="primary"
+                >
+                  <IconBrandInstagram size={18} />
+                </ActionIcon>
               </Group>
-            </Grid.Col>
-            
-            <Grid.Col span={isMobile ? 6 : 2}>
-              <Text fw={700} mb="md">Hızlı Erişim</Text>
-              <Stack spacing="xs">
-                <Link href="/" style={{ color: 'inherit' }}>Ana Sayfa</Link>
-                <Link href="/about" style={{ color: 'inherit' }}>Hakkımızda</Link>
-                <Link href="/chat" style={{ color: 'inherit' }}>İlaç Chatbot</Link>
-                <Link href="/faq" style={{ color: 'inherit' }}>S.S.S.</Link>
-              </Stack>
-            </Grid.Col>
-            
-            <Grid.Col span={isMobile ? 6 : 2}>
-              <Text fw={700} mb="md">Kaynaklar</Text>
-              <Stack spacing="xs">
-                <Link href="/docs" style={{ color: 'inherit' }}>Dokümantasyon</Link>
-                <Link href="/privacy" style={{ color: 'inherit' }}>Gizlilik Politikası</Link>
-                <Link href="/terms" style={{ color: 'inherit' }}>Kullanım Şartları</Link>
-                <Link href="/contact" style={{ color: 'inherit' }}>İletişim</Link>
-              </Stack>
-            </Grid.Col>
-            
-            <Grid.Col span={isMobile ? 12 : 2}>
-              <Text fw={700} mb="md">İletişim</Text>
-              <Stack spacing="xs">
-                <Text size="sm">info@drugllm.com</Text>
-                <Text size="sm">+90 (212) 123 45 67</Text>
-                <Text size="sm">İstanbul, Türkiye</Text>
-              </Stack>
-            </Grid.Col>
-          </Grid>
-          
-          <Divider my={isMobile ? "md" : "xl"} />
-          
-          <Group position="apart" style={{ opacity: 0.7 }}>
-            <Text size="xs">© 2025 DrugLLM. Tüm hakları saklıdır.</Text>
-            <Group spacing="xs">
-              <Link href="/privacy" style={{ color: 'inherit', fontSize: '12px' }}>Gizlilik</Link>
-              <Text size="xs">•</Text>
-              <Link href="/terms" style={{ color: 'inherit', fontSize: '12px' }}>Şartlar</Link>
             </Group>
-          </Group>
-        </footer>
+          </Container>
+        </Box>
       </Container>
     </Box>
   );

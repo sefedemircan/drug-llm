@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react';
-import { Stack, Paper, ScrollArea, Box } from '@mantine/core';
+import { Stack, Paper, ScrollArea, Box, Text } from '@mantine/core';
 import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
 
@@ -64,15 +64,36 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0 }) {
       style={{ 
         backgroundColor: 'var(--chat-bg)',
         position: 'relative',
+        backgroundImage: 'linear-gradient(to bottom, rgba(225, 245, 254, 0.3), rgba(224, 247, 234, 0.2))',
       }}
     >
+      <Box
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '50px',
+          backgroundColor: 'var(--primary)',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+          padding: '0 20px',
+          display: 'flex',
+          alignItems: 'center',
+          zIndex: 10,
+        }}
+      >
+        <Text fw={600} c="white" style={{ fontSize: '16px' }}>DrugLLM Sohbet</Text>
+      </Box>
+
       <Box
         style={{ 
           height: 'calc(100% - 80px)',
           overflowY: 'auto',
           padding: '16px',
-          paddingTop: '8px',
+          paddingTop: '60px', // Başlık için ekstra üst boşluk
           paddingBottom: '100px', // Input yüksekliğini hesaba katan padding
+          backgroundPosition: 'center',
+          backgroundSize: 'cover',
         }}
       >
         <Stack gap="lg" style={{ maxWidth: '900px', margin: '0 auto' }}>
@@ -86,16 +107,25 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0 }) {
       
       <Box 
         style={{ 
-          backgroundColor: 'var(--chat-bg)',
+          background: 'linear-gradient(to top, var(--chat-bg) 85%, transparent)',
           position: 'absolute',
           bottom: 0,
           left: 0,
           right: 0,
           padding: '20px',
+          paddingTop: '40px',
           zIndex: 1000,
         }}
       >
-        <Box style={{ maxWidth: '900px', margin: '0 auto' }}>
+        <Box style={{ 
+          maxWidth: '900px', 
+          margin: '0 auto',
+          boxShadow: '0 -2px 10px rgba(0,0,0,0.05)',
+          borderRadius: '12px',
+          overflow: 'hidden',
+          border: '1px solid var(--border-color)',
+          backgroundColor: 'white',
+        }}>
           <ChatInput onSendMessage={addMessage} />
         </Box>
       </Box>

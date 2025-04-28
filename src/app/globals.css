@@ -1,29 +1,29 @@
 :root {
   /* Ana Renkler */
   --background-white: #FFFFFF;
-  --foreground-dark: #4A4A4A;
+  --foreground-dark: #333333;
   
   /* Arka planlar */
-  --chat-bg: #F2F2F2;
+  --chat-bg: #F7F9FC;
   --sidebar-bg: #FFFFFF;
-  --sidebar-header-bg: #E6EFF5;
+  --sidebar-header-bg: #E2F0FF;
   
   /* Mesaj renkleri */
-  --chat-bot-message: #E6EFF5;
-  --chat-user-message: #EDF7F2;
+  --chat-bot-message: #E1F5FE;
+  --chat-user-message: #E0F7EA;
   
   /* UI Elementleri */
-  --border-color: #E5E5E5;
-  --border-color-light: #EFEFEF;
-  --primary: #0B4F6C;
-  --primary-light: #CDDEE3;
-  --secondary: #40916C;
-  --accent: #FF8C61;
+  --border-color: #E0E7EF;
+  --border-color-light: #EAEEF5;
+  --primary: #1976D2;
+  --primary-light: #BBDEFB;
+  --secondary: #00C853;
+  --accent: #FF5722;
   
   /* Metin renkleri */
-  --text-muted: #808080;
-  --text-title: #0B4F6C;
-  --text-body: #4A4A4A;
+  --text-muted: #707070;
+  --text-title: #1565C0;
+  --text-body: #333333;
 
   /* Breakpoint'ler */
   --breakpoint-xs: 480px;
@@ -37,25 +37,25 @@
   :root {
     /* Dark mode kapalı tutuldu, light mode renkleri kullanılıyor */
     --background-white: #FFFFFF;
-    --foreground-dark: #4A4A4A;
+    --foreground-dark: #333333;
     
-    --chat-bg: #F2F2F2;
+    --chat-bg: #F7F9FC;
     --sidebar-bg: #FFFFFF;
-    --sidebar-header-bg: #E6EFF5;
+    --sidebar-header-bg: #E2F0FF;
     
-    --chat-bot-message: #E6EFF5;
-    --chat-user-message: #EDF7F2;
+    --chat-bot-message: #E1F5FE;
+    --chat-user-message: #E0F7EA;
     
-    --border-color: #E5E5E5;
-    --border-color-light: #EFEFEF;
-    --primary: #0B4F6C;
-    --primary-light: #CDDEE3;
-    --secondary: #40916C;
-    --accent: #FF8C61;
+    --border-color: #E0E7EF;
+    --border-color-light: #EAEEF5;
+    --primary: #1976D2;
+    --primary-light: #BBDEFB;
+    --secondary: #00C853;
+    --accent: #FF5722;
     
-    --text-muted: #808080;
-    --text-title: #0B4F6C;
-    --text-body: #4A4A4A;
+    --text-muted: #707070;
+    --text-title: #1565C0;
+    --text-body: #333333;
   }
 }
 
@@ -346,5 +346,174 @@ h6, .h6 {
   .py-md-3 {
     padding-top: 1rem !important;
     padding-bottom: 1rem !important;
+  }
+}
+
+/* Modern Ana Sayfa Stilleri */
+.home-hero {
+  background: linear-gradient(135deg, var(--primary), #0D47A1);
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  color: white;
+  box-shadow: 0 20px 40px rgba(13, 71, 161, 0.25);
+}
+
+.home-hero::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 1;
+}
+
+.home-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  left: 30%;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: rgba(33, 150, 243, 0.15);
+  z-index: 1;
+}
+
+.home-section {
+  padding: 60px 0;
+  position: relative;
+}
+
+.home-section.light {
+  background-color: white;
+}
+
+.home-section.primary-light {
+  background-color: #E3F2FD;
+  position: relative;
+  overflow: hidden;
+}
+
+.home-section.primary-light::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: rgba(33, 150, 243, 0.1);
+  z-index: 0;
+}
+
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, var(--primary) 0%, #64B5F6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-secondary {
+  background: linear-gradient(90deg, var(--secondary) 30%, #B2FF59 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.testimonial-card {
+  border-radius: 12px;
+  background: white;
+  padding: 24px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color-light);
+}
+
+.testimonial-card:hover {
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+}
+
+.feature-icon {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--primary-light);
+  color: var(--primary);
+  margin-bottom: 16px;
+}
+
+.cta-button {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0.2), rgba(255,255,255,0));
+  transform: translateX(-100%) rotate(45deg);
+  transition: transform 0.6s;
+}
+
+.cta-button:hover::after {
+  transform: translateX(100%) rotate(45deg);
+}
+
+/* Animasyonlar */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 30px rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes gradientBg {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }

@@ -9,7 +9,8 @@ import {
   IconArrowUp,
   IconWorld,
   IconBulb,
-  IconDotsCircleHorizontal
+  IconDotsCircleHorizontal,
+  IconSend
 } from '@tabler/icons-react';
 
 export default function ChatInput({ onSendMessage }) {
@@ -42,20 +43,17 @@ export default function ChatInput({ onSendMessage }) {
 
   return (
     <Paper
-      withBorder
       radius="xl"
       style={{ 
         backgroundColor: 'var(--background-white)',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-        marginBottom: '20px',
-        border: '1px solid var(--border-color)',
+        marginBottom: '0px',
         position: 'relative',
         minHeight: '70px',
         width: '100%',
         paddingTop: '12px',
         paddingBottom: '12px',
-        paddingLeft: '12px',
-        paddingRight: '12px'
+        paddingLeft: '16px',
+        paddingRight: '16px'
       }}
     >
       <form onSubmit={handleSubmit} style={{ height: '100%' }}>
@@ -67,26 +65,28 @@ export default function ChatInput({ onSendMessage }) {
               size={isMobile ? "md" : "lg"}
               radius="xl"
               style={{
-                border: '1px solid var(--primary-light)',
-                background: 'var(--primary-light)',
+                border: 'none',
+                background: 'var(--primary)',
                 transition: 'all 0.2s ease',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                color: 'white'
               }}
               sx={(theme) => ({
                 '&:hover': {
                   background: 'var(--primary)',
-                  transform: 'scale(1.05)'
+                  transform: 'scale(1.05)',
+                  boxShadow: '0 3px 6px rgba(0,0,0,0.2)',
                 }
               })}
             >
-              <IconPlus size={isMobile ? 20 : 22} stroke={2} color="var(--primary)" />
+              <IconPlus size={isMobile ? 20 : 22} stroke={2} color="white" />
             </ActionIcon>
             
             <Textarea
-              placeholder="Ask anything"
+              placeholder="Herhangi bir soru sorun..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -109,6 +109,7 @@ export default function ChatInput({ onSendMessage }) {
                   color: 'var(--text-body)',
                   resize: 'none',
                   overflow: 'auto',
+                  fontWeight: 500,
                 },
                 wrapper: {
                   backgroundColor: 'transparent',
@@ -122,23 +123,37 @@ export default function ChatInput({ onSendMessage }) {
             <Group spacing={isMobile ? 4 : 8} style={{ marginTop: isMobile ? '16px' : '20px', marginRight: isMobile ? '8px' : '16px' }}>
               <ActionIcon
                 radius="xl"
-                variant="transparent"
-                color="gray.5"
+                variant="subtle"
+                style={{
+                  color: 'var(--primary)',
+                  backgroundColor: 'var(--primary-light)',
+                  height: '40px',
+                  width: '40px',
+                }}
               >
-                <IconMicrophone size={isMobile ? 18 : 20} stroke={1.5} color="var(--text-muted)" />
+                <IconMicrophone size={isMobile ? 18 : 20} stroke={1.5} />
               </ActionIcon>
 
               <ActionIcon
                 radius="xl"
-                variant="transparent"
-                color="gray.5"
+                variant="filled"
                 onClick={handleSubmit}
                 disabled={!message.trim()}
                 style={{
-                  border: message.trim() ? '1px solid var(--border-color)' : '1px solid transparent'
+                  background: message.trim() ? 'var(--primary)' : 'var(--border-color)',
+                  height: '40px',
+                  width: '40px',
+                  boxShadow: message.trim() ? '0 2px 4px rgba(0,0,0,0.2)' : 'none',
+                  transition: 'all 0.2s ease',
                 }}
+                sx={(theme) => ({
+                  '&:hover': {
+                    background: 'var(--primary)',
+                    transform: message.trim() ? 'scale(1.05)' : 'none',
+                  }
+                })}
               >
-                <IconArrowUp size={isMobile ? 18 : 20} stroke={1.5} color={message.trim() ? "var(--primary)" : "var(--border-color)"} />
+                <IconSend size={isMobile ? 18 : 20} stroke={1.5} color="white" />
               </ActionIcon>
             </Group>
           </Group>
@@ -160,15 +175,16 @@ export default function ChatInput({ onSendMessage }) {
               compact="true"
               styles={{
                 root: {
-                  backgroundColor: activeMode === 'search' ? 'var(--primary-light)' : 'var(--chat-bg)',
+                  backgroundColor: activeMode === 'search' ? 'var(--primary-light)' : '#F0F4F8',
                   color: activeMode === 'search' ? 'var(--primary)' : 'var(--text-body)',
-                  border: '1px solid var(--border-color)',
+                  border: 'none',
                   paddingTop: isMobile ? '2px' : '4px',
                   paddingBottom: isMobile ? '2px' : '4px',
                   paddingLeft: isMobile ? '8px' : '12px',
                   paddingRight: isMobile ? '8px' : '12px',
-                  height: isMobile ? '26px' : '30px',
+                  height: isMobile ? '30px' : '34px',
                   minWidth: isMobile ? 'auto' : undefined,
+                  fontWeight: 600,
                   '&:hover': {
                     backgroundColor: 'var(--primary-light)'
                   }
@@ -183,7 +199,7 @@ export default function ChatInput({ onSendMessage }) {
               onClick={() => handleModeSelect('search')}
             >
               <IconWorld size={isMobile ? 14 : 16} stroke={1.5} /> 
-              {isMobile ? '' : 'Search'}
+              {isMobile ? '' : 'Arama'}
             </Button>
 
             <Button
@@ -192,15 +208,16 @@ export default function ChatInput({ onSendMessage }) {
               compact="true"
               styles={{
                 root: {
-                  backgroundColor: activeMode === 'reason' ? 'var(--primary-light)' : 'var(--chat-bg)',
+                  backgroundColor: activeMode === 'reason' ? 'var(--primary-light)' : '#F0F4F8',
                   color: activeMode === 'reason' ? 'var(--primary)' : 'var(--text-body)',
-                  border: '1px solid var(--border-color)',
+                  border: 'none',
                   paddingTop: isMobile ? '2px' : '4px',
                   paddingBottom: isMobile ? '2px' : '4px',
                   paddingLeft: isMobile ? '8px' : '12px',
                   paddingRight: isMobile ? '8px' : '12px',
-                  height: isMobile ? '26px' : '30px',
+                  height: isMobile ? '30px' : '34px',
                   minWidth: isMobile ? 'auto' : undefined,
+                  fontWeight: 600,
                   '&:hover': {
                     backgroundColor: 'var(--primary-light)'
                   }
@@ -215,18 +232,18 @@ export default function ChatInput({ onSendMessage }) {
               onClick={() => handleModeSelect('reason')}
             >
               <IconBulb size={isMobile ? 14 : 16} stroke={1.5} /> 
-              {isMobile ? '' : 'Reason'}
+              {isMobile ? '' : 'Neden'}
             </Button>
 
             <ActionIcon
               radius="xl"
               variant="subtle"
               style={{ 
-                backgroundColor: 'var(--chat-bg)',
-                border: '1px solid var(--border-color)',
+                backgroundColor: '#F0F4F8',
+                border: 'none',
                 color: 'var(--text-muted)',
-                height: isMobile ? '26px' : '30px',
-                width: isMobile ? '26px' : '30px'
+                height: isMobile ? '30px' : '34px',
+                width: isMobile ? '30px' : '34px'
               }}
             >
               <IconDotsCircleHorizontal size={isMobile ? 14 : 16} stroke={1.5} />

@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// İlaç chatbotu için tema renkleri
+// İlaç chatbotu için tema renkleri - global.css değişkenleriyle uyumlu hale getirildi
 const theme = createTheme({
   fontFamily: 'var(--font-geist-sans)',
   fontFamilyMonospace: 'var(--font-geist-mono)',
@@ -23,57 +23,57 @@ const theme = createTheme({
   white: '#FFFFFF',
   primaryColor: 'primary',
   colors: {
-    // Ana tema rengi - Koyu Mavi
+    // Ana tema rengi - global.css'deki --primary: #1976D2 değeriyle uyumlu
     primary: [
-      '#E6EFF5', // 0: En açık ton
-      '#CDDEE3', // 1: Açık Mavi
-      '#A3C4D3', // 2
-      '#7BAAC3', // 3
-      '#5390B3', // 4
-      '#2A76A3', // 5
-      '#1F6894', // 6
-      '#145A85', // 7
-      '#0B4F6C', // 8: Koyu Mavi (Ana renk)
-      '#063D59', // 9: En koyu ton
+      '#E3F2FD', // 0: En açık ton
+      '#BBDEFB', // 1: Açık Mavi (global.css'deki --primary-light)
+      '#90CAF9', // 2
+      '#64B5F6', // 3
+      '#42A5F5', // 4
+      '#2196F3', // 5
+      '#1E88E5', // 6
+      '#1976D2', // 7: Koyu Mavi (global.css'deki --primary)
+      '#1565C0', // 8: (global.css'deki --text-title)
+      '#0D47A1', // 9: En koyu ton
     ],
-    // İkincil renk - Turkuaz/Çam Yeşili
+    // İkincil renk - global.css'deki --secondary: #00C853 değeriyle uyumlu
     secondary: [
-      '#EDF7F2', // 0: En açık ton
-      '#D1ECE1', // 1
-      '#B5E0D1', // 2
-      '#99D4C1', // 3
-      '#7DC9B1', // 4
-      '#61BDA1', // 5
-      '#50A68B', // 6
-      '#40916C', // 7: Turkuaz/Çam Yeşili (İkincil renk)
-      '#307956', // 8
-      '#216240', // 9: En koyu ton
+      '#E8F5E9', // 0: En açık ton
+      '#C8E6C9', // 1
+      '#A5D6A7', // 2
+      '#81C784', // 3
+      '#66BB6A', // 4
+      '#4CAF50', // 5
+      '#43A047', // 6
+      '#388E3C', // 7
+      '#2E7D32', // 8
+      '#00C853', // 9: Yeşil (global.css'deki --secondary)
     ],
-    // Vurgu rengi - Mercan/Turuncu
+    // Vurgu rengi - global.css'deki --accent: #FF5722 değeriyle uyumlu
     accent: [
-      '#FFF2EE', // 0: En açık ton
-      '#FFE6DD', // 1
-      '#FFD9CC', // 2
-      '#FFCCBB', // 3
-      '#FFBFAA', // 4
-      '#FFA989', // 5
-      '#FF9876', // 6
-      '#FF8C61', // 7: Mercan/Turuncu (Vurgu rengi)
-      '#FF704D', // 8
-      '#FF5538', // 9: En koyu ton
+      '#FBE9E7', // 0: En açık ton
+      '#FFCCBC', // 1
+      '#FFAB91', // 2
+      '#FF8A65', // 3
+      '#FF7043', // 4
+      '#FF5722', // 5: Turuncu (global.css'deki --accent)
+      '#F4511E', // 6
+      '#E64A19', // 7
+      '#D84315', // 8
+      '#BF360C', // 9: En koyu ton
     ],
     // Nötr gri tonları
     neutral: [
-      '#FFFFFF', // 0: Beyaz
+      '#FFFFFF', // 0: Beyaz (global.css'deki --background-white)
       '#F2F2F2', // 1: Açık Gri
       '#E5E5E5', // 2
       '#D9D9D9', // 3
       '#BFBFBF', // 4
       '#A6A6A6', // 5
       '#808080', // 6
-      '#666666', // 7
-      '#4A4A4A', // 8: Koyu Gri (Metin)
-      '#333333', // 9: En koyu ton
+      '#707070', // 7: (global.css'deki --text-muted)
+      '#4A4A4A', // 8
+      '#333333', // 9: En koyu ton (global.css'deki --text-body ve --foreground-dark)
     ],
   }
 });

@@ -79,8 +79,8 @@ const theme = createTheme({
 });
 
 export const metadata = {
-  title: "İlaç Bilgi Chatbotu",
-  description: "İlaçlar hakkında bilgi veren yapay zeka destekli chatbot",
+  title: "DrugLLM",
+  description: "DrugLLM, yapay zeka destekli bir ilaç bilgi sistemidir.",
 };
 
 export default function RootLayout({ children }) {

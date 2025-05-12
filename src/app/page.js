@@ -106,7 +106,7 @@ export default function Home() {
 
   return (
     <Box style={{ 
-      background: `linear-gradient(180deg, #F5F9FF 0%, white 100%)`,
+      background: "transparent",
       minHeight: '100vh',
       position: 'relative'
     }}>

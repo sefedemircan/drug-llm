@@ -320,7 +320,7 @@ export default function ProfilePage() {
               <Card.Section bg="var(--primary)" py="sm" px="lg">
                 <Group position="apart">
                   <Group>
-                    <ThemeIcon size="lg" radius="md" color="red" variant="light">
+                    <ThemeIcon size="lg" radius="md" color="white" variant="light">
                       <IconHeartbeat size={20} />
                     </ThemeIcon>
                     <Title order={4} style={{ fontWeight: 700, color: 'white' }}>
@@ -386,7 +386,7 @@ export default function ProfilePage() {
               <Card.Section bg="var(--secondary)" py="sm" px="lg">
                 <Group position="apart">
                   <Group>
-                    <ThemeIcon size="lg" radius="md" color="var(--primary)" variant="light">
+                    <ThemeIcon size="lg" radius="md" color="white" variant="light">
                       <IconPill size={20} />
                     </ThemeIcon>
                     <Title order={4} style={{ fontWeight: 700, color: 'white' }}>

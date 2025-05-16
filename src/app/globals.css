@@ -19,6 +19,8 @@
   --primary-light: #BBDEFB;
   --secondary: #00C853;
   --accent: #FF5722;
+  --danger: #FF4C51;
+  --danger-light: rgba(255, 76, 81, 0.1);
   
   /* Metin renkleri */
   --text-muted: #707070;
@@ -52,6 +54,8 @@
     --primary-light: #BBDEFB;
     --secondary: #00C853;
     --accent: #FF5722;
+    --danger: #FF4C51;
+    --danger-light: rgba(255, 76, 81, 0.1);
     
     --text-muted: #707070;
     --text-title: #1565C0;
@@ -515,5 +519,38 @@ h6, .h6 {
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+
+/* Mikrofon animasyonu için özel stiller */
+.mic-listening {
+  animation: pulse 1.5s infinite;
+}
+
+.mic-status {
+  font-size: 12px;
+  border-radius: 4px;
+  padding: 2px 8px;
+  animation: fadeIn 0.3s;
+}
+
+.mic-status.listening {
+  color: var(--primary);
+  background-color: var(--primary-light);
+}
+
+.mic-status.error {
+  color: var(--danger);
+  background-color: var(--danger-light);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

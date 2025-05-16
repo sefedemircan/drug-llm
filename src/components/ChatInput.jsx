@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react';
-import { TextInput, ActionIcon, Group, Paper, Button, Flex, useMantineTheme, Textarea } from '@mantine/core';
+import { useState, useEffect } from 'react';
+import { TextInput, ActionIcon, Group, Paper, Button, Flex, useMantineTheme, Textarea, Tooltip } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { 
   IconPlus,
@@ -10,8 +10,10 @@ import {
   IconWorld,
   IconBulb,
   IconDotsCircleHorizontal,
-  IconSend
+  IconSend,
+  IconMicrophoneOff
 } from '@tabler/icons-react';
+import useSpeechRecognition from '../hooks/useSpeechRecognition';
 
 export default function ChatInput({ onSendMessage, isMobile }) {
   const [message, setMessage] = useState('');
@@ -20,12 +22,33 @@ export default function ChatInput({ onSendMessage, isMobile }) {
   // Eğer isMobile prop olarak geçilmezse, hook ile kontrol ediyoruz
   const isSmallScreen = useMediaQuery('(max-width: 768px)');
   const isActuallyMobile = isMobile !== undefined ? isMobile : isSmallScreen;
+  
+  // Konuşma tanıma özelliği için hook'u kullan
+  const { 
+    transcript, 
+    isListening, 
+    error, 
+    toggleListening,
+    resetTranscript 
+  } = useSpeechRecognition();
+
+  // Transcript değiştiğinde mesaj alanını güncelle
+  useEffect(() => {
+    if (transcript) {
+      setMessage(transcript);
+    }
+  }, [transcript]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (message.trim()) {
+      // Eğer konuşma tanıma aktifse, gönderirken durdur
+      if (isListening) {
+        toggleListening();
+      }
       onSendMessage(message);
       setMessage('');
+      resetTranscript();
     }
   };
 
@@ -41,6 +64,11 @@ export default function ChatInput({ onSendMessage, isMobile }) {
 
   const handleModeSelect = (mode) => {
     setActiveMode(activeMode === mode ? null : mode);
+  };
+
+  // Mikrofon ikonuna tıklama işleyicisi
+  const handleMicrophoneClick = () => {
+    toggleListening();
   };
 
   return (
@@ -128,20 +156,34 @@ export default function ChatInput({ onSendMessage, isMobile }) {
               marginTop: isActuallyMobile ? '12px' : '20px', 
               marginRight: isActuallyMobile ? '4px' : '16px' 
             }}>
-              {!isActuallyMobile && (
+              {/* Mikrofon ikonu artık her zaman görünecek */}
+              <Tooltip label={isListening ? "Dinlemeyi durdur" : "Sesli giriş yap"} withArrow position="top">
                 <ActionIcon
                   radius="xl"
                   variant="subtle"
+                  onClick={handleMicrophoneClick}
+                  className={isListening ? "mic-listening" : ""}
                   style={{
-                    color: 'var(--primary)',
-                    backgroundColor: 'var(--primary-light)',
-                    height: '40px',
-                    width: '40px',
+                    color: isListening ? 'var(--danger)' : 'var(--primary)',
+                    backgroundColor: isListening ? 'rgba(255, 76, 81, 0.1)' : 'var(--primary-light)',
+                    height: isActuallyMobile ? '36px' : '40px',
+                    width: isActuallyMobile ? '36px' : '40px',
+                    transition: 'all 0.2s ease',
                   }}
+                  sx={(theme) => ({
+                    '&:hover': {
+                      backgroundColor: isListening ? 'rgba(255, 76, 81, 0.2)' : 'var(--primary-light)',
+                      transform: 'scale(1.05)',
+                    }
+                  })}
                 >
-                  <IconMicrophone size={isActuallyMobile ? 16 : 20} stroke={1.5} />
+                  {isListening ? (
+                    <IconMicrophoneOff size={isActuallyMobile ? 16 : 20} stroke={1.5} />
+                  ) : (
+                    <IconMicrophone size={isActuallyMobile ? 16 : 20} stroke={1.5} />
+                  )}
                 </ActionIcon>
-              )}
+              </Tooltip>
 
               <ActionIcon
                 radius="xl"
@@ -259,6 +301,28 @@ export default function ChatInput({ onSendMessage, isMobile }) {
               <IconDotsCircleHorizontal size={isActuallyMobile ? 14 : 16} stroke={1.5} />
             </ActionIcon>
           </Group>
+          
+          {/* Hata mesajını göstermek için */}
+          {error && (
+            <div className="mic-status error" style={{ 
+              position: 'absolute', 
+              bottom: isActuallyMobile ? '34px' : '42px', 
+              right: '16px',
+            }}>
+              {error}
+            </div>
+          )}
+          
+          {/* Dinleme durumu göstergesi */}
+          {isListening && (
+            <div className="mic-status listening" style={{ 
+              position: 'absolute', 
+              bottom: isActuallyMobile ? '34px' : '42px', 
+              right: '16px',
+            }}>
+              Konuşmanız dinleniyor...
+            </div>
+          )}
         </Flex>
       </form>
     </Paper>

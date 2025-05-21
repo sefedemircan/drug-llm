@@ -554,3 +554,79 @@ h6, .h6 {
     transform: translateY(0);
   }
 }
+
+/* Aşağı kaydırma işareti animasyonu */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Scroll butonu metin animasyonu */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Yukarı çıkma butonu için yeni basit CSS */
+#scrollTopButton {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+  background-color: #1976D2 !important;
+  color: white !important;
+  font-size: 24px !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+}
+
+#scrollTopButton[style*="display: flex"] {
+  opacity: 1 !important;
+  visibility: visible !important;
+  animation: fadeInButton 0.5s forwards;
+}
+
+@keyframes fadeInButton {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#scrollTopButton:hover {
+  background-color: #1565C0 !important;
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(25, 118, 210, 0.6) !important;
+}
+
+#scrollTopButton:active {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4) !important;
+}
+
+/* Mobil cihazlar için buton boyutu */
+@media (max-width: 768px) {
+  #scrollTopButton {
+    width: 50px !important;
+    height: 50px !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    font-size: 20px !important;
+  }
+}

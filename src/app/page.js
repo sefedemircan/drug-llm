@@ -1,7 +1,7 @@
 "use client";
 
 import { Button, Container, Title, Text, Group, Card, SimpleGrid, Box, ThemeIcon, Divider, Badge, Grid, BackgroundImage, Center, useMantineTheme, Accordion, Avatar, Footer, Stack, ActionIcon } from '@mantine/core';
-import { IconPill, IconStethoscope, IconHeartbeat, IconSearch, IconRobot, IconShield, IconCloudComputing, IconDeviceMobile, IconChevronRight, IconBrandTwitter, IconBrandFacebook, IconBrandInstagram, IconBrandYoutube, IconQuestionMark, IconStar, IconUser, IconMessage, IconArrowUp } from '@tabler/icons-react';
+import { IconPill, IconStethoscope, IconHeartbeat, IconSearch, IconRobot, IconShield, IconCloudComputing, IconDeviceMobile, IconChevronRight, IconBrandTwitter, IconBrandFacebook, IconBrandInstagram, IconBrandYoutube, IconQuestionMark, IconStar, IconUser, IconMessage, IconArrowUp, IconChevronDown } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
 import { useMediaQuery } from '@mantine/hooks';
@@ -13,6 +13,59 @@ export default function Home() {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const isSmallMobile = useMediaQuery('(max-width: 480px)');
   
+  // Scroll durumunu izleme
+  const [scrollY, setScrollY] = useState(0);
+  const [showScrollToTop, setShowScrollToTop] = useState(false);
+  
+  // Scroll butonu referansı
+  const scrollButtonRef = useRef(null);
+  
+  // Scroll olayını izle
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      setScrollY(currentScrollY);
+      
+      // Belirli bir mesafe kaydırıldığında yukarı çıkma butonunu göster
+      if (currentScrollY > 300) {
+        setShowScrollToTop(true);
+        // Butonun görünürlüğünü doğrudan DOM'da güncelle
+        if (scrollButtonRef.current) {
+          scrollButtonRef.current.style.display = 'flex';
+        }
+      } else {
+        setShowScrollToTop(false);
+        // Butonun görünürlüğünü doğrudan DOM'da güncelle
+        if (scrollButtonRef.current) {
+          scrollButtonRef.current.style.display = 'none';
+        }
+      }
+    };
+    
+    // Sayfa yüklendiğinde scroll durumunu kontrol et
+    handleScroll();
+    
+    // Scroll event'ini ekle
+    window.addEventListener('scroll', handleScroll);
+    
+    // Component unmount olduğunda event listener'ı temizle
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+  
+  // Butonun görünürlüğünü güncelle
+  useEffect(() => {
+    if (scrollButtonRef.current) {
+      scrollButtonRef.current.style.display = showScrollToTop ? 'flex' : 'none';
+    }
+  }, [showScrollToTop]);
+  
+  // Sayfanın en üstüne scroll fonksiyonu
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
   const features = [
     {
@@ -153,7 +206,8 @@ export default function Home() {
                 letterSpacing: '-0.02em',
                 lineHeight: 1.1,
                 marginBottom: '24px',
-                textShadow: '0 10px 30px rgba(0,0,0,0.15)'
+                textShadow: '0 10px 30px rgba(0,0,0,0.15)',
+                fontFamily: "'Montserrat', var(--font-geist-sans)",
               }}>
                 DrugLLM
               </Title>
@@ -162,7 +216,9 @@ export default function Home() {
                 letterSpacing: '0.3px',
                 lineHeight: 1.6,
                 color: 'rgba(255,255,255,0.9)',
-                marginBottom: '32px'
+                marginBottom: '32px',
+                fontSize: isMobile ? '1rem' : '1.25rem',
+                fontFamily: "'Open Sans', var(--font-geist-sans)",
               }}>
                 Yapay zeka destekli ilaç bilgi asistanınız ile ilaçlarınız hakkında güvenilir bilgilere anında erişin.
               </Text>
@@ -187,7 +243,8 @@ export default function Home() {
                       backgroundColor: 'var(--secondary)',
                       transform: 'translateY(-3px)',
                       boxShadow: '0 12px 20px rgba(0, 200, 83, 0.35)',
-                    }
+                    },
+                    fontSize: isMobile ? '0.9rem' : '1rem',
                   }}
                 >
                   Giriş Yap
@@ -212,13 +269,19 @@ export default function Home() {
                       backgroundColor: 'rgba(255,255,255,0.25)',
                       transform: 'translateY(-3px)',
                       boxShadow: '0 12px 20px rgba(0,0,0,0.15)',
-                    }
+                    },
+                    fontSize: isMobile ? '0.9rem' : '1rem',
                   }}
                 >
                   Hesap Oluştur
                 </Button>
               </Group>
-              <Text size={isMobile ? "xs" : "sm"} mt="lg" style={{ opacity: 0.8, fontWeight: 400 }}>
+              <Text size={isMobile ? "xs" : "sm"} mt="lg" style={{ 
+                opacity: 0.8, 
+                fontWeight: 400,
+                fontStyle: 'italic',
+                letterSpacing: '0.2px'
+              }}>
                 *Tamamen ücretsiz, kayıt gerektiren bir hizmettir.
               </Text>
             </Box>
@@ -266,20 +329,24 @@ export default function Home() {
         </Box>
 
         {/* Features Section - Responsive & Modern */}
-        <Box className="home-section light" style={{ padding: isMobile ? '40px 0' : '80px 0' }}>
+        <Box className="home-section light features-section" style={{ padding: isMobile ? '40px 0' : '80px 0' }}>
           <Container>
             <Box mb={isMobile ? 30 : 60} style={{ textAlign: 'center' }}>
               <Title order={2} mb="md" className="gradient-text" style={{ 
                 fontSize: isMobile ? '1.75rem' : '2.5rem',
                 fontWeight: 800,
-                letterSpacing: '-0.02em'
+                letterSpacing: '-0.02em',
+                fontFamily: "'Montserrat', var(--font-geist-sans)",
               }}>
                 Neler Yapabilirsin?
               </Title>
               <Text size={isMobile ? "sm" : "md"} style={{ 
                 maxWidth: '700px', 
                 margin: '0 auto',
-                color: 'var(--text-muted)'
+                color: 'var(--text-muted)',
+                lineHeight: 1.7,
+                letterSpacing: '0.2px',
+                fontFamily: "'Open Sans', var(--font-geist-sans)",
               }}>
                 DrugLLM, ilaçlar hakkında bilgi sahibi olmanızı sağlayan gelişmiş özelliklere sahiptir
               </Text>
@@ -324,14 +391,18 @@ export default function Home() {
                   <Title order={4} mb="sm" style={{ 
                     fontSize: '1.1rem',
                     fontWeight: 700,
-                    color: 'var(--text-title)'
+                    color: 'var(--text-title)',
+                    fontFamily: "'Montserrat', var(--font-geist-sans)",
+                    letterSpacing: '0.2px',
                   }}>
                     {feature.title}
                   </Title>
                   
                   <Text size="sm" style={{ 
                     color: 'var(--text-body)',
-                    lineHeight: 1.6
+                    lineHeight: 1.6,
+                    fontFamily: "'Open Sans', var(--font-geist-sans)",
+                    letterSpacing: '0.1px',
                   }}>
                     {feature.description}
                   </Text>
@@ -355,13 +426,17 @@ export default function Home() {
                 fontSize: isMobile ? '1.75rem' : '2.5rem',
                 fontWeight: 800,
                 letterSpacing: '-0.02em',
+                fontFamily: "'Montserrat', var(--font-geist-sans)",
               }}>
                 Teknolojinin Gücü
               </Title>
               <Text size={isMobile ? "sm" : "md"} style={{ 
                 maxWidth: '700px', 
                 margin: '0 auto',
-                color: 'var(--text-muted)'
+                color: 'var(--text-muted)',
+                lineHeight: 1.7,
+                letterSpacing: '0.2px',
+                fontFamily: "'Open Sans', var(--font-geist-sans)",
               }}>
                 Gelişmiş yapay zeka algoritmalarımız sayesinde sağlık bilgilerine erişim artık çok daha kolay
               </Text>
@@ -408,14 +483,18 @@ export default function Home() {
                   <Title order={4} mb="sm" style={{ 
                     fontSize: '1.1rem',
                     fontWeight: 700,
-                    color: 'var(--text-title)'
+                    color: 'var(--text-title)',
+                    fontFamily: "'Montserrat', var(--font-geist-sans)",
+                    letterSpacing: '0.2px',
                   }}>
                     {tech.title}
                   </Title>
                   
                   <Text size="sm" style={{ 
                     color: 'var(--text-body)',
-                    lineHeight: 1.6
+                    lineHeight: 1.6,
+                    fontFamily: "'Open Sans', var(--font-geist-sans)",
+                    letterSpacing: '0.1px',
                   }}>
                     {tech.description}
                   </Text>
@@ -432,14 +511,18 @@ export default function Home() {
               <Title order={2} mb="md" className="gradient-text" style={{ 
                 fontSize: isMobile ? '1.75rem' : '2.5rem',
                 fontWeight: 800,
-                letterSpacing: '-0.02em'
+                letterSpacing: '-0.02em',
+                fontFamily: "'Montserrat', var(--font-geist-sans)",
               }}>
                 Sık Sorulan Sorular
               </Title>
               <Text size={isMobile ? "sm" : "md"} style={{ 
                 maxWidth: '700px', 
                 margin: '0 auto',
-                color: 'var(--text-muted)'
+                color: 'var(--text-muted)',
+                lineHeight: 1.7,
+                letterSpacing: '0.2px',
+                fontFamily: "'Open Sans', var(--font-geist-sans)",
               }}>
                 DrugLLM ile ilgili merak ettiğiniz soruların cevaplarını burada bulabilirsiniz
               </Text>
@@ -471,6 +554,7 @@ export default function Home() {
                         fontSize: '1rem',
                         color: 'var(--text-title)',
                         padding: '20px 24px',
+                        fontFamily: "'Montserrat', var(--font-geist-sans)",
                       }}
                     >
                       {faq.question}
@@ -481,6 +565,8 @@ export default function Home() {
                         padding: '0 24px 20px',
                         fontSize: '0.95rem',
                         lineHeight: 1.6,
+                        fontFamily: "'Open Sans', var(--font-geist-sans)",
+                        letterSpacing: '0.1px',
                       }}
                     >
                       {faq.answer}
@@ -506,14 +592,18 @@ export default function Home() {
               <Title order={2} mb="md" className="gradient-text" style={{ 
                 fontSize: isMobile ? '1.75rem' : '2.5rem',
                 fontWeight: 800,
-                letterSpacing: '-0.02em'
+                letterSpacing: '-0.02em',
+                fontFamily: "'Montserrat', var(--font-geist-sans)",
               }}>
                 Kullanıcı Yorumları
               </Title>
               <Text size={isMobile ? "sm" : "md"} style={{ 
                 maxWidth: '700px', 
                 margin: '0 auto',
-                color: 'var(--text-muted)'
+                color: 'var(--text-muted)',
+                lineHeight: 1.7,
+                letterSpacing: '0.2px',
+                fontFamily: "'Open Sans', var(--font-geist-sans)",
               }}>
                 DrugLLM&apos;i kullanan profesyoneller ve hastalar ne diyor?
               </Text>
@@ -538,7 +628,10 @@ export default function Home() {
                           style={{ border: '3px solid white', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}
                         />
                         <Box>
-                          <Text fw={700} size="sm" style={{ color: 'var(--text-title)' }}>
+                          <Text fw={700} size="sm" style={{ 
+                            color: 'var(--text-title)',
+                            fontFamily: "'Montserrat', var(--font-geist-sans)",
+                          }}>
                             {testimonial.name}
                           </Text>
                           <Text size="xs" style={{ color: 'var(--primary)' }}>
@@ -565,7 +658,9 @@ export default function Home() {
                         color: 'var(--text-body)',
                         fontStyle: 'italic',
                         position: 'relative',
-                        paddingLeft: '8px'
+                        paddingLeft: '8px',
+                        fontFamily: "'Open Sans', var(--font-geist-sans)",
+                        letterSpacing: '0.1px',
                       }}
                       component="div"
                     >
@@ -625,11 +720,17 @@ export default function Home() {
                     <Title order={3} mb="md" style={{ 
                       color: 'white',
                       fontSize: isMobile ? '1.5rem' : '2rem',
-                      fontWeight: 700
+                      fontWeight: 700,
+                      fontFamily: "'Montserrat', var(--font-geist-sans)",
+                      letterSpacing: '0.3px',
                     }}>
                       Hemen Başlayın!
                     </Title>
-                    <Text color="white" opacity={0.9} mb="xl" size={isMobile ? "sm" : "md"}>
+                    <Text color="white" opacity={0.9} mb="xl" size={isMobile ? "sm" : "md"} style={{
+                      lineHeight: 1.7,
+                      letterSpacing: '0.2px',
+                      fontFamily: "'Open Sans', var(--font-geist-sans)",
+                    }}>
                       Ücretsiz hesabınızı oluşturun ve ilaçlar hakkında detaylı bilgilere hemen ulaşın. Sağlığınız için doğru bilgi her zaman önemlidir.
                     </Text>
                     
@@ -723,6 +824,35 @@ export default function Home() {
           </Container>
         </Box>
       </Container>
+      
+      {/* Yukarı Çıkma Butonu - Basitleştirilmiş */}
+      <button
+        onClick={scrollToTop}
+        id="scrollTopButton"
+        ref={scrollButtonRef}
+        style={{
+          position: 'fixed',
+          bottom: '30px',
+          right: '30px',
+          width: '60px',
+          height: '60px',
+          borderRadius: '50%',
+          backgroundColor: '#1976D2',
+          color: 'white',
+          border: 'none',
+          boxShadow: '0 4px 15px rgba(25, 118, 210, 0.5)',
+          cursor: 'pointer',
+          display: 'none', // Başlangıçta gizli, JavaScript ile kontrol edilecek
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          fontSize: '24px',
+          fontWeight: 'bold'
+        }}
+        aria-label="Yukarı çık"
+      >
+        ↑
+      </button>
     </Box>
   );
 }

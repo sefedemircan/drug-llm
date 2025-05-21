@@ -4,6 +4,7 @@ import "@mantine/core/styles.css";
 import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
 import { ChatProvider } from "../context/ChatContext";
+import { Montserrat, Open_Sans } from "next/font/google";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,6 +14,19 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+// Yeni fontlar
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const openSans = Open_Sans({
+  variable: "--font-open-sans",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 // İlaç chatbotu için tema renkleri - global.css değişkenleriyle uyumlu hale getirildi
@@ -86,7 +100,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="tr">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} ${openSans.variable}`}>
         <MantineProvider theme={theme} defaultColorScheme="light">
           <AuthProvider>
             <ChatProvider>

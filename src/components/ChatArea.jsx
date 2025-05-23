@@ -8,7 +8,7 @@ import ChatMessage from './ChatMessage';
 import { useChat } from '../context/ChatContext';
 
 export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onOpenSidebar }) {
-  const { currentChat, addMessageToCurrentChat } = useChat();
+  const { currentChat, addMessageToCurrentChat, isBotReplying } = useChat(); // Consume isBotReplying
   const messagesEndRef = useRef(null);
   const containerRef = useRef(null);
   
@@ -22,7 +22,7 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
   // Yeni mesaj geldiğinde otomatik scroll
   useEffect(() => {
     scrollToBottom();
-  }, [currentChat.messages]);
+  }, [currentChat.messages, isBotReplying]); // Add isBotReplying to dependencies
 
   const handleSendMessage = (message) => {
     addMessageToCurrentChat(message);
@@ -122,13 +122,22 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
               </Text>
             </div>
           ) : (
-            currentChat.messages.map((message, index) => (
-              <ChatMessage 
-                key={index} 
-                message={message}
-                isMobile={isMobile}
-              />
-            ))
+            <>
+              {currentChat.messages.map((message) => (
+                <ChatMessage 
+                  key={message.id} // Use message.id for key
+                  message={message}
+                  isMobile={isMobile}
+                />
+              ))}
+              {isBotReplying && (
+                <ChatMessage
+                  key="typing_indicator"
+                  message={{ id: 'typing_indicator', role: 'system', content: 'Bot is typing...' }}
+                  isMobile={isMobile}
+                />
+              )}
+            </>
           )}
           {/* Scroll için referans noktası */}
           <div ref={messagesEndRef} style={{ height: 20 }} />

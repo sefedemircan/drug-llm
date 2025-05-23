@@ -166,6 +166,7 @@ export function ChatProvider({ children }) {
   const [chatHistory, setChatHistory] = useState(mockChatHistory);
   const [currentChat, setCurrentChat] = useState(mockChatHistory[0].chats[0]);
   const [isNewChat, setIsNewChat] = useState(false);
+  const [isBotReplying, setIsBotReplying] = useState(false);
 
   // Sohbet geçmişinden bir sohbeti seçer
   const selectChat = (chatId) => {
@@ -205,55 +206,103 @@ export function ChatProvider({ children }) {
     };
     
     setCurrentChat(updatedChat);
-    
-    // Simule edilen bot cevabı - gerçek uygulamada API'ye istek atılacaktır
-    setTimeout(() => {
-      const botResponse = {
-        id: Date.now() + 1,
-        role: 'system',
-        content: `"${message}" sorunuza cevap veriyorum. Bu bir örnek cevaptır.`
-      };
-      
-      const updatedChatWithResponse = {
-        ...updatedChat,
-        messages: [...updatedChat.messages, botResponse]
-      };
-      
-      setCurrentChat(updatedChatWithResponse);
-      
-      // Eğer yeni sohbetse, sohbet geçmişine ekle
+    setIsBotReplying(true); // Set loading state to true
+
+    // Function to update history and reset new chat flag
+    const updateHistoryAndFinalize = (finalChat) => {
       if (isNewChat) {
         const newHistoryItem = {
-          ...updatedChatWithResponse,
-          title: message.length > 30 ? message.substring(0, 30) + '...' : message
+          ...finalChat, // Use the chat that includes the bot's response or error
+          id: currentChat.id, // Ensure the ID is the one generated for the new chat
+          title: message.length > 30 ? message.substring(0, 30) + '...' : message,
         };
-        
+
         const todayGroup = chatHistory.find(group => group.date === 'Bugün');
         if (todayGroup) {
           const updatedHistory = chatHistory.map(group => {
             if (group.date === 'Bugün') {
               return {
                 ...group,
-                chats: [newHistoryItem, ...group.chats]
+                chats: [newHistoryItem, ...group.chats.filter(chat => chat.id !== newHistoryItem.id)], // Avoid duplicates if any
               };
             }
             return group;
           });
-          
           setChatHistory(updatedHistory);
+          setCurrentChat(newHistoryItem); // Update currentChat to have the new title
         } else {
           setChatHistory([
             {
               date: 'Bugün',
-              chats: [newHistoryItem]
+              chats: [newHistoryItem],
             },
-            ...chatHistory
+            ...chatHistory,
           ]);
+          setCurrentChat(newHistoryItem); // Update currentChat to have the new title
         }
-        
-        setIsNewChat(false);
+        setIsNewChat(false); // Reset after adding to history
+      } else {
+        // If it's not a new chat, we still need to update the existing chat in chatHistory
+        // setCurrentChat(finalChat) is already called before this function,
+        // so currentChat has the latest messages. We just need to ensure history is updated.
+        setChatHistory(prevHistory => {
+          return prevHistory.map(group => ({
+            ...group,
+            chats: group.chats.map(chat =>
+              chat.id === finalChat.id ? finalChat : chat
+            ),
+          }));
+        });
       }
-    }, 1000);
+    };
+
+    // Call the backend API
+    fetch('/api/chat/hf', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message: message }),
+    })
+      .then(async (response) => {
+        const data = await response.json();
+        const botReply = data.reply || "Size nasıl yardımcı olabilirim?";
+        
+        const botResponse = {
+          id: Date.now() + 1, // Unique ID for the bot's message
+          role: 'system',
+          content: botReply,
+        };
+        
+        const updatedChatWithResponse = {
+          ...updatedChat,
+          messages: [...updatedChat.messages, botResponse],
+        };
+        
+        setCurrentChat(updatedChatWithResponse);
+        updateHistoryAndFinalize(updatedChatWithResponse);
+      })
+      .catch((error) => {
+        console.log('Network Error:', error.message);
+        
+        // Network hatası durumunda basit bir mesaj
+        const errorResponse = {
+          id: Date.now() + 1,
+          role: 'system',
+          content: "Size nasıl yardımcı olabilirim? İlaçlar hakkında soru sorabilirsiniz.",
+        };
+        
+        const updatedChatWithError = {
+          ...updatedChat,
+          messages: [...updatedChat.messages, errorResponse],
+        };
+        
+        setCurrentChat(updatedChatWithError);
+        updateHistoryAndFinalize(updatedChatWithError);
+      })
+      .finally(() => {
+        setIsBotReplying(false); // Set loading state to false in all cases
+      });
   };
 
   return (
@@ -263,7 +312,8 @@ export function ChatProvider({ children }) {
         currentChat,
         selectChat,
         startNewChat,
-        addMessageToCurrentChat
+        addMessageToCurrentChat,
+        isBotReplying, // Expose the new state
       }}
     >
       {children}

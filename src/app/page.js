@@ -826,7 +826,7 @@ export default function Home() {
       </Container>
       
       {/* Yukarı Çıkma Butonu - Basitleştirilmiş */}
-      <button
+      <Button
         onClick={scrollToTop}
         id="scrollTopButton"
         ref={scrollButtonRef}
@@ -852,7 +852,7 @@ export default function Home() {
         aria-label="Yukarı çık"
       >
         ↑
-      </button>
+      </Button>
     </Box>
   );
 }

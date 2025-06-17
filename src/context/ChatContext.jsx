@@ -259,17 +259,17 @@ export function ChatProvider({ children }) {
     };
 
     // Call the backend API
-    console.log('🚀 API çağrısı yapılıyor...');
-    console.log('📤 Gönderilen message:', message);
-    console.log('📤 Gönderilen userId:', user?.id || null);
-    console.log('👤 User object:', user);
+    //console.log('🚀 API çağrısı yapılıyor...');
+    //console.log('📤 Gönderilen message:', message);
+    //console.log('📤 Gönderilen userId:', user?.id || null);
+    //console.log('👤 User object:', user);
     
     // User metadata'dan profil ve sağlık bilgilerini çıkar
     const profileData = user?.user_metadata?.profileData || null;
     const healthData = user?.user_metadata?.healthData || null;
     
-    console.log('📋 Profile data from metadata:', profileData);
-    console.log('🏥 Health data from metadata:', healthData);
+    //console.log('📋 Profile data from metadata:', profileData);
+    //console.log('🏥 Health data from metadata:', healthData);
     
     fetch('/api/chat/hf', {
       method: 'POST',
@@ -284,9 +284,9 @@ export function ChatProvider({ children }) {
       }),
     })
       .then(async (response) => {
-        console.log('📥 API yanıtı alındı');
+        //console.log('📥 API yanıtı alındı');
         const data = await response.json();
-        console.log('📄 API data:', data);
+        //console.log('📄 API data:', data);
         const botReply = data.reply || "Size nasıl yardımcı olabilirim?";
         
         const botResponse = {

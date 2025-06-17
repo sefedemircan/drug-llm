@@ -217,20 +217,20 @@ export async function POST(request) {
 		const frontendProfileData = body.profileData || null;
 		const frontendHealthData = body.healthData || null;
 
-		console.log('=== API DEBUG ===');
-		console.log('Received message:', userMessage);
-		console.log('Received userId:', userId);
-		console.log('UserId type:', typeof userId);
-		console.log('Frontend profile data:', frontendProfileData);
-		console.log('Frontend health data:', frontendHealthData);
+		//console.log('=== API DEBUG ===');
+		//console.log('Received message:', userMessage);
+		//console.log('Received userId:', userId);
+		//console.log('UserId type:', typeof userId);
+		//console.log('Frontend profile data:', frontendProfileData);
+		//console.log('Frontend health data:', frontendHealthData);
 
 		// Kullanıcı verilerini Supabase'den çek
 		let supabaseProfileData = null;
 		let supabaseHealthData = null;
 
 		if (userId) {
-			console.log('✅ UserID mevcut, kullanıcı verilerini çekiyorum...');
-			console.log('Fetching user data for userId:', userId);
+			//console.log('✅ UserID mevcut, kullanıcı verilerini çekiyorum...');
+			//console.log('Fetching user data for userId:', userId);
 			
 			// Paralel olarak profil ve sağlık bilgilerini çek
 			const [userProfile, userHealthInfo] = await Promise.all([
@@ -241,31 +241,16 @@ export async function POST(request) {
 			supabaseProfileData = userProfile;
 			supabaseHealthData = userHealthInfo;
 
-			console.log('Supabase Profile data fetched:', supabaseProfileData ? 'Yes' : 'No');
-			console.log('Supabase Health data fetched:', supabaseHealthData ? 'Yes' : 'No');
-			
-			// Debug: Çekilen verileri logla
-			if (supabaseProfileData) {
-				console.log('✅ Supabase Profile data:', JSON.stringify(supabaseProfileData, null, 2));
-			} else {
-				console.log('❌ Supabase Profile data is null/undefined');
-			}
-			if (supabaseHealthData) {
-				console.log('✅ Supabase Health data:', JSON.stringify(supabaseHealthData, null, 2));
-			} else {
-				console.log('❌ Supabase Health data is null/undefined');
-			}
-		} else {
-			console.log('❌ UserID yok, genel prompt kullanılacak');
-			console.log('No userId provided, using default prompt');
+			//console.log('Supabase Profile data fetched:', supabaseProfileData ? 'Yes' : 'No');
+			//console.log('Supabase Health data fetched:', supabaseHealthData ? 'Yes' : 'No');
 		}
 
 		// Supabase verisi varsa onu kullan, yoksa frontend'den gelen veriyi kullan
 		const finalProfileData = supabaseProfileData || frontendProfileData;
 		const finalHealthData = supabaseHealthData || frontendHealthData;
 
-		console.log('🎯 Final profile data source:', supabaseProfileData ? 'Supabase' : (frontendProfileData ? 'Frontend' : 'None'));
-		console.log('🎯 Final health data source:', supabaseHealthData ? 'Supabase' : (frontendHealthData ? 'Frontend' : 'None'));
+		//console.log('🎯 Final profile data source:', supabaseProfileData ? 'Supabase' : (frontendProfileData ? 'Frontend' : 'None'));
+		//console.log('🎯 Final health data source:', supabaseHealthData ? 'Supabase' : (frontendHealthData ? 'Frontend' : 'None'));
 
 		try {
 			// Debug: System prompt'u logla

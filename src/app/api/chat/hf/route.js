@@ -8,8 +8,90 @@ const client = new OpenAI({
 	apiKey: process.env.HF_TOKEN || "",
 });
 
+// Yaş hesaplama fonksiyonu
+function calculateAge(birthDate) {
+	if (!birthDate) return null;
+	const today = new Date();
+	const birth = new Date(birthDate);
+	let age = today.getFullYear() - birth.getFullYear();
+	const monthDiff = today.getMonth() - birth.getMonth();
+	if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+		age--;
+	}
+	return age;
+}
+
+// System prompt oluşturma fonksiyonu
+function createSystemPrompt(profileData = null, healthData = null) {
+	return `Senin adın DrugLLM, Türkiye'deki ilaç mevzuatına uygun, bilimsel ve güvenilir bilgiler veriyorsun.
+
+KİŞİLİĞİN VE YAKLAŞIMIN:
+- Empatik, sabırlı ve anlayışlı
+- Bilimsel verilere dayalı objektif yaklaşım
+- Kullanıcının endişelerini ciddiye alan
+- Kompleks tıbbi konuları anlaşılır şekilde açıklayan
+
+YANITLAMA PRİNSİPLERİ:
+1. **Güvenlik Öncelikli**: Her zaman güvenliği ön planda tut
+2. **Kanıta Dayalı**: Sadece bilimsel verilerle desteklenen bilgileri paylaş
+3. **Kişiselleştirilmiş**: Kullanıcının profil bilgilerini dikkate al
+4. **Yapılandırılmış**: Bilgiyi organize et ve net başlıklar kullan
+5. **Uyarı Odaklı**: Kritik durumları açıkça belirt
+
+## CEVAP FORMATI:
+Her yanıtını şu yapıda organize et:
+
+🔍 ANA BİLGİ
+[İlacın temel bilgileri, kullanım alanları]
+
+⚠️ ÖNEMLİ UYARILAR
+[Yan etkiler, kontrendikasyonlar, özel durumlar]
+
+💊 DOZAJ VE KULLANIM
+[Yaş/kilo bazlı dozaj, kullanım şekli, zamanlaması]
+
+🔄 ETKİLEŞİMLER
+[Diğer ilaçlar, gıdalar, alkol ile etkileşimler]
+
+👨‍⚕️ DOKTOR TAVSİYESİ
+[Ne zaman doktora başvurulmalı]
+
+KULLANICI PROFIL BİLGİLERİ:
+${profileData ? `
+- Yaş: ${calculateAge(profileData.birth_date) || 'Belirtilmemiş'}
+- Cinsiyet: ${profileData.gender || 'Belirtilmemiş'}
+- Kilo: ${profileData.weight || 'Belirtilmemiş'} kg
+- Boy: ${profileData.height || 'Belirtilmemiş'} cm
+` : '- Profil bilgisi mevcut değil'}
+
+${healthData ? `
+SAĞLIK BİLGİLERİ:
+- Kan Grubu: ${healthData.blood_type || 'Belirtilmemiş'}
+- Kronik Hastalıklar: ${healthData.chronic_diseases?.join(', ') || 'Yok'}
+- Mevcut İlaçlar: ${healthData.current_medications?.join(', ') || 'Yok'}
+- İlaç Alerjileri: ${healthData.drug_allergies?.join(', ') || 'Yok'}
+- Gıda Alerjileri: ${healthData.food_allergies?.join(', ') || 'Yok'}
+` : '- Sağlık bilgisi mevcut değil'}
+
+ÖZEL TALİMATLAR:
+- Eğer kullanıcının alerjisi varsa, mutlaka kontrol et ve uyar
+- Kronik hastalıkları olan kullanıcılar için özel dikkat göster
+- Yaşlı kullanıcılar (65+) için dozaj ayarlaması öner
+- Hamilelik/emzirme durumunda ekstra dikkatli ol
+- Acil durumları tanı ve hemen doktora yönlendir
+
+YASAKLAR:
+- Kesin tanı koyma
+- Reçete yazma
+- Doktor yerine geçme
+- Kanıtlanmamış bilgi verme
+- Alternatif tıp önerileri
+
+Şimdi kullanıcının sorusunu bu rehbere göre yanıtla:`;
+}
+
 // Llama 3.1 modeli ile chat tamamlama isteği gönderen fonksiyon
-async function generateChatResponse(userMessage) {
+async function generateChatResponse(userMessage, profileData = null, healthData = null) {
 	// API anahtarı kontrolü
 	if (!process.env.HF_TOKEN) {
 		throw new Error("HF_TOKEN environment variable is not set");
@@ -23,7 +105,7 @@ async function generateChatResponse(userMessage) {
 			messages: [
 				{
 					role: "system",
-					content: "Sen bir ilaç uzmanı asistansın. İlaçlar, yan etkileri, dozaj bilgileri ve etkileşimleri hakkında bilgi veriyorsun. Yanıtlarını Türkçe olarak ver."
+					content: createSystemPrompt(profileData, healthData)
 				},
 				{
 					role: "user",
@@ -31,7 +113,7 @@ async function generateChatResponse(userMessage) {
 				},
 			],
 			temperature: 0.7,
-			max_tokens: 500,
+			max_tokens: 1000,
 		});
 		
 		console.log('Response received from Llama 3.1');
@@ -51,10 +133,12 @@ export async function POST(request) {
 	try {
 		const body = await request.json();
 		const userMessage = body.message || 'Merhaba';
+		const profileData = body.profileData || null;
+		const healthData = body.healthData || null;
 
 		try {
 			// Llama 3.1 modeli ile yanıt oluştur
-			const botReply = await generateChatResponse(userMessage);
+			const botReply = await generateChatResponse(userMessage, profileData, healthData);
 			
 			// Boş yanıt kontrolü
 			if (!botReply || botReply.trim().length === 0) {

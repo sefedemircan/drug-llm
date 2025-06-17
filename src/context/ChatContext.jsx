@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState } from 'react';
+import { useAuth } from './AuthContext';
 
 // Örnek sohbet geçmişi verileri
 const mockChatHistory = [
@@ -167,6 +168,7 @@ export function ChatProvider({ children }) {
   const [currentChat, setCurrentChat] = useState(mockChatHistory[0].chats[0]);
   const [isNewChat, setIsNewChat] = useState(false);
   const [isBotReplying, setIsBotReplying] = useState(false);
+  const { user } = useAuth();
 
   // Sohbet geçmişinden bir sohbeti seçer
   const selectChat = (chatId) => {
@@ -257,15 +259,34 @@ export function ChatProvider({ children }) {
     };
 
     // Call the backend API
+    console.log('🚀 API çağrısı yapılıyor...');
+    console.log('📤 Gönderilen message:', message);
+    console.log('📤 Gönderilen userId:', user?.id || null);
+    console.log('👤 User object:', user);
+    
+    // User metadata'dan profil ve sağlık bilgilerini çıkar
+    const profileData = user?.user_metadata?.profileData || null;
+    const healthData = user?.user_metadata?.healthData || null;
+    
+    console.log('📋 Profile data from metadata:', profileData);
+    console.log('🏥 Health data from metadata:', healthData);
+    
     fetch('/api/chat/hf', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ message: message }),
+      body: JSON.stringify({ 
+        message: message,
+        userId: user?.id || null,
+        profileData: profileData,
+        healthData: healthData
+      }),
     })
       .then(async (response) => {
+        console.log('📥 API yanıtı alındı');
         const data = await response.json();
+        console.log('📄 API data:', data);
         const botReply = data.reply || "Size nasıl yardımcı olabilirim?";
         
         const botResponse = {
@@ -283,7 +304,7 @@ export function ChatProvider({ children }) {
         updateHistoryAndFinalize(updatedChatWithResponse);
       })
       .catch((error) => {
-        console.log('Network Error:', error.message);
+        console.log('❌ Network Error:', error.message);
         
         // Network hatası durumunda basit bir mesaj
         const errorResponse = {

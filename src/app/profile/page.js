@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../utils/supabase';
@@ -54,16 +54,8 @@ export default function ProfilePage() {
   const theme = useMantineTheme();
   const isMobile = useMediaQuery('(max-width: 768px)');
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login');
-    } else if (user) {
-      fetchUserData();
-    }
-  }, [user, loading, router]);
-
   // Tüm kullanıcı verilerini çekme
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     try {
       // Kullanıcı giriş yapmış mı kontrol ediyoruz
       if (!user || !user.id) {
@@ -108,7 +100,15 @@ export default function ProfilePage() {
       setError("Kullanıcı verileri alınamadı: " + (error.message || 'Bilinmeyen hata'));
       setPageLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    } else if (user) {
+      fetchUserData();
+    }
+  }, [user, loading, router, fetchUserData]);
 
   if (loading || !user) {
     return <LoadingSpinner fullScreen message="Profiliniz yükleniyor" />;

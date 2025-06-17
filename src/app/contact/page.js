@@ -420,7 +420,7 @@ export default function ContactPage() {
                 size="md"
                 style={{ borderColor: 'white', color: 'white' }}
               >
-                Blog'u İnceleyin
+                Blog&apos;u İnceleyin
               </Button>
             </Group>
           </Paper>

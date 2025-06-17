@@ -2,7 +2,7 @@
 
 import { useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
-import LoadingOverlay from '@mantine/core';
+import { LoadingOverlay } from '@mantine/core';
 
 function SignupContent() {
   const router = useRouter();

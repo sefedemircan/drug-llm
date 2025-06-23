@@ -170,6 +170,8 @@ YASAKLAR:
 
 ÖNEMLİ: Eğer kullanıcının profil ve sağlık bilgileri mevcutsa, yanıtında mutlaka bu bilgileri dikkate al ve gerekli uyarıları doğal bir şekilde yap. Özellikle ilaç alerjileri ve kronik hastalıklar için özel dikkat göster. Kullanıcı kendisi hakkında sorular sorduğunda mevcut bilgileri kullanarak samimi ve doğal bir yanıt ver.
 
+SOHBET CONTEXT'İ: Eğer bu sohbette önceki mesajlar varsa, onları dikkate al ve sohbetin devamlılığını sağla. Kullanıcı "bu ilaç", "bu şehir", "bahsettiğin" gibi referanslar kullandığında önceki mesajlardaki bilgileri hatırla ve ona göre yanıt ver. Sohbet geçmişini unutma!
+
 Şimdi kullanıcının sorusunu bu rehbere göre yanıtla:`;
 }
 
@@ -191,18 +193,53 @@ async function generateChatResponse(userMessage, chatHistory = [], profileData =
 			}
 		];
 
-		// Chat geçmişini ekle (eğer varsa)
+		// Chat geçmişini ekle (Bu session'daki TÜM mesajları ekleyeceğiz)
 		if (chatHistory && chatHistory.length > 0) {
-			// Sistem mesajını atla (zaten yukarıda eklendi)
+			console.log('📚 Raw chat history from DB:', chatHistory.map((m, i) => ({ 
+				index: i, 
+				role: m.role, 
+				content: m.content?.substring(0, 50) + '...',
+				created_at: m.created_at
+			})));
+			
+			// Session'daki TÜM mesajları process et
 			const conversationMessages = chatHistory
-				.filter(msg => msg.role !== 'system' || msg.content !== 'Merhaba! Size ilaçlar hakkında nasıl yardımcı olabilirim?')
+				// Gereksiz sistem mesajlarını filtrele
+				.filter(msg => {
+					// Default sistem mesajını atla
+					if (msg.role === 'system' && (
+						msg.content === 'Merhaba! Size ilaçlar hakkında nasıl yardımcı olabilirim?' ||
+						msg.content?.includes('✍️ Yanıt hazırlanıyor')
+					)) {
+						return false;
+					}
+					return true;
+				})
+				// Role mapping: system mesajları assistant'a çevir
 				.map(msg => ({
 					role: msg.role === 'system' ? 'assistant' : msg.role,
-					content: msg.content
-				}));
+					content: msg.content?.trim()
+				}))
+				// Boş mesajları filtrele
+				.filter(msg => msg.content && msg.content.length > 0);
 			
+			console.log('📝 Processed conversation messages:', conversationMessages.map((m, i) => ({ 
+				index: i, 
+				role: m.role, 
+				content: m.content?.substring(0, 50) + '...' 
+			})));
+			
+			// Geçmiş mesajları ekle
 			messages.push(...conversationMessages);
 			console.log(`✅ Chat geçmişinden ${conversationMessages.length} mesaj eklendi`);
+			
+			// Context bilgisi
+			const userMessages = conversationMessages.filter(m => m.role === 'user').length;
+			const assistantMessages = conversationMessages.filter(m => m.role === 'assistant').length;
+			console.log(`💡 Context summary: ${userMessages} user, ${assistantMessages} assistant messages`);
+		} else {
+			console.log('📭 No chat history found for session:', sessionId);
+			console.log('🆕 This appears to be the first message in this session');
 		}
 
 		// Son kullanıcı mesajını ekle
@@ -212,6 +249,11 @@ async function generateChatResponse(userMessage, chatHistory = [], profileData =
 		});
 
 		console.log(`📤 Toplam ${messages.length} mesaj gönderiliyor`);
+		console.log('🎯 Final messages to model:', messages.map((m, i) => ({ 
+			index: i, 
+			role: m.role, 
+			content: m.content?.substring(0, 100) + '...' 
+		})));
 		
 		const chatCompletion = await client.chat.completions.create({
 			//model: "meta-llama/Meta-Llama-3.1-8B-Instruct-fast",
@@ -247,10 +289,14 @@ function getErrorResponse(message) {
 // Chat session'ından mesajları çek
 async function getChatHistory(sessionId) {
 	try {
+		console.log(`🔍 getChatHistory called with sessionId: ${sessionId}`);
+		
 		if (!sessionId || sessionId.toString().startsWith('new')) {
+			console.log('🚫 SessionId is null or starts with "new", returning empty array');
 			return [];
 		}
 
+		console.log('📡 Querying Supabase for chat messages...');
 		const { data: messages, error } = await supabase
 			.from('chat_messages')
 			.select('*')
@@ -259,10 +305,21 @@ async function getChatHistory(sessionId) {
 
 		if (error) {
 			console.error('❌ Chat geçmişi çekilemedi:', error);
+			console.error('❌ Supabase error details:', error.message, error.code);
 			return [];
 		}
 
 		console.log(`📜 Session ${sessionId} için ${messages?.length || 0} mesaj çekildi`);
+		
+		if (messages && messages.length > 0) {
+			console.log('📋 Message details:', messages.map(m => ({
+				id: m.id,
+				role: m.role,
+				content_preview: m.content?.substring(0, 30) + '...',
+				created_at: m.created_at
+			})));
+		}
+		
 		return messages || [];
 	} catch (error) {
 		console.error('❌ Chat geçmişi çekilirken hata:', error);

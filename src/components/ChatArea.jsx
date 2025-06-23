@@ -55,7 +55,23 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
       // Get the session ID from the updated chat
       const sessionId = updatedChat?.id || currentChat?.id;
       
+      // DB commit işleminin tamamlanması için uzun bir delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       console.log('🔍 Session ID for streaming API call:', sessionId);
+      console.log('💬 Current chat messages count:', currentChat?.messages?.length || 0);
+      console.log('📋 Current chat info:', { 
+        id: currentChat?.id, 
+        title: currentChat?.title,
+        messagesCount: currentChat?.messages?.length 
+      });
+      
+      // Frontend'deki mevcut mesajları da logla
+      console.log('🗨️ Current chat messages in frontend:', currentChat?.messages?.map((m, i) => ({
+        index: i,
+        role: m.role,
+        content: m.content?.substring(0, 50) + '...'
+      })));
       
       // Call streaming API
       const response = await fetch('/api/chat/stream', {

@@ -2,10 +2,21 @@ import { NextResponse } from 'next/server';
 import { OpenAI } from "openai";
 import { createClient } from '@supabase/supabase-js';
 
-// Supabase istemcisini oluştur
-const supabase = createClient(
+// Supabase istemcileri oluştur (hem anon hem service)
+const supabaseAnon = createClient(
 	process.env.NEXT_PUBLIC_SUPABASE_URL,
 	process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
+
+const supabaseService = createClient(
+	process.env.NEXT_PUBLIC_SUPABASE_URL,
+	process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+	{
+		auth: {
+			autoRefreshToken: false,
+			persistSession: false
+		}
+	}
 );
 
 // OpenAI istemcisini oluştur (OpenRouter API ile)
@@ -31,7 +42,7 @@ async function getUserProfile(userId) {
 	try {
 		console.log('📋 getUserProfile çağrıldı, userId:', userId);
 		
-		const { data, error } = await supabase
+		const { data, error } = await supabaseService
 			.from('user_profile')
 			.select('*')
 			.eq('user_id', userId)
@@ -55,7 +66,7 @@ async function getHealthInfo(userId) {
 	try {
 		console.log('🏥 getHealthInfo çağrıldı, userId:', userId);
 		
-		const { data, error } = await supabase
+		const { data, error } = await supabaseService
 			.from('health_info')
 			.select('*')
 			.eq('user_id', userId)
@@ -128,28 +139,63 @@ YASAKLAR:
 
 ÖNEMLİ: Eğer kullanıcının profil ve sağlık bilgileri mevcutsa, yanıtında mutlaka bu bilgileri dikkate al ve gerekli uyarıları doğal bir şekilde yap. Özellikle ilaç alerjileri ve kronik hastalıklar için özel dikkat göster. Kullanıcı kendisi hakkında sorular sorduğunda mevcut bilgileri kullanarak samimi ve doğal bir yanıt ver.
 
+SOHBET CONTEXT'İ: Eğer bu sohbette önceki mesajlar varsa, onları dikkate al ve sohbetin devamlılığını sağla. Sohbet geçmişini unutma!
+
 Şimdi kullanıcının sorusunu bu rehbere göre yanıtla:`;
 }
 
-// Chat session'ından mesajları çek
-async function getChatHistory(sessionId) {
+// Chat session'ından mesajları çek (RLS ile uyumlu)
+async function getChatHistory(sessionId, userId, retryCount = 3) {
 	try {
+		console.error(`🔍 getChatHistory called with sessionId: ${sessionId}, userId: ${userId} (retry: ${4-retryCount}/3)`);
+		
 		if (!sessionId || sessionId.toString().startsWith('new')) {
+			console.error('🚫 SessionId is null or starts with "new", returning empty array');
 			return [];
 		}
 
-		const { data: messages, error } = await supabase
+		if (!userId) {
+			console.error('🚫 UserId is null, cannot query with RLS, returning empty array');
+			return [];
+		}
+
+		console.error('📡 Querying Supabase for chat messages with user context...');
+		
+		// Service client ile RLS bypass ederek mesajları çek
+		console.error('🔑 Using service role client to bypass RLS');
+		const { data: messages, error } = await supabaseService
 			.from('chat_messages')
 			.select('*')
 			.eq('session_id', sessionId)
+			.eq('user_id', userId)  // Güvenlik için user_id kontrolü ekle
 			.order('created_at', { ascending: true });
 
 		if (error) {
 			console.error('❌ Chat geçmişi çekilemedi:', error);
+			console.error('❌ Supabase error details:', error.message, error.code);
 			return [];
 		}
 
-		console.log(`📜 Session ${sessionId} için ${messages?.length || 0} mesaj çekildi`);
+		console.error(`📜 Session ${sessionId} için ${messages?.length || 0} mesaj çekildi`);
+		
+		// Eğer mesaj yoksa ve retry hakkımız varsa, kısa bir bekleyip tekrar dene
+		if ((!messages || messages.length === 0) && retryCount > 1) {
+			console.error(`🔄 No messages found, retrying in 500ms... (${retryCount-1} retries left)`);
+			await new Promise(resolve => setTimeout(resolve, 500));
+			return getChatHistory(sessionId, userId, retryCount - 1);
+		}
+		
+		if (messages && messages.length > 0) {
+			console.error('📋 Message details:', messages.map(m => ({
+				id: m.id,
+				role: m.role,
+				content_preview: m.content?.substring(0, 30) + '...',
+				created_at: m.created_at
+			})));
+		} else {
+			console.error('📭 Still no messages after all retries, proceeding with empty history');
+		}
+		
 		return messages || [];
 	} catch (error) {
 		console.error('❌ Chat geçmişi çekilirken hata:', error);
@@ -166,10 +212,10 @@ export async function POST(request) {
 		const frontendProfileData = body.profileData || null;
 		const frontendHealthData = body.healthData || null;
 
-		console.log('=== STREAMING API DEBUG ===');
-		console.log('Received message:', userMessage);
-		console.log('Received userId:', userId);
-		console.log('Received sessionId:', sessionId);
+		console.error('=== STREAMING API DEBUG ===');
+		console.error('Received message:', userMessage);
+		console.error('Received userId:', userId);
+		console.error('Received sessionId:', sessionId);
 
 		// Kullanıcı verilerini Supabase'den çek
 		let supabaseProfileData = null;
@@ -192,7 +238,9 @@ export async function POST(request) {
 		}
 
 		// Chat geçmişini çek
-		const chatHistory = await getChatHistory(sessionId);
+		console.error('🔍 About to call getChatHistory with sessionId:', sessionId, 'userId:', userId);
+		const chatHistory = await getChatHistory(sessionId, userId);
+		console.error('📜 getChatHistory returned:', chatHistory?.length, 'messages');
 
 		// Supabase verisi varsa onu kullan, yoksa frontend'den gelen veriyi kullan
 		const finalProfileData = supabaseProfileData || frontendProfileData;
@@ -209,17 +257,53 @@ export async function POST(request) {
 			}
 		];
 
-		// Chat geçmişini ekle (eğer varsa)
+		// Chat geçmişini ekle (Bu session'daki TÜM mesajları ekleyeceğiz)
 		if (chatHistory && chatHistory.length > 0) {
+			console.log('📚 Raw chat history from DB:', chatHistory.map((m, i) => ({ 
+				index: i, 
+				role: m.role, 
+				content: m.content?.substring(0, 50) + '...',
+				created_at: m.created_at
+			})));
+			
+			// Session'daki TÜM mesajları process et
 			const conversationMessages = chatHistory
-				.filter(msg => msg.role !== 'system' || msg.content !== 'Merhaba! Size ilaçlar hakkında nasıl yardımcı olabilirim?')
+				// Gereksiz sistem mesajlarını filtrele
+				.filter(msg => {
+					// Default sistem mesajını atla
+					if (msg.role === 'system' && (
+						msg.content === 'Merhaba! Size ilaçlar hakkında nasıl yardımcı olabilirim?' ||
+						msg.content?.includes('✍️ Yanıt hazırlanıyor')
+					)) {
+						return false;
+					}
+					return true;
+				})
+				// Role mapping: system mesajları assistant'a çevir
 				.map(msg => ({
 					role: msg.role === 'system' ? 'assistant' : msg.role,
-					content: msg.content
-				}));
+					content: msg.content?.trim()
+				}))
+				// Boş mesajları filtrele
+				.filter(msg => msg.content && msg.content.length > 0);
 			
+			console.log('📝 Processed conversation messages:', conversationMessages.map((m, i) => ({ 
+				index: i, 
+				role: m.role, 
+				content: m.content?.substring(0, 50) + '...' 
+			})));
+			
+			// Geçmiş mesajları ekle
 			messages.push(...conversationMessages);
 			console.log(`✅ Chat geçmişinden ${conversationMessages.length} mesaj eklendi`);
+			
+			// Context bilgisi
+			const userMessages = conversationMessages.filter(m => m.role === 'user').length;
+			const assistantMessages = conversationMessages.filter(m => m.role === 'assistant').length;
+			console.log(`💡 Context summary: ${userMessages} user, ${assistantMessages} assistant messages`);
+		} else {
+			console.log('📭 No chat history found for session:', sessionId);
+			console.log('🆕 This appears to be the first message in this session');
 		}
 
 		// Son kullanıcı mesajını ekle
@@ -229,6 +313,17 @@ export async function POST(request) {
 		});
 
 		console.log(`📤 Toplam ${messages.length} mesaj gönderiliyor`);
+		console.log('🎯 Final messages to model:', messages.map((m, i) => ({ 
+			index: i, 
+			role: m.role, 
+			content: m.content?.substring(0, 100) + '...' 
+		})));
+		
+		// CRITICAL: Modele gönderilen tüm mesajları tam olarak logla
+		console.error('🚨 FULL MESSAGES TO MODEL:');
+		messages.forEach((msg, i) => {
+			console.error(`  ${i}. [${msg.role.toUpperCase()}]: ${msg.content}`);
+		});
 
 		// Streaming response oluştur
 		const encoder = new TextEncoder();

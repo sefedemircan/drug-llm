@@ -6,14 +6,14 @@ const ScrollToTop = () => {
   const [isVisible, setIsVisible] = useState(true); // Test için başlangıçta görünür
 
   // Debug için
-  console.log('ScrollToTop rendered, isVisible:', isVisible);
+  //console.log('ScrollToTop rendered, isVisible:', isVisible);
 
   // Scroll olayını izle
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       const newIsVisible = scrollTop > 100; // Daha düşük threshold
-      console.log('Scroll position:', scrollTop, 'Will be visible:', newIsVisible);
+      //console.log('Scroll position:', scrollTop, 'Will be visible:', newIsVisible);
       setIsVisible(newIsVisible);
     };
 

@@ -34,7 +34,7 @@ function calculateAge(birthDate) {
 // Kullanıcı profil bilgilerini Supabase'den çek
 async function getUserProfile(userId) {
 	try {
-		console.log('📋 getUserProfile çağrıldı, userId:', userId);
+		//console.log('📋 getUserProfile çağrıldı, userId:', userId);
 		
 		const { data, error } = await supabase
 			.from('user_profile')
@@ -49,8 +49,8 @@ async function getUserProfile(userId) {
 			return null;
 		}
 
-		console.log('✅ Profile data query successful');
-		console.log('✅ Profile data found:', !!data && data.length > 0);
+		//console.log('✅ Profile data query successful');
+		//console.log('✅ Profile data found:', !!data && data.length > 0);
 		return data && data.length > 0 ? data[0] : null;
 	} catch (error) {
 		console.error('❌ Exception in getUserProfile:', error);
@@ -61,7 +61,7 @@ async function getUserProfile(userId) {
 // Kullanıcı sağlık bilgilerini Supabase'den çek
 async function getHealthInfo(userId) {
 	try {
-		console.log('🏥 getHealthInfo çağrıldı, userId:', userId);
+		//console.log('🏥 getHealthInfo çağrıldı, userId:', userId);
 		
 		const { data, error } = await supabase
 			.from('health_info')
@@ -70,14 +70,14 @@ async function getHealthInfo(userId) {
 			.limit(1);
 
 		if (error) {
-			console.error('❌ Error fetching health info:', error);
-			console.error('❌ Error details:', error.message);
-			console.error('❌ Error code:', error.code);
+			//console.error('❌ Error fetching health info:', error);
+			//console.error('❌ Error details:', error.message);
+			//console.error('❌ Error code:', error.code);
 			return null;
 		}
 
-		console.log('✅ Health data query successful');
-		console.log('✅ Health data found:', !!data && data.length > 0);
+		//console.log('✅ Health data query successful');
+		//console.log('✅ Health data found:', !!data && data.length > 0);
 		return data && data.length > 0 ? data[0] : null;
 	} catch (error) {
 		console.error('❌ Exception in getHealthInfo:', error);
@@ -183,7 +183,7 @@ async function generateChatResponse(userMessage, chatHistory = [], profileData =
 	}
 	
 	try {
-		console.log('Sending request to Llama 3.1 model...');
+		//console.log('Sending request to Llama 3.1 model...');
 		
 		// Chat geçmişini mesaj formatına çevir
 		const messages = [
@@ -195,13 +195,7 @@ async function generateChatResponse(userMessage, chatHistory = [], profileData =
 
 		// Chat geçmişini ekle (Bu session'daki TÜM mesajları ekleyeceğiz)
 		if (chatHistory && chatHistory.length > 0) {
-			console.log('📚 Raw chat history from DB:', chatHistory.map((m, i) => ({ 
-				index: i, 
-				role: m.role, 
-				content: m.content?.substring(0, 50) + '...',
-				created_at: m.created_at
-			})));
-			
+		
 			// Session'daki TÜM mesajları process et
 			const conversationMessages = chatHistory
 				// Gereksiz sistem mesajlarını filtrele
@@ -222,24 +216,19 @@ async function generateChatResponse(userMessage, chatHistory = [], profileData =
 				}))
 				// Boş mesajları filtrele
 				.filter(msg => msg.content && msg.content.length > 0);
-			
-			console.log('📝 Processed conversation messages:', conversationMessages.map((m, i) => ({ 
-				index: i, 
-				role: m.role, 
-				content: m.content?.substring(0, 50) + '...' 
-			})));
+		
 			
 			// Geçmiş mesajları ekle
 			messages.push(...conversationMessages);
-			console.log(`✅ Chat geçmişinden ${conversationMessages.length} mesaj eklendi`);
+			//console.log(`✅ Chat geçmişinden ${conversationMessages.length} mesaj eklendi`);
 			
 			// Context bilgisi
 			const userMessages = conversationMessages.filter(m => m.role === 'user').length;
 			const assistantMessages = conversationMessages.filter(m => m.role === 'assistant').length;
-			console.log(`💡 Context summary: ${userMessages} user, ${assistantMessages} assistant messages`);
+			//console.log(`💡 Context summary: ${userMessages} user, ${assistantMessages} assistant messages`);
 		} else {
-			console.log('📭 No chat history found for session:', sessionId);
-			console.log('🆕 This appears to be the first message in this session');
+			//console.log('📭 No chat history found for session:', sessionId);
+			//console.log('🆕 This appears to be the first message in this session');
 		}
 
 		// Son kullanıcı mesajını ekle
@@ -248,12 +237,7 @@ async function generateChatResponse(userMessage, chatHistory = [], profileData =
 			content: userMessage,
 		});
 
-		console.log(`📤 Toplam ${messages.length} mesaj gönderiliyor`);
-		console.log('🎯 Final messages to model:', messages.map((m, i) => ({ 
-			index: i, 
-			role: m.role, 
-			content: m.content?.substring(0, 100) + '...' 
-		})));
+		
 		
 		const chatCompletion = await client.chat.completions.create({
 			//model: "meta-llama/Meta-Llama-3.1-8B-Instruct-fast",
@@ -265,7 +249,7 @@ async function generateChatResponse(userMessage, chatHistory = [], profileData =
 			max_tokens: 1000,
 		});
 		
-		console.log('✅ Response received from AI model');
+		//onsole.log('✅ Response received from AI model');
 		const responseContent = chatCompletion.choices[0]?.message?.content;
 		
 		if (!responseContent || responseContent.trim().length === 0) {
@@ -273,7 +257,7 @@ async function generateChatResponse(userMessage, chatHistory = [], profileData =
 			throw new Error('Empty response from AI model');
 		}
 		
-		console.log('📝 AI Response length:', responseContent.length);
+		//console.log('📝 AI Response length:', responseContent.length);
 		return responseContent;
 	} catch (error) {
 		console.error('❌ Error generating chat response:', error);
@@ -289,14 +273,14 @@ function getErrorResponse(message) {
 // Chat session'ından mesajları çek
 async function getChatHistory(sessionId) {
 	try {
-		console.log(`🔍 getChatHistory called with sessionId: ${sessionId}`);
+		//console.log(`🔍 getChatHistory called with sessionId: ${sessionId}`);
 		
 		if (!sessionId || sessionId.toString().startsWith('new')) {
-			console.log('🚫 SessionId is null or starts with "new", returning empty array');
+			//console.log('🚫 SessionId is null or starts with "new", returning empty array');
 			return [];
 		}
 
-		console.log('📡 Querying Supabase for chat messages...');
+		//console.log('📡 Querying Supabase for chat messages...');
 		const { data: messages, error } = await supabase
 			.from('chat_messages')
 			.select('*')
@@ -309,7 +293,7 @@ async function getChatHistory(sessionId) {
 			return [];
 		}
 
-		console.log(`📜 Session ${sessionId} için ${messages?.length || 0} mesaj çekildi`);
+		//console.log(`📜 Session ${sessionId} için ${messages?.length || 0} mesaj çekildi`);
 		
 		if (messages && messages.length > 0) {
 			console.log('📋 Message details:', messages.map(m => ({
@@ -336,20 +320,20 @@ export async function POST(request) {
 		const frontendProfileData = body.profileData || null;
 		const frontendHealthData = body.healthData || null;
 
-		console.log('=== API DEBUG ===');
-		console.log('Received message:', userMessage);
-		console.log('Received userId:', userId);
-		console.log('Received sessionId:', sessionId);
-		console.log('Received profileData:', !!frontendProfileData);
-		console.log('Received healthData:', !!frontendHealthData);
+		//console.log('=== API DEBUG ===');
+		//console.log('Received message:', userMessage);
+		//console.log('Received userId:', userId);
+		//console.log('Received sessionId:', sessionId);
+		//console.log('Received profileData:', !!frontendProfileData);
+		//console.log('Received healthData:', !!frontendHealthData);
 
 		// Kullanıcı verilerini Supabase'den çek
 		let supabaseProfileData = null;
 		let supabaseHealthData = null;
 
 		if (userId) {
-			console.log('✅ UserID mevcut, kullanıcı verilerini çekiyorum...');
-			console.log('Fetching user data for userId:', userId);
+			//console.log('✅ UserID mevcut, kullanıcı verilerini çekiyorum...');
+			//console.log('Fetching user data for userId:', userId);
 			
 			// Paralel olarak profil ve sağlık bilgilerini çek
 			const [userProfile, userHealthInfo] = await Promise.all([
@@ -360,8 +344,8 @@ export async function POST(request) {
 			supabaseProfileData = userProfile;
 			supabaseHealthData = userHealthInfo;
 
-			console.log('Supabase Profile data fetched:', supabaseProfileData ? 'Yes' : 'No');
-			console.log('Supabase Health data fetched:', supabaseHealthData ? 'Yes' : 'No');
+			//console.log('Supabase Profile data fetched:', supabaseProfileData ? 'Yes' : 'No');
+			//console.log('Supabase Health data fetched:', supabaseHealthData ? 'Yes' : 'No');
 		}
 
 		// Chat geçmişini çek
@@ -373,11 +357,11 @@ export async function POST(request) {
 
 		// Debug için: eğer veri yoksa test verisi ekle
 		if (!finalProfileData && !finalHealthData) {
-			console.log('⚠️ No user data found, model will respond without personalization');
+			//console.log('⚠️ No user data found, model will respond without personalization');
 		}
 
-		console.log('🎯 Final profile data source:', supabaseProfileData ? 'Supabase' : (frontendProfileData ? 'Frontend' : 'None'));
-		console.log('🎯 Final health data source:', supabaseHealthData ? 'Supabase' : (frontendHealthData ? 'Frontend' : 'None'));
+		//console.log('🎯 Final profile data source:', supabaseProfileData ? 'Supabase' : (frontendProfileData ? 'Frontend' : 'None'));
+		//console.log('🎯 Final health data source:', supabaseHealthData ? 'Supabase' : (frontendHealthData ? 'Frontend' : 'None'));
 
 		try {
 			// Debug: System prompt'u logla
@@ -390,18 +374,18 @@ export async function POST(request) {
 			
 			// Boş yanıt kontrolü
 			if (!botReply || botReply.trim().length === 0) {
-				console.log('❌ Empty response from model');
+				//console.log('❌ Empty response from model');
 				return NextResponse.json({ 
 					reply: "Üzgünüm, şu anda yanıt oluşturamıyorum. Lütfen daha sonra tekrar deneyin." 
 				}, { status: 200 });
 			}
 			
-			console.log('✅ Bot reply generated successfully, length:', botReply.length);
-			console.log('📄 Bot reply preview:', botReply.substring(0, 200) + '...');
+			//console.log('✅ Bot reply generated successfully, length:', botReply.length);
+			//console.log('📄 Bot reply preview:', botReply.substring(0, 200) + '...');
 			
 			return NextResponse.json({ reply: botReply }, { status: 200 });
 		} catch (apiError) {
-			console.log('API Error:', apiError.message);
+			//console.log('API Error:', apiError.message);
 			return NextResponse.json({ 
 				reply: getErrorResponse(apiError.message) 
 			}, { status: 200 });

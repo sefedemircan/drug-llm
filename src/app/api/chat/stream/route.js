@@ -40,7 +40,7 @@ function calculateAge(birthDate) {
 // Kullanıcı profil bilgilerini Supabase'den çek
 async function getUserProfile(userId) {
 	try {
-		console.log('📋 getUserProfile çağrıldı, userId:', userId);
+		//console.log('📋 getUserProfile çağrıldı, userId:', userId);
 		
 		const { data, error } = await supabaseService
 			.from('user_profile')
@@ -53,7 +53,7 @@ async function getUserProfile(userId) {
 			return null;
 		}
 
-		console.log('✅ Profile data query successful');
+		//console.log('✅ Profile data query successful');
 		return data && data.length > 0 ? data[0] : null;
 	} catch (error) {
 		console.error('❌ Exception in getUserProfile:', error);
@@ -64,7 +64,7 @@ async function getUserProfile(userId) {
 // Kullanıcı sağlık bilgilerini Supabase'den çek
 async function getHealthInfo(userId) {
 	try {
-		console.log('🏥 getHealthInfo çağrıldı, userId:', userId);
+		//console.log('🏥 getHealthInfo çağrıldı, userId:', userId);
 		
 		const { data, error } = await supabaseService
 			.from('health_info')
@@ -77,7 +77,7 @@ async function getHealthInfo(userId) {
 			return null;
 		}
 
-		console.log('✅ Health data query successful');
+		//console.log('✅ Health data query successful');
 		return data && data.length > 0 ? data[0] : null;
 	} catch (error) {
 		console.error('❌ Exception in getHealthInfo:', error);
@@ -147,22 +147,22 @@ SOHBET CONTEXT'İ: Eğer bu sohbette önceki mesajlar varsa, onları dikkate al 
 // Chat session'ından mesajları çek (RLS ile uyumlu)
 async function getChatHistory(sessionId, userId, retryCount = 3) {
 	try {
-		console.error(`🔍 getChatHistory called with sessionId: ${sessionId}, userId: ${userId} (retry: ${4-retryCount}/3)`);
+		//console.error(`🔍 getChatHistory called with sessionId: ${sessionId}, userId: ${userId} (retry: ${4-retryCount}/3)`);
 		
 		if (!sessionId || sessionId.toString().startsWith('new')) {
-			console.error('🚫 SessionId is null or starts with "new", returning empty array');
+			//console.error('🚫 SessionId is null or starts with "new", returning empty array');
 			return [];
 		}
 
 		if (!userId) {
-			console.error('🚫 UserId is null, cannot query with RLS, returning empty array');
+			//console.error('🚫 UserId is null, cannot query with RLS, returning empty array');
 			return [];
 		}
 
-		console.error('📡 Querying Supabase for chat messages with user context...');
+		//console.error('📡 Querying Supabase for chat messages with user context...');
 		
 		// Service client ile RLS bypass ederek mesajları çek
-		console.error('🔑 Using service role client to bypass RLS');
+		//console.error('🔑 Using service role client to bypass RLS');
 		const { data: messages, error } = await supabaseService
 			.from('chat_messages')
 			.select('*')
@@ -171,16 +171,16 @@ async function getChatHistory(sessionId, userId, retryCount = 3) {
 			.order('created_at', { ascending: true });
 
 		if (error) {
-			console.error('❌ Chat geçmişi çekilemedi:', error);
-			console.error('❌ Supabase error details:', error.message, error.code);
+			//console.error('❌ Chat geçmişi çekilemedi:', error);
+			//console.error('❌ Supabase error details:', error.message, error.code);
 			return [];
 		}
 
-		console.error(`📜 Session ${sessionId} için ${messages?.length || 0} mesaj çekildi`);
+		//console.error(`📜 Session ${sessionId} için ${messages?.length || 0} mesaj çekildi`);
 		
 		// Eğer mesaj yoksa ve retry hakkımız varsa, kısa bir bekleyip tekrar dene
 		if ((!messages || messages.length === 0) && retryCount > 1) {
-			console.error(`🔄 No messages found, retrying in 500ms... (${retryCount-1} retries left)`);
+			//console.error(`🔄 No messages found, retrying in 500ms... (${retryCount-1} retries left)`);
 			await new Promise(resolve => setTimeout(resolve, 500));
 			return getChatHistory(sessionId, userId, retryCount - 1);
 		}
@@ -212,17 +212,17 @@ export async function POST(request) {
 		const frontendProfileData = body.profileData || null;
 		const frontendHealthData = body.healthData || null;
 
-		console.error('=== STREAMING API DEBUG ===');
-		console.error('Received message:', userMessage);
-		console.error('Received userId:', userId);
-		console.error('Received sessionId:', sessionId);
+		//console.error('=== STREAMING API DEBUG ===');
+		//console.error('Received message:', userMessage);
+		//console.error('Received userId:', userId);
+		//console.error('Received sessionId:', sessionId);
 
 		// Kullanıcı verilerini Supabase'den çek
 		let supabaseProfileData = null;
 		let supabaseHealthData = null;
 
 		if (userId) {
-			console.log('✅ UserID mevcut, kullanıcı verilerini çekiyorum...');
+			//console.log('✅ UserID mevcut, kullanıcı verilerini çekiyorum...');
 			
 			// Paralel olarak profil ve sağlık bilgilerini çek
 			const [userProfile, userHealthInfo] = await Promise.all([
@@ -233,21 +233,21 @@ export async function POST(request) {
 			supabaseProfileData = userProfile;
 			supabaseHealthData = userHealthInfo;
 
-			console.log('Supabase Profile data fetched:', supabaseProfileData ? 'Yes' : 'No');
-			console.log('Supabase Health data fetched:', supabaseHealthData ? 'Yes' : 'No');
+			//console.log('Supabase Profile data fetched:', supabaseProfileData ? 'Yes' : 'No');
+			//console.log('Supabase Health data fetched:', supabaseHealthData ? 'Yes' : 'No');
 		}
 
 		// Chat geçmişini çek
-		console.error('🔍 About to call getChatHistory with sessionId:', sessionId, 'userId:', userId);
+		//console.error('🔍 About to call getChatHistory with sessionId:', sessionId, 'userId:', userId);
 		const chatHistory = await getChatHistory(sessionId, userId);
-		console.error('📜 getChatHistory returned:', chatHistory?.length, 'messages');
+		//console.error('📜 getChatHistory returned:', chatHistory?.length, 'messages');
 
 		// Supabase verisi varsa onu kullan, yoksa frontend'den gelen veriyi kullan
 		const finalProfileData = supabaseProfileData || frontendProfileData;
 		const finalHealthData = supabaseHealthData || frontendHealthData;
 
-		console.log('🎯 Final profile data source:', supabaseProfileData ? 'Supabase' : (frontendProfileData ? 'Frontend' : 'None'));
-		console.log('🎯 Final health data source:', supabaseHealthData ? 'Supabase' : (frontendHealthData ? 'Frontend' : 'None'));
+		//console.log('🎯 Final profile data source:', supabaseProfileData ? 'Supabase' : (frontendProfileData ? 'Frontend' : 'None'));
+		//console.log('🎯 Final health data source:', supabaseHealthData ? 'Supabase' : (frontendHealthData ? 'Frontend' : 'None'));
 
 		// Chat geçmişini mesaj formatına çevir
 		const messages = [
@@ -259,12 +259,6 @@ export async function POST(request) {
 
 		// Chat geçmişini ekle (Bu session'daki TÜM mesajları ekleyeceğiz)
 		if (chatHistory && chatHistory.length > 0) {
-			console.log('📚 Raw chat history from DB:', chatHistory.map((m, i) => ({ 
-				index: i, 
-				role: m.role, 
-				content: m.content?.substring(0, 50) + '...',
-				created_at: m.created_at
-			})));
 			
 			// Session'daki TÜM mesajları process et
 			const conversationMessages = chatHistory
@@ -287,23 +281,19 @@ export async function POST(request) {
 				// Boş mesajları filtrele
 				.filter(msg => msg.content && msg.content.length > 0);
 			
-			console.log('📝 Processed conversation messages:', conversationMessages.map((m, i) => ({ 
-				index: i, 
-				role: m.role, 
-				content: m.content?.substring(0, 50) + '...' 
-			})));
+			
 			
 			// Geçmiş mesajları ekle
 			messages.push(...conversationMessages);
-			console.log(`✅ Chat geçmişinden ${conversationMessages.length} mesaj eklendi`);
+			//console.log(`✅ Chat geçmişinden ${conversationMessages.length} mesaj eklendi`);
 			
 			// Context bilgisi
 			const userMessages = conversationMessages.filter(m => m.role === 'user').length;
 			const assistantMessages = conversationMessages.filter(m => m.role === 'assistant').length;
-			console.log(`💡 Context summary: ${userMessages} user, ${assistantMessages} assistant messages`);
+			//console.log(`💡 Context summary: ${userMessages} user, ${assistantMessages} assistant messages`);
 		} else {
-			console.log('📭 No chat history found for session:', sessionId);
-			console.log('🆕 This appears to be the first message in this session');
+			//console.log('📭 No chat history found for session:', sessionId);
+			//console.log('🆕 This appears to be the first message in this session');
 		}
 
 		// Son kullanıcı mesajını ekle
@@ -312,25 +302,15 @@ export async function POST(request) {
 			content: userMessage,
 		});
 
-		console.log(`📤 Toplam ${messages.length} mesaj gönderiliyor`);
-		console.log('🎯 Final messages to model:', messages.map((m, i) => ({ 
-			index: i, 
-			role: m.role, 
-			content: m.content?.substring(0, 100) + '...' 
-		})));
+		//console.log(`📤 Toplam ${messages.length} mesaj gönderiliyor`);
 		
-		// CRITICAL: Modele gönderilen tüm mesajları tam olarak logla
-		console.error('🚨 FULL MESSAGES TO MODEL:');
-		messages.forEach((msg, i) => {
-			console.error(`  ${i}. [${msg.role.toUpperCase()}]: ${msg.content}`);
-		});
-
+		
 		// Streaming response oluştur
 		const encoder = new TextEncoder();
 		const stream = new ReadableStream({
 			async start(controller) {
 				try {
-					console.log('🌊 Starting streaming response...');
+					//console.log('🌊 Starting streaming response...');
 					
 					const stream = await client.chat.completions.create({
 						model: "meta-llama/llama-4-maverick:free",

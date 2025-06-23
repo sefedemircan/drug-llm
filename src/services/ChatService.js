@@ -101,7 +101,7 @@ class ChatService {
 
       if (error) throw error;
 
-      console.log('✅ New chat session created:', session.id);
+      //console.log('✅ New chat session created:', session.id);
       return session;
     } catch (error) {
       console.error('❌ Error creating chat session:', error);
@@ -122,13 +122,6 @@ class ChatService {
     if (!role || !content?.trim()) throw new Error('Role and content are required');
 
     try {
-      console.log('💾 addMessage started:', {
-        sessionId,
-        role,
-        contentLength: content.length,
-        userId: this.currentUser.id
-      });
-
       // Start transaction
       const { data: message, error: messageError } = await supabase
         .from('chat_messages')
@@ -147,11 +140,7 @@ class ChatService {
         throw messageError;
       }
 
-      console.log('✅ Message inserted into DB:', {
-        messageId: message.id,
-        role: message.role,
-        sessionId: message.session_id
-      });
+      
 
       // Update session timestamp
       const { error: updateError } = await supabase
@@ -163,7 +152,7 @@ class ChatService {
         console.warn('⚠️ Failed to update session timestamp:', updateError);
       }
 
-      console.log(`✅ Message added: ${role} message to session ${sessionId}`);
+      //console.log(`✅ Message added: ${role} message to session ${sessionId}`);
       return message;
     } catch (error) {
       console.error('❌ Error adding message:', error);
@@ -193,13 +182,7 @@ class ChatService {
     }
 
     try {
-      console.log('🚀 completeChatTransaction started:', {
-        hasSessionId: !!sessionId,
-        userMessageLength: userMessage.length,
-        botResponseLength: botResponse.length,
-        sessionTitle,
-        currentUserId: this.currentUser?.id
-      });
+      
 
       let currentSessionId = sessionId;
 
@@ -208,23 +191,23 @@ class ChatService {
         if (!sessionTitle?.trim()) {
           throw new Error('Session title is required for new sessions');
         }
-        console.log('🆕 Creating new session...');
+        //console.log('🆕 Creating new session...');
         const newSession = await this.createChatSession(sessionTitle);
         currentSessionId = newSession.id;
-        console.log('✅ New session created:', currentSessionId);
+        //console.log('✅ New session created:', currentSessionId);
       }
 
       // Add user message
-      console.log('👤 Adding user message...');
+      //console.log('👤 Adding user message...');
       const userMsg = await this.addMessage(currentSessionId, 'user', userMessage);
-      console.log('✅ User message added:', userMsg.id);
+      //console.log('✅ User message added:', userMsg.id);
       
       // Add bot response
-      console.log('🤖 Adding bot response...');
+      //console.log('🤖 Adding bot response...');
       const botMsg = await this.addMessage(currentSessionId, 'assistant', botResponse);
-      console.log('✅ Bot message added:', botMsg.id);
+      //console.log('✅ Bot message added:', botMsg.id);
 
-      console.log(`✅ Chat transaction completed for session: ${currentSessionId}`);
+      //console.log(`✅ Chat transaction completed for session: ${currentSessionId}`);
       
       return {
         sessionId: currentSessionId,
@@ -267,7 +250,7 @@ class ChatService {
 
       if (error) throw error;
 
-      console.log(`✅ Chat session deleted: ${sessionId}`);
+      //console.log(`✅ Chat session deleted: ${sessionId}`);
       return true;
     } catch (error) {
       console.error('❌ Error deleting chat session:', error);

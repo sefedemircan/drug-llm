@@ -46,11 +46,11 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
       setIsStreaming(true);
       setStreamingContent('');
       
-      console.log('🚀 handleSendMessage başladı:', message.substring(0, 50) + '...');
+      //console.log('🚀 handleSendMessage başladı:', message.substring(0, 50) + '...');
       
       // Add user message and get the updated chat with session ID
       const updatedChat = await addUserMessage(message);
-      console.log('✅ User message added, updated chat:', updatedChat?.id);
+      //console.log('✅ User message added, updated chat:', updatedChat?.id);
       
       // Get the session ID from the updated chat
       const sessionId = updatedChat?.id || currentChat?.id;
@@ -58,20 +58,9 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
       // DB commit işleminin tamamlanması için uzun bir delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      console.log('🔍 Session ID for streaming API call:', sessionId);
-      console.log('💬 Current chat messages count:', currentChat?.messages?.length || 0);
-      console.log('📋 Current chat info:', { 
-        id: currentChat?.id, 
-        title: currentChat?.title,
-        messagesCount: currentChat?.messages?.length 
-      });
+      //console.log('🔍 Session ID for streaming API call:', sessionId);
+      //console.log('💬 Current chat messages count:', currentChat?.messages?.length || 0);
       
-      // Frontend'deki mevcut mesajları da logla
-      console.log('🗨️ Current chat messages in frontend:', currentChat?.messages?.map((m, i) => ({
-        index: i,
-        role: m.role,
-        content: m.content?.substring(0, 50) + '...'
-      })));
       
       // Call streaming API
       const response = await fetch('/api/chat/stream', {
@@ -88,7 +77,7 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
         }),
       });
 
-      console.log('📡 Streaming response status:', response.status, response.statusText);
+      //console.log('📡 Streaming response status:', response.status, response.statusText);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -120,13 +109,13 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
                 setStreamingContent(fullResponse);
                 
                 // Save final message to database
-                console.log('💾 Saving final streaming message to database');
+                //console.log('💾 Saving final streaming message to database');
                 await addBotMessageWithSessionId(fullResponse, sessionId);
                 
                 setIsStreaming(false);
-                console.log('✅ Streaming bot yanıtı tamamlandı');
+                //console.log('✅ Streaming bot yanıtı tamamlandı');
               } else if (data.type === 'error') {
-                console.error('❌ Streaming error:', data.error);
+                //console.error('❌ Streaming error:', data.error);
                 setIsStreaming(false);
                 await addBotMessage('Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.');
               }

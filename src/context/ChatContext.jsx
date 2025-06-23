@@ -41,10 +41,10 @@ export function ChatProvider({ children }) {
 
   // Supabase'den chat geçmişini yükle
   const loadChatHistory = async () => {
-    console.log('🔄 loadChatHistory çalışıyor - user:', user?.id);
+    //console.log('🔄 loadChatHistory çalışıyor - user:', user?.id);
     
     if (!user) {
-      console.log('❌ User yok, chat history temizleniyor');
+      //console.log('❌ User yok, chat history temizleniyor');
       resetChatState();
       return;
     }
@@ -54,10 +54,10 @@ export function ChatProvider({ children }) {
       
       // Get sessions using new ChatService
       const sessions = await chatService.getChatSessions();
-      console.log('📥 Sessions yüklendi:', sessions?.length || 0);
+      //onsole.log('📥 Sessions yüklendi:', sessions?.length || 0);
 
       if (!sessions || sessions.length === 0) {
-        console.log('⭕ Hiç session yok');
+        //console.log('⭕ Hiç session yok');
         setChatHistory([]);
         setCurrentChat(null);
         return;
@@ -67,7 +67,7 @@ export function ChatProvider({ children }) {
       const sessionsWithMessages = await Promise.all(
         sessions.map(async (session) => {
           const messages = await chatService.getChatMessages(session.id);
-          console.log(`📨 Session ${session.id} için ${messages?.length || 0} mesaj yüklendi`);
+          //console.log(`📨 Session ${session.id} için ${messages?.length || 0} mesaj yüklendi`);
 
           return {
             id: session.id,
@@ -82,7 +82,7 @@ export function ChatProvider({ children }) {
       // Group by date for UI compatibility
       const groupedHistory = groupChatsByDate(sessionsWithMessages);
       setChatHistory(groupedHistory);
-      console.log('✅ Chat history set edildi:', groupedHistory);
+      //console.log('✅ Chat history set edildi:', groupedHistory);
 
       // Set most recent chat as current
       if (sessionsWithMessages.length > 0) {
@@ -90,18 +90,18 @@ export function ChatProvider({ children }) {
         
         if (!currentChat || !currentChatExists || !currentChat.messages || currentChat.messages.length <= 1) {
           const mostRecentChat = sessionsWithMessages[0];
-          console.log('🎯 En son chat set ediliyor:', mostRecentChat.id, mostRecentChat.title);
+          //console.log('🎯 En son chat set ediliyor:', mostRecentChat.id, mostRecentChat.title);
           setCurrentChat(mostRecentChat);
           setIsNewChat(false);
         } else {
           const updatedCurrentChat = sessionsWithMessages.find(s => s.id === currentChat.id);
           if (updatedCurrentChat && updatedCurrentChat.messages.length !== currentChat.messages.length) {
-            console.log('🔄 Mevcut chat\'in mesajları güncelleniyor:', updatedCurrentChat.messages.length);
+            //console.log('🔄 Mevcut chat\'in mesajları güncelleniyor:', updatedCurrentChat.messages.length);
             setCurrentChat(updatedCurrentChat);
           }
         }
       } else {
-        console.log('🆕 Hiç session yok, otomatik yeni chat başlatılıyor');
+        //console.log('🆕 Hiç session yok, otomatik yeni chat başlatılıyor');
         startNewChat();
       }
 
@@ -153,7 +153,7 @@ export function ChatProvider({ children }) {
     if (!user) return;
 
     try {
-      console.log(`📂 Selecting chat: ${chatId}`);
+      //console.log(`📂 Selecting chat: ${chatId}`);
       
       // Find in loaded history first
       let foundChat = null;
@@ -169,7 +169,7 @@ export function ChatProvider({ children }) {
         setCurrentChat(foundChat);
         setCurrentSessionId(foundChat.id);
         setIsNewChat(false);
-        console.log(`✅ Chat selected: ${foundChat.title}`);
+        //console.log(`✅ Chat selected: ${foundChat.title}`);
       } else {
         console.error(`❌ Chat not found: ${chatId}`);
       }
@@ -180,7 +180,7 @@ export function ChatProvider({ children }) {
 
   // Yeni sohbet başlat
   const startNewChat = () => {
-    console.log('🆕 Starting new chat');
+    //console.log('🆕 Starting new chat');
     setCurrentChat({...emptyChat, id: 'new-' + Date.now()});
     setCurrentSessionId(null);
     setIsNewChat(true);
@@ -189,18 +189,9 @@ export function ChatProvider({ children }) {
   // Ana mesaj ekleme fonksiyonu
   const addMessageToCurrentChat = async (message) => {
     if (!message?.content?.trim() || !user?.id) {
-      console.log('❌ Invalid message or user!');
+      //console.log('❌ Invalid message or user!');
       return null;
     }
-
-    console.log('🚀 addMessageToCurrentChat başlıyor:', {
-      messageRole: message.role,
-      messageContent: message.content.substring(0, 50) + '...',
-      currentChatId: currentChat?.id,
-      currentSessionId: currentSessionId,
-      isNewChat: !currentChat?.id || currentChat.id.startsWith('new'),
-      userID: user.id
-    });
 
     try {
       // UI'ya mesajı hemen ekle
@@ -217,7 +208,7 @@ export function ChatProvider({ children }) {
       // User mesajı için session kontrolü
       if (message.role === 'user') {
         if (!sessionId || !currentChat?.id || currentChat.id.startsWith('new')) {
-          console.log('🆕 Creating new session for user message');
+          //console.log('🆕 Creating new session for user message');
           
           const title = chatService.generateTitle(message.content);
           const newSession = await chatService.createChatSession(title);
@@ -231,18 +222,18 @@ export function ChatProvider({ children }) {
             messages: []
           };
           
-          console.log('✅ New session created:', sessionId);
+          //console.log('✅ New session created:', sessionId);
         }
       } 
       // Bot mesajı için session kontrolü
       else if (message.role === 'assistant') {
         if (!sessionId && currentChat?.id && !currentChat.id.startsWith('new')) {
           sessionId = currentChat.id;
-          console.log('🔄 Using currentChat.id for bot message:', sessionId);
+          //console.log('🔄 Using currentChat.id for bot message:', sessionId);
         }
         
         if (!sessionId) {
-          console.error('❌ No valid session ID for bot message!');
+          //console.error('❌ No valid session ID for bot message!');
           return null;
         }
       }
@@ -254,7 +245,7 @@ export function ChatProvider({ children }) {
       }));
 
       // Veritabanına kaydet
-      console.log('💾 Saving message to database with session ID:', sessionId);
+      //console.log('💾 Saving message to database with session ID:', sessionId);
       const savedMessage = await chatService.addMessage(sessionId, message.role, message.content);
       
       // UI'daki temp mesajı gerçek mesajla değiştir
@@ -276,7 +267,7 @@ export function ChatProvider({ children }) {
       // Sidebar güncelle
       await loadChatHistory();
       
-      console.log('✅ Message saved and UI updated:', savedMessage.id);
+      //console.log('✅ Message saved and UI updated:', savedMessage.id);
       return updatedChat;
       
     } catch (error) {
@@ -290,7 +281,7 @@ export function ChatProvider({ children }) {
     if (!user || !chatId) return false;
 
     try {
-      console.log(`🗑️ Deleting chat: ${chatId}`);
+      //console.log(`🗑️ Deleting chat: ${chatId}`);
       await chatService.deleteChatSession(chatId);
       
       // Update local state
@@ -301,7 +292,7 @@ export function ChatProvider({ children }) {
         startNewChat();
       }
       
-      console.log(`✅ Chat deleted: ${chatId}`);
+      //console.log(`✅ Chat deleted: ${chatId}`);
       return true;
     } catch (error) {
       console.error('❌ Chat silinirken hata:', error);
@@ -312,12 +303,6 @@ export function ChatProvider({ children }) {
   // Bot yanıtını ekle
   const addBotMessage = async (botResponse) => {
     if (!botResponse?.trim()) return;
-
-    console.log('🤖 addBotMessage çağrıldı:', {
-      currentSessionId,
-      currentChatId: currentChat?.id,
-      responseLength: botResponse.length
-    });
 
     const botMessage = {
       role: 'assistant',
@@ -330,11 +315,6 @@ export function ChatProvider({ children }) {
   // Bot yanıtını ekle - Session ID ile
   const addBotMessageWithSessionId = async (botResponse, sessionId) => {
     if (!botResponse?.trim() || !sessionId) return;
-
-    console.log('🤖 addBotMessageWithSessionId çağrıldı:', {
-      sessionId,
-      responseLength: botResponse.length
-    });
 
     try {
       // Add message to UI immediately
@@ -353,7 +333,7 @@ export function ChatProvider({ children }) {
       }));
 
       // Save to database directly with session ID
-      console.log('💾 Saving bot message to database with session ID:', sessionId);
+      //console.log('💾 Saving bot message to database with session ID:', sessionId);
       const savedMessage = await chatService.addMessage(sessionId, 'assistant', botResponse.trim());
       
       // Replace temporary message with saved one
@@ -366,7 +346,7 @@ export function ChatProvider({ children }) {
         ).filter(msg => !msg.isTemporary || msg.id !== newMessage.id)
       }));
 
-      console.log('✅ Bot message saved to database:', savedMessage.id);
+      //console.log('✅ Bot message saved to database:', savedMessage.id);
       return currentChat;
     } catch (error) {
       console.error('❌ addBotMessageWithSessionId hatası:', error);
@@ -377,12 +357,6 @@ export function ChatProvider({ children }) {
   // User mesajını ekle
   const addUserMessage = async (userMessage) => {
     if (!userMessage?.trim()) return null;
-
-    console.log('👤 addUserMessage çağrıldı:', {
-      messageLength: userMessage.length,
-      currentSessionId,
-      currentChatId: currentChat?.id
-    });
 
     const message = {
       role: 'user',

@@ -47,6 +47,7 @@ import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { useMediaQuery } from "@mantine/hooks";
 import Navbar from "../components/Navbar";
+import ScrollToTop from "../components/ScrollToTop";
 
 // Optimized custom hook for scroll animations
 const useScrollAnimation = () => {
@@ -112,51 +113,7 @@ export default function Home() {
   // Scroll animasyonları için custom hook
   useScrollAnimation();
 
-  // Scroll durumunu izleme
-  const [scrollY, setScrollY] = useState(0);
-  const [showScrollToTop, setShowScrollToTop] = useState(false);
 
-  // Scroll butonu referansı
-  const scrollButtonRef = useRef(null);
-
-  // Scroll olayını izle
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      setScrollY(currentScrollY);
-
-      // Belirli bir mesafe kaydırıldığında yukarı çıkma butonunu göster
-      if (currentScrollY > 300) {
-        setShowScrollToTop(true);
-        // Butonun görünürlüğünü doğrudan DOM'da güncelle
-        if (scrollButtonRef.current) {
-          scrollButtonRef.current.style.display = "flex";
-        }
-      } else {
-        setShowScrollToTop(false);
-        // Butonun görünürlüğünü doğrudan DOM'da güncelle
-        if (scrollButtonRef.current) {
-          scrollButtonRef.current.style.display = "none";
-        }
-      }
-    };
-
-    // Sayfa yüklendiğinde scroll durumunu kontrol et
-    handleScroll();
-
-    // Scroll event'ini ekle
-    window.addEventListener("scroll", handleScroll);
-
-    // Component unmount olduğunda event listener'ı temizle
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Butonun görünürlüğünü güncelle
-  useEffect(() => {
-    if (scrollButtonRef.current) {
-      scrollButtonRef.current.style.display = showScrollToTop ? "flex" : "none";
-    }
-  }, [showScrollToTop]);
 
   // CSS animasyonlarını sayfa yüklendiğinde ekle
   useEffect(() => {
@@ -319,12 +276,7 @@ export default function Home() {
   }, []);
 
   // Sayfanın en üstüne scroll fonksiyonu
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
+
 
   const features = [
     {
@@ -1593,34 +1545,8 @@ export default function Home() {
         </Box>
       </Container>
 
-      {/* Yukarı Çıkma Butonu - Basitleştirilmiş */}
-      <Button
-        onClick={scrollToTop}
-        id="scrollTopButton"
-        ref={scrollButtonRef}
-        style={{
-          position: "fixed",
-          bottom: "30px",
-          right: "30px",
-          width: "60px",
-          height: "60px",
-          borderRadius: "50%",
-          backgroundColor: "#1976D2",
-          color: "white",
-          border: "none",
-          boxShadow: "0 4px 15px rgba(25, 118, 210, 0.5)",
-          cursor: "pointer",
-          display: "none", // Başlangıçta gizli, JavaScript ile kontrol edilecek
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 9999,
-          fontSize: "24px",
-          fontWeight: "bold",
-        }}
-        aria-label="Yukarı çık"
-      >
-        ↑
-      </Button>
+      {/* Scroll to Top Butonu */}
+      <ScrollToTop />
     </Box>
   );
 }

@@ -5,8 +5,11 @@ import { createClient } from '@supabase/supabase-js';
 
 // OpenAI istemcisini oluştur
 const client = new OpenAI({
-	baseURL: "https://router.huggingface.co/nebius/v1",
-	apiKey: process.env.HF_TOKEN || "",
+	//baseURL: "https://router.huggingface.co/nebius/v1",
+	//baseURL: "https://router.huggingface.co/hf-inference/models/meta-llama/Llama-3.3-70B-Instruct/v1",
+	baseURL: "https://openrouter.ai/api/v1",
+	//apiKey: process.env.HF_TOKEN || "",
+	apiKey: process.env.OPENROUTER_API_KEY || "",
 });
 
 // Supabase istemcisini oluştur
@@ -37,7 +40,7 @@ async function getUserProfile(userId) {
 			.from('user_profile')
 			.select('*')
 			.eq('user_id', userId)
-			.single();
+			.limit(1);
 
 		if (error) {
 			console.error('❌ Error fetching user profile:', error);
@@ -47,8 +50,8 @@ async function getUserProfile(userId) {
 		}
 
 		console.log('✅ Profile data query successful');
-		console.log('✅ Profile data found:', !!data);
-		return data;
+		console.log('✅ Profile data found:', !!data && data.length > 0);
+		return data && data.length > 0 ? data[0] : null;
 	} catch (error) {
 		console.error('❌ Exception in getUserProfile:', error);
 		return null;
@@ -64,7 +67,7 @@ async function getHealthInfo(userId) {
 			.from('health_info')
 			.select('*')
 			.eq('user_id', userId)
-			.single();
+			.limit(1);
 
 		if (error) {
 			console.error('❌ Error fetching health info:', error);
@@ -74,8 +77,8 @@ async function getHealthInfo(userId) {
 		}
 
 		console.log('✅ Health data query successful');
-		console.log('✅ Health data found:', !!data);
-		return data;
+		console.log('✅ Health data found:', !!data && data.length > 0);
+		return data && data.length > 0 ? data[0] : null;
 	} catch (error) {
 		console.error('❌ Exception in getHealthInfo:', error);
 		return null;
@@ -171,7 +174,7 @@ YASAKLAR:
 }
 
 // Llama 3.1 modeli ile chat tamamlama isteği gönderen fonksiyon
-async function generateChatResponse(userMessage, profileData = null, healthData = null) {
+async function generateChatResponse(userMessage, chatHistory = [], profileData = null, healthData = null) {
 	// API anahtarı kontrolü
 	if (!process.env.HF_TOKEN) {
 		throw new Error("HF_TOKEN environment variable is not set");
@@ -180,26 +183,58 @@ async function generateChatResponse(userMessage, profileData = null, healthData 
 	try {
 		console.log('Sending request to Llama 3.1 model...');
 		
+		// Chat geçmişini mesaj formatına çevir
+		const messages = [
+			{
+				role: "system",
+				content: createSystemPrompt(profileData, healthData)
+			}
+		];
+
+		// Chat geçmişini ekle (eğer varsa)
+		if (chatHistory && chatHistory.length > 0) {
+			// Sistem mesajını atla (zaten yukarıda eklendi)
+			const conversationMessages = chatHistory
+				.filter(msg => msg.role !== 'system' || msg.content !== 'Merhaba! Size ilaçlar hakkında nasıl yardımcı olabilirim?')
+				.map(msg => ({
+					role: msg.role === 'system' ? 'assistant' : msg.role,
+					content: msg.content
+				}));
+			
+			messages.push(...conversationMessages);
+			console.log(`✅ Chat geçmişinden ${conversationMessages.length} mesaj eklendi`);
+		}
+
+		// Son kullanıcı mesajını ekle
+		messages.push({
+			role: "user",
+			content: userMessage,
+		});
+
+		console.log(`📤 Toplam ${messages.length} mesaj gönderiliyor`);
+		
 		const chatCompletion = await client.chat.completions.create({
-			model: "meta-llama/Meta-Llama-3.1-8B-Instruct-fast",
-			messages: [
-				{
-					role: "system",
-					content: createSystemPrompt(profileData, healthData)
-				},
-				{
-					role: "user",
-					content: userMessage,
-				},
-			],
+			//model: "meta-llama/Meta-Llama-3.1-8B-Instruct-fast",
+			//model:"meta-llama/Llama-3.3-70B-Instruct",
+			//model:"deepseek/deepseek-r1-distill-llama-70b:free",
+			model:"meta-llama/llama-4-maverick:free",
+			messages: messages,
 			temperature: 0.7,
 			max_tokens: 1000,
 		});
 		
-		console.log('Response received from Llama 3.1');
-		return chatCompletion.choices[0].message.content;
+		console.log('✅ Response received from AI model');
+		const responseContent = chatCompletion.choices[0]?.message?.content;
+		
+		if (!responseContent || responseContent.trim().length === 0) {
+			console.error('❌ Empty response from AI model');
+			throw new Error('Empty response from AI model');
+		}
+		
+		console.log('📝 AI Response length:', responseContent.length);
+		return responseContent;
 	} catch (error) {
-		console.error('Error generating chat response:', error);
+		console.error('❌ Error generating chat response:', error);
 		throw error;
 	}
 }
@@ -209,28 +244,55 @@ function getErrorResponse(message) {
 	return `Üzgünüm, şu anda yanıt veremiyorum. Lütfen daha sonra tekrar deneyin. (Hata: ${message})`;
 }
 
+// Chat session'ından mesajları çek
+async function getChatHistory(sessionId) {
+	try {
+		if (!sessionId || sessionId.toString().startsWith('new')) {
+			return [];
+		}
+
+		const { data: messages, error } = await supabase
+			.from('chat_messages')
+			.select('*')
+			.eq('session_id', sessionId)
+			.order('created_at', { ascending: true });
+
+		if (error) {
+			console.error('❌ Chat geçmişi çekilemedi:', error);
+			return [];
+		}
+
+		console.log(`📜 Session ${sessionId} için ${messages?.length || 0} mesaj çekildi`);
+		return messages || [];
+	} catch (error) {
+		console.error('❌ Chat geçmişi çekilirken hata:', error);
+		return [];
+	}
+}
+
 export async function POST(request) {
 	try {
 		const body = await request.json();
 		const userMessage = body.message || 'Merhaba';
 		const userId = body.userId || null;
+		const sessionId = body.sessionId || null;
 		const frontendProfileData = body.profileData || null;
 		const frontendHealthData = body.healthData || null;
 
-		//console.log('=== API DEBUG ===');
-		//console.log('Received message:', userMessage);
-		//console.log('Received userId:', userId);
-		//console.log('UserId type:', typeof userId);
-		//console.log('Frontend profile data:', frontendProfileData);
-		//console.log('Frontend health data:', frontendHealthData);
+		console.log('=== API DEBUG ===');
+		console.log('Received message:', userMessage);
+		console.log('Received userId:', userId);
+		console.log('Received sessionId:', sessionId);
+		console.log('Received profileData:', !!frontendProfileData);
+		console.log('Received healthData:', !!frontendHealthData);
 
 		// Kullanıcı verilerini Supabase'den çek
 		let supabaseProfileData = null;
 		let supabaseHealthData = null;
 
 		if (userId) {
-			//console.log('✅ UserID mevcut, kullanıcı verilerini çekiyorum...');
-			//console.log('Fetching user data for userId:', userId);
+			console.log('✅ UserID mevcut, kullanıcı verilerini çekiyorum...');
+			console.log('Fetching user data for userId:', userId);
 			
 			// Paralel olarak profil ve sağlık bilgilerini çek
 			const [userProfile, userHealthInfo] = await Promise.all([
@@ -241,41 +303,45 @@ export async function POST(request) {
 			supabaseProfileData = userProfile;
 			supabaseHealthData = userHealthInfo;
 
-			//console.log('Supabase Profile data fetched:', supabaseProfileData ? 'Yes' : 'No');
-			//console.log('Supabase Health data fetched:', supabaseHealthData ? 'Yes' : 'No');
+			console.log('Supabase Profile data fetched:', supabaseProfileData ? 'Yes' : 'No');
+			console.log('Supabase Health data fetched:', supabaseHealthData ? 'Yes' : 'No');
 		}
+
+		// Chat geçmişini çek
+		const chatHistory = await getChatHistory(sessionId);
 
 		// Supabase verisi varsa onu kullan, yoksa frontend'den gelen veriyi kullan
 		const finalProfileData = supabaseProfileData || frontendProfileData;
 		const finalHealthData = supabaseHealthData || frontendHealthData;
 
-		//console.log('🎯 Final profile data source:', supabaseProfileData ? 'Supabase' : (frontendProfileData ? 'Frontend' : 'None'));
-		//console.log('🎯 Final health data source:', supabaseHealthData ? 'Supabase' : (frontendHealthData ? 'Frontend' : 'None'));
+		// Debug için: eğer veri yoksa test verisi ekle
+		if (!finalProfileData && !finalHealthData) {
+			console.log('⚠️ No user data found, model will respond without personalization');
+		}
+
+		console.log('🎯 Final profile data source:', supabaseProfileData ? 'Supabase' : (frontendProfileData ? 'Frontend' : 'None'));
+		console.log('🎯 Final health data source:', supabaseHealthData ? 'Supabase' : (frontendHealthData ? 'Frontend' : 'None'));
 
 		try {
 			// Debug: System prompt'u logla
-			const systemPrompt = createSystemPrompt(finalProfileData, finalHealthData);
-			console.log('Generated system prompt length:', systemPrompt.length);
-			console.log('Has user data for prompt:', !!(finalProfileData || finalHealthData));
-			if (finalProfileData || finalHealthData) {
-				console.log('✅ Kişisel bilgilerle prompt oluşturuldu');
-			} else {
-				console.log('❌ Genel prompt oluşturuldu');
-			}
-			console.log('System prompt preview:', systemPrompt.substring(0, 500) + '...');
+			//const systemPrompt = createSystemPrompt(finalProfileData, finalHealthData);
+			//console.log('Generated system prompt length:', systemPrompt.length);
+			//console.log('Has user data for prompt:', !!(finalProfileData || finalHealthData));
 			
-			// Llama 3.1 modeli ile yanıt oluştur
-			const botReply = await generateChatResponse(userMessage, finalProfileData, finalHealthData);
+			// Llama 3.1 modeli ile yanıt oluştur (chat geçmişini de gönder)
+			const botReply = await generateChatResponse(userMessage, chatHistory, finalProfileData, finalHealthData);
 			
 			// Boş yanıt kontrolü
 			if (!botReply || botReply.trim().length === 0) {
-				console.log('Empty response from model');
+				console.log('❌ Empty response from model');
 				return NextResponse.json({ 
 					reply: "Üzgünüm, şu anda yanıt oluşturamıyorum. Lütfen daha sonra tekrar deneyin." 
 				}, { status: 200 });
 			}
 			
-			console.log('✅ Bot reply generated successfully');
+			console.log('✅ Bot reply generated successfully, length:', botReply.length);
+			console.log('📄 Bot reply preview:', botReply.substring(0, 200) + '...');
+			
 			return NextResponse.json({ reply: botReply }, { status: 200 });
 		} catch (apiError) {
 			console.log('API Error:', apiError.message);

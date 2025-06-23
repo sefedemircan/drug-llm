@@ -1,16 +1,25 @@
 'use client'
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Stack, Box, Text, ActionIcon, Tooltip } from '@mantine/core';
 import { IconInfoCircle, IconChevronLeft, IconRobot } from '@tabler/icons-react';
 import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
+import StreamingChatMessage from './StreamingChatMessage';
 import { useChat } from '../context/ChatContext';
+import { useAuth } from '../context/AuthContext';
+import useUserData from '../hooks/useUserData';
 
 export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onOpenSidebar }) {
-  const { currentChat, addMessageToCurrentChat, isBotReplying } = useChat(); // Consume isBotReplying
+  const { currentChat, addUserMessage, addBotMessage, addBotMessageWithSessionId, isBotReplying, setIsBotReplying } = useChat();
+  const { user } = useAuth();
+  const { profileData, healthData } = useUserData();
   const messagesEndRef = useRef(null);
   const containerRef = useRef(null);
+  
+  // Streaming state
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [streamingContent, setStreamingContent] = useState('');
   
   // Scroll işlemini yöneten fonksiyon
   const scrollToBottom = () => {
@@ -22,10 +31,109 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
   // Yeni mesaj geldiğinde otomatik scroll
   useEffect(() => {
     scrollToBottom();
-  }, [currentChat.messages, isBotReplying]); // Add isBotReplying to dependencies
+  }, [currentChat?.messages, isBotReplying]);
 
-  const handleSendMessage = (message) => {
-    addMessageToCurrentChat(message);
+  // Auto-scroll when messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [currentChat?.messages, isBotReplying]);
+
+  const handleSendMessage = async (message) => {
+    if (!message?.trim()) return;
+    
+    try {
+      setIsBotReplying(true);
+      setIsStreaming(true);
+      setStreamingContent('');
+      
+      console.log('🚀 handleSendMessage başladı:', message.substring(0, 50) + '...');
+      
+      // Add user message and get the updated chat with session ID
+      const updatedChat = await addUserMessage(message);
+      console.log('✅ User message added, updated chat:', updatedChat?.id);
+      
+      // Get the session ID from the updated chat
+      const sessionId = updatedChat?.id || currentChat?.id;
+      
+      console.log('🔍 Session ID for streaming API call:', sessionId);
+      
+      // Call streaming API
+      const response = await fetch('/api/chat/stream', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: message,
+          userId: user?.id,
+          sessionId: sessionId,
+          profileData: profileData,
+          healthData: healthData
+        }),
+      });
+
+      console.log('📡 Streaming response status:', response.status, response.statusText);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Read streaming response
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullResponse = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (done) break;
+        
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+        
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              
+              if (data.type === 'chunk') {
+                fullResponse += data.content;
+                setStreamingContent(fullResponse);
+              } else if (data.type === 'complete') {
+                fullResponse = data.fullContent;
+                setStreamingContent(fullResponse);
+                
+                // Save final message to database
+                console.log('💾 Saving final streaming message to database');
+                await addBotMessageWithSessionId(fullResponse, sessionId);
+                
+                setIsStreaming(false);
+                console.log('✅ Streaming bot yanıtı tamamlandı');
+              } else if (data.type === 'error') {
+                console.error('❌ Streaming error:', data.error);
+                setIsStreaming(false);
+                await addBotMessage('Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.');
+              }
+            } catch (parseError) {
+              console.error('❌ JSON parse error:', parseError);
+            }
+          }
+        }
+      }
+
+    } catch (error) {
+      console.error('❌ handleSendMessage hatası:', error);
+      
+      setIsStreaming(false);
+      // Hata durumunda kullanıcıya bilgi ver
+      try {
+        await addBotMessage('Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.');
+      } catch (addError) {
+        console.error('❌ Hata mesajı eklenirken sorun:', addError);
+      }
+    } finally {
+      setIsBotReplying(false);
+    }
   };
 
   return (
@@ -74,15 +182,17 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
             textOverflow: 'ellipsis',
             maxWidth: isMobile ? 'calc(100vw - 100px)' : '500px'
           }}>
-            {currentChat.title}
+            {currentChat?.title || 'Yeni Sohbet'}
           </Text>
         </div>
         
-        <Tooltip label="DrugLLM, ilaç bilgilerini sağlayan bir yapay zeka asistanıdır" position="bottom" withArrow>
-          <ActionIcon variant="subtle" color="white">
-            <IconInfoCircle size={18} />
-          </ActionIcon>
-        </Tooltip>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <Tooltip label="DrugLLM, ilaç bilgilerini sağlayan bir yapay zeka asistanıdır" position="bottom" withArrow>
+            <ActionIcon variant="subtle" color="white">
+              <IconInfoCircle size={18} />
+            </ActionIcon>
+          </Tooltip>
+        </div>
       </Box>
 
       <Box
@@ -105,7 +215,7 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
           margin: '0 auto',
           width: '100%'
         }}>
-          {currentChat.messages.length === 0 ? (
+          {!currentChat || currentChat.messages.length === 0 ? (
             <div style={{ 
               display: 'flex', 
               flexDirection: 'column',
@@ -125,15 +235,24 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
             <>
               {currentChat.messages.map((message) => (
                 <ChatMessage 
-                  key={message.id} // Use message.id for key
+                  key={message.id}
                   message={message}
                   isMobile={isMobile}
                 />
               ))}
-              {isBotReplying && (
+              {isStreaming && (
+                <StreamingChatMessage
+                  key="streaming_message"
+                  message={{ id: 'streaming_message', role: 'assistant', content: '' }}
+                  isMobile={isMobile}
+                  isStreaming={true}
+                  streamingContent={streamingContent}
+                />
+              )}
+              {isBotReplying && !isStreaming && (
                 <ChatMessage
                   key="typing_indicator"
-                  message={{ id: 'typing_indicator', role: 'system', content: 'Bot is typing...' }}
+                  message={{ id: 'typing_indicator', role: 'system', content: '✍️ Yanıt hazırlanıyor...' }}
                   isMobile={isMobile}
                 />
               )}

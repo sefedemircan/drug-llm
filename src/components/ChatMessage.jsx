@@ -4,7 +4,7 @@ import { Paper, Text, Avatar, Group, Box } from '@mantine/core';
 import { IconRobot, IconUser } from '@tabler/icons-react';
 
 export default function ChatMessage({ message, isMobile }) {
-  const isBot = message.role === 'system';
+  const isBot = message.role === 'assistant' || message.role === 'system';
   
   return (
     <Paper

@@ -1,342 +1,417 @@
 'use client'
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
-
-// Örnek sohbet geçmişi verileri
-const mockChatHistory = [
-  {
-    date: 'Bugün',
-    chats: [
-      { 
-        id: 1, 
-        title: 'Aspirin kullanımı hakkında bilgi',
-        messages: [
-          {
-            id: 1,
-            role: 'system',
-            content: 'Merhaba! Size ilaçlar hakkında nasıl yardımcı olabilirim?'
-          },
-          {
-            id: 2,
-            role: 'user',
-            content: 'Aspirin nedir ve ne için kullanılır?'
-          },
-          {
-            id: 3,
-            role: 'system',
-            content: 'Aspirin (Asetilsalisilik asit), ağrı kesici, ateş düşürücü ve iltihap giderici özelliklere sahip bir ilaçtır. Genellikle hafif ve orta şiddetli ağrıların tedavisinde, ateş düşürmede ve iltihaplı durumların tedavisinde kullanılır. Ayrıca, düşük dozlarda kan pıhtılaşmasını önlemek için kalp krizi ve inme riskini azaltmak amacıyla da kullanılabilir.'
-          }
-        ]
-      },
-      { 
-        id: 2, 
-        title: 'Antibiyotik ilaçlarının yan etkileri',
-        messages: [
-          {
-            id: 1,
-            role: 'system',
-            content: 'Merhaba! Size ilaçlar hakkında nasıl yardımcı olabilirim?'
-          },
-          {
-            id: 2,
-            role: 'user',
-            content: 'Antibiyotik ilaçlarının yan etkileri nelerdir?'
-          },
-          {
-            id: 3,
-            role: 'system',
-            content: 'Antibiyotiklerin yan etkileri, ilacın türüne göre değişebilir. Yaygın yan etkiler arasında mide bulantısı, ishal, kusma, döküntü ve kaşıntı bulunur. Bazı antibiyotikler, bağırsak florasını bozarak probiyotik dengesini değiştirebilir. Nadir durumlarda ciddi alerjik reaksiyonlar, karaciğer veya böbrek sorunları oluşabilir. Antibiyotik kullanırken doktorunuzun önerilerine mutlaka uymalısınız.'
-          }
-        ]
-      }
-    ]
-  },
-  {
-    date: 'Dün',
-    chats: [
-      { 
-        id: 3, 
-        title: 'Parol ve Novalgin karşılaştırması',
-        messages: [
-          {
-            id: 1,
-            role: 'system',
-            content: 'Merhaba! Size ilaçlar hakkında nasıl yardımcı olabilirim?'
-          },
-          {
-            id: 2,
-            role: 'user',
-            content: 'Parol ve Novalgin arasındaki farklar nelerdir?'
-          },
-          {
-            id: 3,
-            role: 'system',
-            content: 'Parol (parasetamol) ve Novalgin (metamizol) farklı ağrı kesici ilaçlardır. Parol, ateş düşürücü ve ağrı kesici olarak kullanılır, ancak iltihaplanmayı azaltma etkisi azdır. Novalgin ise ağrı kesici, ateş düşürücü ve iltihaplanma önleyici özelliklere sahiptir. Novalgin, özellikle şiddetli ağrılarda tercih edilir. Ancak, Novalgin bazı ülkelerde kan hastalıkları riskinden dolayı kullanımı kısıtlanmıştır veya yasaklanmıştır. Her iki ilacın da farklı yan etki profilleri vardır ve doktor tavsiyesi ile kullanılmalıdır.'
-          }
-        ]
-      },
-      { 
-        id: 4, 
-        title: 'Kan sulandırıcı ilaçlar listesi',
-        messages: [
-          {
-            id: 1,
-            role: 'system',
-            content: 'Merhaba! Size ilaçlar hakkında nasıl yardımcı olabilirim?'
-          },
-          {
-            id: 2,
-            role: 'user',
-            content: 'En yaygın kan sulandırıcı ilaçlar nelerdir?'
-          },
-          {
-            id: 3,
-            role: 'system',
-            content: 'Yaygın kan sulandırıcı (antikoagülan) ilaçlar şunlardır: 1) Warfarin (Coumadin), 2) Heparin, 3) Düşük molekül ağırlıklı heparinler (Enoksaparin, Dalteparin), 4) Yeni nesil oral antikoagülanlar: Rivaroksaban (Xarelto), Apiksaban (Eliquis), Dabigatran (Pradaxa), Edoksaban (Lixiana/Savaysa). Ayrıca, antiplatelet ilaçlar da kan pıhtılaşmasını farklı bir mekanizma ile önler: Aspirin, Klopidogrel (Plavix), Prasugrel (Effient), Tikagrelor (Brilinta). Bu ilaçların her biri farklı endikasyonlar için kullanılır ve doktor kontrolünde alınmalıdır.'
-          }
-        ]
-      }
-    ]
-  },
-  {
-    date: 'Önceki 7 Gün',
-    chats: [
-      { 
-        id: 5, 
-        title: 'Grip için kullanılan ilaçlar',
-        messages: [
-          {
-            id: 1,
-            role: 'system',
-            content: 'Merhaba! Size ilaçlar hakkında nasıl yardımcı olabilirim?'
-          },
-          {
-            id: 2,
-            role: 'user',
-            content: 'Grip için kullanılan ilaçlar nelerdir?'
-          },
-          {
-            id: 3,
-            role: 'system',
-            content: 'Grip tedavisinde kullanılan ilaçlar genellikle semptomları hafifletmeye yöneliktir. Bunlar arasında parasetamol ve ibuprofen gibi ateş düşürücü ve ağrı kesiciler, dekonjestanlar (burun tıkanıklığını gidermek için), öksürük şurupları ve antihistaminikler (burun akıntısı için) bulunur. Ciddi grip vakalarında veya yüksek risk grubundaki hastalarda, viral replikasyonu durdurmak için oseltamivir (Tamiflu) gibi antiviral ilaçlar kullanılabilir. Ancak, bu antiviraller semptomlar başladıktan sonra ilk 48 saat içinde alınırsa en etkili olur.'
-          }
-        ]
-      },
-      { 
-        id: 6, 
-        title: 'Migren tedavisi',
-        messages: [
-          {
-            id: 1,
-            role: 'system',
-            content: 'Merhaba! Size ilaçlar hakkında nasıl yardımcı olabilirim?'
-          },
-          {
-            id: 2,
-            role: 'user',
-            content: 'Migren için hangi tedaviler mevcut?'
-          },
-          {
-            id: 3,
-            role: 'system',
-            content: 'Migren tedavisi genel olarak iki kategoriye ayrılır: akut tedavi ve önleyici tedavi. Akut tedavide, ağrı başladığında alınan ilaçlar kullanılır: parasetamol, NSAIDs (ibuprofen, naproksen), triptanlar (sumatriptan, zolmitriptan) ve CGRP antagonistleri (ubrogepant, rimegepant) gibi. Önleyici tedavide ise migren ataklarının sıklığını ve şiddetini azaltmak için düzenli kullanılan ilaçlar vardır: beta-blokerler (propranolol), antikonvülzanlar (topiramat), antidepresanlar, CGRP antikor tedavileri (erenumab, fremanezumab) ve botulinum toksini enjeksiyonları. Ayrıca, migren ataklarını tetikleyen faktörlerin belirlenmesi ve bunlardan kaçınılması da önemlidir.'
-          }
-        ]
-      }
-    ]
-  }
-];
+import chatService from '../services/ChatService';
 
 // Boş bir sohbet şablonu
 const emptyChat = {
   id: 'new',
   title: 'Yeni Sohbet',
-  messages: [
-    {
-      id: 1,
-      role: 'system',
-      content: 'Merhaba! Size ilaçlar hakkında nasıl yardımcı olabilirim?'
-    }
-  ]
+  messages: []
 };
 
 const ChatContext = createContext(null);
 
 export function ChatProvider({ children }) {
-  const [chatHistory, setChatHistory] = useState(mockChatHistory);
-  const [currentChat, setCurrentChat] = useState(mockChatHistory[0].chats[0]);
+  const [chatHistory, setChatHistory] = useState([]);
+  const [currentChat, setCurrentChat] = useState(null);
   const [isNewChat, setIsNewChat] = useState(false);
   const [isBotReplying, setIsBotReplying] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [currentSessionId, setCurrentSessionId] = useState(null); // Track active session ID
   const { user } = useAuth();
 
-  // Sohbet geçmişinden bir sohbeti seçer
-  const selectChat = (chatId) => {
-    // Önce mock verilerden sohbeti bul
-    let found = false;
+  // Initialize chat service when user changes
+  useEffect(() => {
+    if (user) {
+      chatService.setCurrentUser(user);
+      loadChatHistory();
+    } else {
+      resetChatState();
+    }
+  }, [user]);
+
+  const resetChatState = () => {
+    setChatHistory([]);
+    setCurrentChat(null);
+    setCurrentSessionId(null);
+    setLoading(false);
+  };
+
+  // Supabase'den chat geçmişini yükle
+  const loadChatHistory = async () => {
+    console.log('🔄 loadChatHistory çalışıyor - user:', user?.id);
     
-    for (const group of chatHistory) {
-      for (const chat of group.chats) {
-        if (chat.id === chatId) {
-          setCurrentChat(chat);
-          setIsNewChat(false);
-          found = true;
-          break;
-        }
+    if (!user) {
+      console.log('❌ User yok, chat history temizleniyor');
+      resetChatState();
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Get sessions using new ChatService
+      const sessions = await chatService.getChatSessions();
+      console.log('📥 Sessions yüklendi:', sessions?.length || 0);
+
+      if (!sessions || sessions.length === 0) {
+        console.log('⭕ Hiç session yok');
+        setChatHistory([]);
+        setCurrentChat(null);
+        return;
       }
-      if (found) break;
+
+      // Get messages for each session
+      const sessionsWithMessages = await Promise.all(
+        sessions.map(async (session) => {
+          const messages = await chatService.getChatMessages(session.id);
+          console.log(`📨 Session ${session.id} için ${messages?.length || 0} mesaj yüklendi`);
+
+          return {
+            id: session.id,
+            title: session.title,
+            messages: messages || [],
+            createdAt: session.created_at,
+            updatedAt: session.updated_at
+          };
+        })
+      );
+
+      // Group by date for UI compatibility
+      const groupedHistory = groupChatsByDate(sessionsWithMessages);
+      setChatHistory(groupedHistory);
+      console.log('✅ Chat history set edildi:', groupedHistory);
+
+      // Set most recent chat as current
+      if (sessionsWithMessages.length > 0) {
+        const currentChatExists = currentChat && sessionsWithMessages.find(s => s.id === currentChat.id);
+        
+        if (!currentChat || !currentChatExists || !currentChat.messages || currentChat.messages.length <= 1) {
+          const mostRecentChat = sessionsWithMessages[0];
+          console.log('🎯 En son chat set ediliyor:', mostRecentChat.id, mostRecentChat.title);
+          setCurrentChat(mostRecentChat);
+          setIsNewChat(false);
+        } else {
+          const updatedCurrentChat = sessionsWithMessages.find(s => s.id === currentChat.id);
+          if (updatedCurrentChat && updatedCurrentChat.messages.length !== currentChat.messages.length) {
+            console.log('🔄 Mevcut chat\'in mesajları güncelleniyor:', updatedCurrentChat.messages.length);
+            setCurrentChat(updatedCurrentChat);
+          }
+        }
+      } else {
+        console.log('🆕 Hiç session yok, otomatik yeni chat başlatılıyor');
+        startNewChat();
+      }
+
+    } catch (error) {
+      console.error('❌ Chat history yüklenirken hata:', error);
+      setChatHistory([]);
+      setCurrentChat(null);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Yeni bir sohbet başlatır
+  // Group chats by date (UI compatibility)
+  const groupChatsByDate = (chats) => {
+    const groups = {
+      today: [],
+      yesterday: [],
+      thisWeek: [],
+      older: []
+    };
+
+    chats.forEach(chat => {
+      const date = new Date(chat.updatedAt || chat.createdAt);
+      const now = new Date();
+      const diffTime = Math.abs(now - date);
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 0) {
+        groups.today.push(chat);
+      } else if (diffDays === 1) {
+        groups.yesterday.push(chat);
+      } else if (diffDays < 7) {
+        groups.thisWeek.push(chat);
+      } else {
+        groups.older.push(chat);
+      }
+    });
+
+    return [
+      { title: 'Bugün', chats: groups.today },
+      { title: 'Dün', chats: groups.yesterday },
+      { title: 'Bu Hafta', chats: groups.thisWeek },
+      { title: 'Daha Eski', chats: groups.older }
+    ].filter(group => group.chats.length > 0);
+  };
+
+  // Chat seçme fonksiyonu
+  const selectChat = async (chatId) => {
+    if (!user) return;
+
+    try {
+      console.log(`📂 Selecting chat: ${chatId}`);
+      
+      // Find in loaded history first
+      let foundChat = null;
+      for (const group of chatHistory) {
+        const chat = group.chats.find(c => c.id === chatId);
+        if (chat) {
+          foundChat = chat;
+          break;
+        }
+      }
+
+      if (foundChat) {
+        setCurrentChat(foundChat);
+        setCurrentSessionId(foundChat.id);
+        setIsNewChat(false);
+        console.log(`✅ Chat selected: ${foundChat.title}`);
+      } else {
+        console.error(`❌ Chat not found: ${chatId}`);
+      }
+    } catch (error) {
+      console.error('❌ Chat seçilirken hata:', error);
+    }
+  };
+
+  // Yeni sohbet başlat
   const startNewChat = () => {
+    console.log('🆕 Starting new chat');
     setCurrentChat({...emptyChat, id: 'new-' + Date.now()});
+    setCurrentSessionId(null);
     setIsNewChat(true);
   };
 
-  // Mevcut sohbete yeni mesaj ekler
-  const addMessageToCurrentChat = (message) => {
-    const newMessage = {
-      id: Date.now(),
-      role: 'user',
-      content: message
-    };
-    
-    const updatedChat = {
-      ...currentChat,
-      messages: [...currentChat.messages, newMessage]
-    };
-    
-    setCurrentChat(updatedChat);
-    setIsBotReplying(true); // Set loading state to true
+  // Ana mesaj ekleme fonksiyonu
+  const addMessageToCurrentChat = async (message) => {
+    if (!message?.content?.trim() || !user?.id) {
+      console.log('❌ Invalid message or user!');
+      return null;
+    }
 
-    // Function to update history and reset new chat flag
-    const updateHistoryAndFinalize = (finalChat) => {
-      if (isNewChat) {
-        const newHistoryItem = {
-          ...finalChat, // Use the chat that includes the bot's response or error
-          id: currentChat.id, // Ensure the ID is the one generated for the new chat
-          title: message.length > 30 ? message.substring(0, 30) + '...' : message,
-        };
+    console.log('🚀 addMessageToCurrentChat başlıyor:', {
+      messageRole: message.role,
+      messageContent: message.content.substring(0, 50) + '...',
+      currentChatId: currentChat?.id,
+      currentSessionId: currentSessionId,
+      isNewChat: !currentChat?.id || currentChat.id.startsWith('new'),
+      userID: user.id
+    });
 
-        const todayGroup = chatHistory.find(group => group.date === 'Bugün');
-        if (todayGroup) {
-          const updatedHistory = chatHistory.map(group => {
-            if (group.date === 'Bugün') {
-              return {
-                ...group,
-                chats: [newHistoryItem, ...group.chats.filter(chat => chat.id !== newHistoryItem.id)], // Avoid duplicates if any
-              };
-            }
-            return group;
-          });
-          setChatHistory(updatedHistory);
-          setCurrentChat(newHistoryItem); // Update currentChat to have the new title
-        } else {
-          setChatHistory([
-            {
-              date: 'Bugün',
-              chats: [newHistoryItem],
-            },
-            ...chatHistory,
-          ]);
-          setCurrentChat(newHistoryItem); // Update currentChat to have the new title
+    try {
+      // UI'ya mesajı hemen ekle
+      const tempMessage = {
+        id: 'temp-' + Date.now(),
+        ...message,
+        created_at: new Date().toISOString(),
+        isTemporary: true
+      };
+
+      let chatToUpdate = currentChat;
+      let sessionId = currentSessionId;
+
+      // User mesajı için session kontrolü
+      if (message.role === 'user') {
+        if (!sessionId || !currentChat?.id || currentChat.id.startsWith('new')) {
+          console.log('🆕 Creating new session for user message');
+          
+          const title = chatService.generateTitle(message.content);
+          const newSession = await chatService.createChatSession(title);
+          sessionId = newSession.id;
+          setCurrentSessionId(sessionId);
+          
+          chatToUpdate = {
+            id: sessionId,
+            title: message.content.substring(0, 50) + '...',
+            created_at: newSession.created_at,
+            messages: []
+          };
+          
+          console.log('✅ New session created:', sessionId);
         }
-        setIsNewChat(false); // Reset after adding to history
-      } else {
-        // If it's not a new chat, we still need to update the existing chat in chatHistory
-        // setCurrentChat(finalChat) is already called before this function,
-        // so currentChat has the latest messages. We just need to ensure history is updated.
-        setChatHistory(prevHistory => {
-          return prevHistory.map(group => ({
-            ...group,
-            chats: group.chats.map(chat =>
-              chat.id === finalChat.id ? finalChat : chat
-            ),
-          }));
-        });
+      } 
+      // Bot mesajı için session kontrolü
+      else if (message.role === 'assistant') {
+        if (!sessionId && currentChat?.id && !currentChat.id.startsWith('new')) {
+          sessionId = currentChat.id;
+          console.log('🔄 Using currentChat.id for bot message:', sessionId);
+        }
+        
+        if (!sessionId) {
+          console.error('❌ No valid session ID for bot message!');
+          return null;
+        }
       }
+
+      // UI güncelle
+      setCurrentChat(prev => ({
+        ...chatToUpdate,
+        messages: [...(chatToUpdate.messages || []), tempMessage]
+      }));
+
+      // Veritabanına kaydet
+      console.log('💾 Saving message to database with session ID:', sessionId);
+      const savedMessage = await chatService.addMessage(sessionId, message.role, message.content);
+      
+      // UI'daki temp mesajı gerçek mesajla değiştir
+      const updatedChat = {
+        ...chatToUpdate,
+        id: sessionId,
+        messages: [...(chatToUpdate.messages || []), savedMessage]
+      };
+      
+      setCurrentChat(prev => ({
+        ...updatedChat,
+        messages: prev.messages.map(msg => 
+          msg.isTemporary && msg.content === message.content && msg.role === message.role
+            ? savedMessage 
+            : msg
+        ).filter(msg => !msg.isTemporary || msg.id !== tempMessage.id)
+      }));
+
+      // Sidebar güncelle
+      await loadChatHistory();
+      
+      console.log('✅ Message saved and UI updated:', savedMessage.id);
+      return updatedChat;
+      
+    } catch (error) {
+      console.error('❌ addMessageToCurrentChat hatası:', error);
+      return null;
+    }
+  };
+
+  // Chat silme fonksiyonu
+  const deleteChat = async (chatId) => {
+    if (!user || !chatId) return false;
+
+    try {
+      console.log(`🗑️ Deleting chat: ${chatId}`);
+      await chatService.deleteChatSession(chatId);
+      
+      // Update local state
+      await loadChatHistory();
+      
+      // If deleted chat was current, start new chat
+      if (currentChat?.id === chatId) {
+        startNewChat();
+      }
+      
+      console.log(`✅ Chat deleted: ${chatId}`);
+      return true;
+    } catch (error) {
+      console.error('❌ Chat silinirken hata:', error);
+      return false;
+    }
+  };
+
+  // Bot yanıtını ekle
+  const addBotMessage = async (botResponse) => {
+    if (!botResponse?.trim()) return;
+
+    console.log('🤖 addBotMessage çağrıldı:', {
+      currentSessionId,
+      currentChatId: currentChat?.id,
+      responseLength: botResponse.length
+    });
+
+    const botMessage = {
+      role: 'assistant',
+      content: botResponse.trim()
     };
 
-    // Call the backend API
-    //console.log('🚀 API çağrısı yapılıyor...');
-    //console.log('📤 Gönderilen message:', message);
-    //console.log('📤 Gönderilen userId:', user?.id || null);
-    //console.log('👤 User object:', user);
-    
-    // User metadata'dan profil ve sağlık bilgilerini çıkar
-    const profileData = user?.user_metadata?.profileData || null;
-    const healthData = user?.user_metadata?.healthData || null;
-    
-    //console.log('📋 Profile data from metadata:', profileData);
-    //console.log('🏥 Health data from metadata:', healthData);
-    
-    fetch('/api/chat/hf', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ 
-        message: message,
-        userId: user?.id || null,
-        profileData: profileData,
-        healthData: healthData
-      }),
-    })
-      .then(async (response) => {
-        //console.log('📥 API yanıtı alındı');
-        const data = await response.json();
-        //console.log('📄 API data:', data);
-        const botReply = data.reply || "Size nasıl yardımcı olabilirim?";
-        
-        const botResponse = {
-          id: Date.now() + 1, // Unique ID for the bot's message
-          role: 'system',
-          content: botReply,
-        };
-        
-        const updatedChatWithResponse = {
-          ...updatedChat,
-          messages: [...updatedChat.messages, botResponse],
-        };
-        
-        setCurrentChat(updatedChatWithResponse);
-        updateHistoryAndFinalize(updatedChatWithResponse);
-      })
-      .catch((error) => {
-        console.log('❌ Network Error:', error.message);
-        
-        // Network hatası durumunda basit bir mesaj
-        const errorResponse = {
-          id: Date.now() + 1,
-          role: 'system',
-          content: "Size nasıl yardımcı olabilirim? İlaçlar hakkında soru sorabilirsiniz.",
-        };
-        
-        const updatedChatWithError = {
-          ...updatedChat,
-          messages: [...updatedChat.messages, errorResponse],
-        };
-        
-        setCurrentChat(updatedChatWithError);
-        updateHistoryAndFinalize(updatedChatWithError);
-      })
-      .finally(() => {
-        setIsBotReplying(false); // Set loading state to false in all cases
-      });
+    return await addMessageToCurrentChat(botMessage);
+  };
+
+  // Bot yanıtını ekle - Session ID ile
+  const addBotMessageWithSessionId = async (botResponse, sessionId) => {
+    if (!botResponse?.trim() || !sessionId) return;
+
+    console.log('🤖 addBotMessageWithSessionId çağrıldı:', {
+      sessionId,
+      responseLength: botResponse.length
+    });
+
+    try {
+      // Add message to UI immediately
+      const newMessage = {
+        id: 'temp-' + Date.now(),
+        role: 'assistant',
+        content: botResponse.trim(),
+        created_at: new Date().toISOString(),
+        isTemporary: true
+      };
+
+      setCurrentChat(prev => ({
+        ...prev,
+        id: sessionId, // Ensure the chat has the correct session ID
+        messages: [...(prev?.messages || []), newMessage]
+      }));
+
+      // Save to database directly with session ID
+      console.log('💾 Saving bot message to database with session ID:', sessionId);
+      const savedMessage = await chatService.addMessage(sessionId, 'assistant', botResponse.trim());
+      
+      // Replace temporary message with saved one
+      setCurrentChat(prev => ({
+        ...prev,
+        messages: prev.messages.map(msg => 
+          msg.isTemporary && msg.role === 'assistant' && msg.content === botResponse.trim()
+            ? { ...savedMessage, role: 'assistant' }
+            : msg
+        ).filter(msg => !msg.isTemporary || msg.id !== newMessage.id)
+      }));
+
+      console.log('✅ Bot message saved to database:', savedMessage.id);
+      return currentChat;
+    } catch (error) {
+      console.error('❌ addBotMessageWithSessionId hatası:', error);
+      return null;
+    }
+  };
+
+  // User mesajını ekle
+  const addUserMessage = async (userMessage) => {
+    if (!userMessage?.trim()) return null;
+
+    console.log('👤 addUserMessage çağrıldı:', {
+      messageLength: userMessage.length,
+      currentSessionId,
+      currentChatId: currentChat?.id
+    });
+
+    const message = {
+      role: 'user',
+      content: userMessage.trim()
+    };
+
+    const updatedChat = await addMessageToCurrentChat(message);
+    return updatedChat;
+  };
+
+  const contextValue = {
+    chatHistory,
+    currentChat,
+    isNewChat,
+    isBotReplying,
+    loading,
+    selectChat,
+    startNewChat,
+    deleteChat,
+    addMessageToCurrentChat,
+    addBotMessage,
+    addUserMessage,
+    setIsBotReplying,
+    loadChatHistory,
+    addBotMessageWithSessionId
   };
 
   return (
-    <ChatContext.Provider
-      value={{
-        chatHistory,
-        currentChat,
-        selectChat,
-        startNewChat,
-        addMessageToCurrentChat,
-        isBotReplying, // Expose the new state
-      }}
-    >
+    <ChatContext.Provider value={contextValue}>
       {children}
     </ChatContext.Provider>
   );

@@ -63,7 +63,21 @@
   }
 }
 
-html,
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 0;
+  max-width: 100vw;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+/* Smooth scrolling için daha iyi CSS */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 body {
   max-width: 100vw;
   overflow-x: hidden;
@@ -689,5 +703,17 @@ h6, .h6 {
   .auth-paper {
     margin: 8px 4px;
     border-radius: 12px !important;
+  }
+}
+
+/* Scroll to Top butonu için smooth animasyon */
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }

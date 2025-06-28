@@ -64,6 +64,11 @@ export default function ChatSidebar({ isMobile, onClose }) {
     }
   };
 
+  const handleEditChat = (chatId) => {
+    console.log('Chat düzenle:', chatId);
+    // TODO: İsim düzenleme modal'ı açılabilir
+  };
+
   return (
     <Box style={{ 
       height: '100%', 
@@ -165,7 +170,7 @@ export default function ChatSidebar({ isMobile, onClose }) {
                             whiteSpace: 'nowrap',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
-                            maxWidth: isMobile ? '150px' : '180px'
+                            maxWidth: isMobile ? '120px' : '150px'
                           }}
                         >
                           {chat.title}
@@ -174,29 +179,62 @@ export default function ChatSidebar({ isMobile, onClose }) {
                           {currentChat?.id === chat.id && !isMobile && (
                             <Badge size="xs" variant="filled" color="primary">Aktif</Badge>
                           )}
-                          <Menu position="bottom-end" withArrow>
+                          <Menu
+                            withArrow
+                            width={200}
+                            position="bottom-end"
+                            transitionProps={{ transition: 'pop' }}
+                            withinPortal={false}
+                            shadow="md"
+                          >
                             <Menu.Target>
                               <ActionIcon
                                 size="sm"
                                 variant="subtle"
-                                onClick={(e) => e.stopPropagation()}
-                                style={{ opacity: 0.7 }}
+                                disabled={deletingChatId === chat.id}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                }}
+                                style={{
+                                  opacity: 0.7,
+                                  cursor: 'pointer',
+                                  transition: 'opacity 0.2s ease'
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.target.style.opacity = '1';
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.target.style.opacity = '0.7';
+                                }}
                               >
                                 {deletingChatId === chat.id ? (
                                   <Loader size={12} />
                                 ) : (
-                                  <IconDots size={12} />
+                                  <IconDots size={12} stroke={1.5} />
                                 )}
                               </ActionIcon>
                             </Menu.Target>
                             <Menu.Dropdown>
                               <Menu.Item
-                                leftSection={<IconTrash size={14} />}
+                                leftSection={<IconEdit size={16} stroke={1.5} />}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEditChat(chat.id);
+                                }}
+                              >
+                                İsmi Düzenle
+                              </Menu.Item>
+                              <Menu.Divider />
+                              <Menu.Item
                                 color="red"
-                                onClick={(e) => handleDeleteChat(chat.id, e)}
+                                leftSection={<IconTrash size={16} stroke={1.5} />}
+                                onClick={(e) => {
+                                  handleDeleteChat(chat.id, e);
+                                }}
                                 disabled={deletingChatId === chat.id}
                               >
-                                Sil
+                                Sohbeti Sil
                               </Menu.Item>
                             </Menu.Dropdown>
                           </Menu>

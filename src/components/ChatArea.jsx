@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react';
-import { Stack, Box, Text, ActionIcon, Tooltip } from '@mantine/core';
-import { IconInfoCircle, IconChevronLeft, IconRobot } from '@tabler/icons-react';
+import { Stack, Box, Text, ActionIcon, Tooltip, Paper, Group } from '@mantine/core';
+import { IconInfoCircle, IconChevronLeft, IconRobot, IconBulb, IconWorld, IconDotsCircleHorizontal } from '@tabler/icons-react';
 import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
 import StreamingChatMessage from './StreamingChatMessage';
@@ -201,6 +201,7 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
       </Box>
 
       <Box
+        className="chat-scroll-area"
         style={{ 
           height: 'calc(100% - 80px)',
           overflowY: 'auto',
@@ -227,22 +228,116 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
               alignItems: 'center', 
               justifyContent: 'center',
               height: '100%',
-              padding: '20px',
+              padding: '40px 20px',
               color: 'var(--text-muted)',
               textAlign: 'center'
             }}>
-              <IconRobot size={isMobile ? 48 : 64} stroke={1} style={{ marginBottom: '16px', opacity: 0.7 }} />
-              <Text size={isMobile ? "sm" : "md"} style={{ maxWidth: '500px', lineHeight: 1.5 }}>
-                İlaç Bilgi Chatbotu'na hoş geldiniz. İlaçlar, etkileri ve yan etkileri hakkında bana sorularınızı sorabilirsiniz.
+              <div style={{
+                background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
+                borderRadius: '50%',
+                padding: '20px',
+                marginBottom: '24px',
+                boxShadow: '0 8px 32px rgba(25, 118, 210, 0.2)',
+                animation: 'float 3s ease-in-out infinite'
+              }}>
+                <IconRobot size={isMobile ? 48 : 64} stroke={1.5} style={{ color: 'white' }} />
+              </div>
+              
+              <Text size={isMobile ? "lg" : "xl"} fw={600} style={{ 
+                color: 'var(--text-body)', 
+                marginBottom: '12px',
+                background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}>
+                İlaç Bilgi Asistanına Hoş Geldiniz
               </Text>
+              
+              <Text size={isMobile ? "sm" : "md"} style={{ 
+                maxWidth: '600px', 
+                lineHeight: 1.6,
+                marginBottom: '32px',
+                color: 'var(--text-muted)'
+              }}>
+                İlaçlar, etkileri, yan etkileri ve etkileşimleri hakkında güvenilir bilgi alın. 
+                Profesyonel sağlık danışmanlığı için size yardımcı olmaya hazırım.
+              </Text>
+
+              {!isMobile && (
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                  gap: '16px',
+                  maxWidth: '800px',
+                  width: '100%',
+                  marginTop: '20px'
+                }}>
+                  {[
+                    {
+                      icon: <IconBulb size={20} />,
+                      title: "İlaç Bilgileri",
+                      description: "Etki mekanizması, doz, kullanım şekli"
+                    },
+                    {
+                      icon: <IconWorld size={20} />,
+                      title: "Yan Etkiler",
+                      description: "Potansiyel yan etkiler ve önlemler"
+                    },
+                    {
+                      icon: <IconDotsCircleHorizontal size={20} />,
+                      title: "İlaç Etkileşimleri",
+                      description: "Diğer ilaçlarla etkileşimler"
+                    }
+                  ].map((feature, index) => (
+                    <Paper
+                      key={index}
+                      p="md"
+                      radius="lg"
+                      style={{
+                        background: 'var(--background-white)',
+                        border: '1px solid var(--border-color-light)',
+                        transition: 'all 0.2s ease',
+                        cursor: 'default'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.1)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
+                    >
+                      <Group gap="sm" mb="xs">
+                        <div style={{
+                          background: 'var(--primary-light)',
+                          borderRadius: '8px',
+                          padding: '8px',
+                          color: 'var(--primary)'
+                        }}>
+                          {feature.icon}
+                        </div>
+                        <Text fw={600} size="sm" style={{ color: 'var(--text-body)' }}>
+                          {feature.title}
+                        </Text>
+                      </Group>
+                      <Text size="xs" style={{ color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                        {feature.description}
+                      </Text>
+                    </Paper>
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
             <>
-              {currentChat.messages.map((message) => (
+              {currentChat.messages.map((message, index) => (
                 <ChatMessage 
                   key={message.id}
                   message={message}
                   isMobile={isMobile}
+                  showTimestamp={index === currentChat.messages.length - 1 || index % 3 === 0}
                 />
               ))}
               {isStreaming && (
@@ -255,10 +350,12 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
                 />
               )}
               {isBotReplying && !isStreaming && (
-                <ChatMessage
+                <StreamingChatMessage
                   key="typing_indicator"
-                  message={{ id: 'typing_indicator', role: 'system', content: '✍️ Yanıt hazırlanıyor...' }}
+                  message={{ id: 'typing_indicator', role: 'assistant', content: '' }}
                   isMobile={isMobile}
+                  isStreaming={true}
+                  streamingContent=""
                 />
               )}
             </>

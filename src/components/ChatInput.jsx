@@ -74,6 +74,7 @@ export default function ChatInput({ onSendMessage, isMobile }) {
   return (
     <Paper
       radius="xl"
+      className="chat-input"
       style={{ 
         backgroundColor: 'var(--background-white)',
         marginBottom: '0px',
@@ -83,7 +84,9 @@ export default function ChatInput({ onSendMessage, isMobile }) {
         paddingTop: isActuallyMobile ? '8px' : '12px',
         paddingBottom: isActuallyMobile ? '8px' : '12px',
         paddingLeft: isActuallyMobile ? '12px' : '16px',
-        paddingRight: isActuallyMobile ? '12px' : '16px'
+        paddingRight: isActuallyMobile ? '12px' : '16px',
+        border: '1px solid var(--border-color)',
+        transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
       }}
     >
       <form onSubmit={handleSubmit} style={{ height: '100%' }}>

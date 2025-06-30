@@ -101,10 +101,16 @@ export default function ChatSidebar({ isMobile, onClose }) {
         {isMobile && (
           <Button
             variant="subtle"
-            compact
             leftSection={<IconArrowLeft size={16} />}
             onClick={onClose}
             size="xs"
+            styles={{
+              root: {
+                padding: '4px 8px',
+                height: 'auto',
+                minHeight: '28px'
+              }
+            }}
           >
             Geri
           </Button>

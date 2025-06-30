@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react';
-import { Stack, Box, Text, ActionIcon, Tooltip, Paper, Group } from '@mantine/core';
-import { IconInfoCircle, IconChevronLeft, IconRobot, IconBulb, IconWorld, IconDotsCircleHorizontal } from '@tabler/icons-react';
+import { Stack, Box, Text, ActionIcon, Tooltip } from '@mantine/core';
+import { IconInfoCircle, IconChevronLeft, IconRobot } from '@tabler/icons-react';
 import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
 import StreamingChatMessage from './StreamingChatMessage';
@@ -20,6 +20,17 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
   // Streaming state
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingContent, setStreamingContent] = useState('');
+  
+  // Transition state for centered input
+  const [isInputCentered, setIsInputCentered] = useState(true);
+  
+  // Check if chat is empty
+  const isEmpty = !currentChat || currentChat.messages.length === 0;
+  
+  // Update centered state based on messages
+  useEffect(() => {
+    setIsInputCentered(isEmpty);
+  }, [isEmpty]);
   
   // Scroll işlemini yöneten fonksiyon
   const scrollToBottom = () => {
@@ -40,6 +51,11 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
 
   const handleSendMessage = async (message) => {
     if (!message?.trim()) return;
+    
+    // Input'u ilk mesaj öncesi ortalı konumdan çıkar
+    if (isInputCentered) {
+      setIsInputCentered(false);
+    }
     
     try {
       setIsBotReplying(true);
@@ -203,132 +219,111 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
       <Box
         className="chat-scroll-area"
         style={{ 
-          height: 'calc(100% - 80px)',
-          overflowY: 'auto',
+          height: 'calc(100% - 60px)',
+          overflowY: isEmpty ? 'hidden' : 'auto',
           paddingLeft: isMobile ? '12px' : '16px',
           paddingRight: isMobile ? '12px' : '16px',
-          paddingTop: '60px', // Başlık için ekstra üst boşluk
-          paddingBottom: isMobile ? '120px' : '100px', // Input yüksekliğini hesaba katan padding
+          paddingTop: isEmpty ? '0' : (isMobile ? '80px' : '90px'),
+          paddingBottom: isInputCentered ? '0' : (isMobile ? '140px' : '120px'),
           backgroundPosition: 'center',
           backgroundSize: 'cover',
           width: '100%',
           maxWidth: '100%',
           position: 'relative',
+          transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
         }}
       >
-        <Stack gap={isMobile ? "md" : "lg"} style={{ 
+        <Stack gap={isEmpty ? 0 : (isMobile ? "md" : "lg")} style={{ 
           maxWidth: '900px', 
           margin: '0 auto',
-          width: '100%'
+          width: '100%',
+          paddingTop: isEmpty ? '0' : (isMobile ? '16px' : '24px'),
+          height: isEmpty ? '100%' : 'auto'
         }}>
-          {!currentChat || currentChat.messages.length === 0 ? (
+          {isEmpty ? (
             <div style={{ 
               display: 'flex', 
               flexDirection: 'column',
               alignItems: 'center', 
               justifyContent: 'center',
               height: '100%',
-              padding: '40px 20px',
+              padding: isMobile ? '20px 16px' : '20px 20px',
               color: 'var(--text-muted)',
-              textAlign: 'center'
+              textAlign: 'center',
+              transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+              minHeight: isMobile ? 'calc(100vh - 120px)' : 'calc(100vh - 140px)',
+              boxSizing: 'border-box'
             }}>
               <div style={{
-                background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
+                background: 'linear-gradient(135deg, #1976D2, #00C853)',
                 borderRadius: '50%',
-                padding: '20px',
-                marginBottom: '24px',
-                boxShadow: '0 8px 32px rgba(25, 118, 210, 0.2)',
-                animation: 'float 3s ease-in-out infinite'
+                padding: isMobile ? '18px' : '24px',
+                marginBottom: isMobile ? '20px' : '32px',
+                boxShadow: '0 12px 40px rgba(25, 118, 210, 0.25)',
+                animation: 'float 3s ease-in-out infinite',
+                position: 'relative',
               }}>
-                <IconRobot size={isMobile ? 48 : 64} stroke={1.5} style={{ color: 'white' }} />
+                <IconRobot size={isMobile ? 40 : 56} stroke={1.5} style={{ color: 'white' }} />
+                <div style={{
+                  position: 'absolute',
+                  top: '-2px',
+                  right: '-2px',
+                  width: '12px',
+                  height: '12px',
+                  background: '#00C853',
+                  borderRadius: '50%',
+                  border: '2px solid white',
+                  animation: 'pulse 2s infinite'
+                }} />
               </div>
               
-              <Text size={isMobile ? "lg" : "xl"} fw={600} style={{ 
-                color: 'var(--text-body)', 
-                marginBottom: '12px',
-                background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
+              <Text size={isMobile ? "xl" : "32px"} fw={700} style={{ 
+                color: '#1976D2',
+                marginBottom: isMobile ? '12px' : '16px',
+                fontSize: isMobile ? '24px' : '32px',
+                fontWeight: 700,
+                letterSpacing: '-0.5px',
               }}>
                 İlaç Bilgi Asistanına Hoş Geldiniz
               </Text>
               
-              <Text size={isMobile ? "sm" : "md"} style={{ 
-                maxWidth: '600px', 
+              <Text size={isMobile ? "md" : "lg"} style={{ 
+                maxWidth: isMobile ? '100%' : '650px', 
                 lineHeight: 1.6,
-                marginBottom: '32px',
-                color: 'var(--text-muted)'
+                marginBottom: isMobile ? '24px' : '32px',
+                color: '#6B7280',
+                fontSize: isMobile ? '15px' : '17px',
+                transition: 'margin-bottom 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+                fontWeight: 400,
               }}>
                 İlaçlar, etkileri, yan etkileri ve etkileşimleri hakkında güvenilir bilgi alın. 
                 Profesyonel sağlık danışmanlığı için size yardımcı olmaya hazırım.
               </Text>
 
-              {!isMobile && (
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                  gap: '16px',
-                  maxWidth: '800px',
-                  width: '100%',
-                  marginTop: '20px'
-                }}>
-                  {[
-                    {
-                      icon: <IconBulb size={20} />,
-                      title: "İlaç Bilgileri",
-                      description: "Etki mekanizması, doz, kullanım şekli"
-                    },
-                    {
-                      icon: <IconWorld size={20} />,
-                      title: "Yan Etkiler",
-                      description: "Potansiyel yan etkiler ve önlemler"
-                    },
-                    {
-                      icon: <IconDotsCircleHorizontal size={20} />,
-                      title: "İlaç Etkileşimleri",
-                      description: "Diğer ilaçlarla etkileşimler"
-                    }
-                  ].map((feature, index) => (
-                    <Paper
-                      key={index}
-                      p="md"
-                      radius="lg"
-                      style={{
-                        background: 'var(--background-white)',
-                        border: '1px solid var(--border-color-light)',
-                        transition: 'all 0.2s ease',
-                        cursor: 'default'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                        e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.1)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = 'none';
-                      }}
-                    >
-                      <Group gap="sm" mb="xs">
-                        <div style={{
-                          background: 'var(--primary-light)',
-                          borderRadius: '8px',
-                          padding: '8px',
-                          color: 'var(--primary)'
-                        }}>
-                          {feature.icon}
-                        </div>
-                        <Text fw={600} size="sm" style={{ color: 'var(--text-body)' }}>
-                          {feature.title}
-                        </Text>
-                      </Group>
-                      <Text size="xs" style={{ color: 'var(--text-muted)', lineHeight: 1.4 }}>
-                        {feature.description}
-                      </Text>
-                    </Paper>
-                  ))}
-                </div>
+              {/* Centered Input for Empty State */}
+              {isInputCentered && (
+                <Box 
+                  className="chat-input-centered"
+                  style={{ 
+                    maxWidth: isMobile ? '100%' : '750px', 
+                    width: '100%',
+                    boxShadow: '0 16px 48px rgba(25, 118, 210, 0.12)',
+                    borderRadius: isMobile ? '16px' : '20px',
+                    overflow: 'hidden',
+                    backgroundColor: 'white',
+                    border: '1px solid rgba(25, 118, 210, 0.1)',
+                    transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transform: 'translateY(0)',
+                    opacity: 1,
+                    position: 'relative',
+                  }}
+                >
+
+                  <ChatInput onSendMessage={handleSendMessage} isMobile={isMobile} />
+                </Box>
               )}
+
+
             </div>
           ) : (
             <>
@@ -365,34 +360,43 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
         </Stack>
       </Box>
       
-      <Box 
-        style={{ 
-          background: 'linear-gradient(to top, var(--chat-bg) 85%, transparent)',
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          paddingLeft: isMobile ? '15px' : '20px',
-          paddingRight: isMobile ? '15px' : '20px',
-          paddingBottom: isMobile ? '15px' : '20px',
-          paddingTop: '40px',
-          zIndex: 1000,
-          width: '100%',
-        }}
-      >
-        <Box style={{ 
-          maxWidth: '900px', 
-          margin: '0 auto',
-          boxShadow: '0 -2px 10px rgba(0,0,0,0.05)',
-          borderRadius: isMobile ? '10px' : '12px',
-          overflow: 'hidden',
-          border: '1px solid var(--border-color)',
-          backgroundColor: 'white',
-          width: '100%',
-        }}>
-          <ChatInput onSendMessage={handleSendMessage} isMobile={isMobile} />
+      {/* Bottom Input Container - Only visible when not centered */}
+      {!isInputCentered && (
+        <Box 
+          style={{ 
+            background: 'linear-gradient(to top, var(--chat-bg) 90%, rgba(247, 249, 252, 0.8) 100%)',
+            position: 'absolute',
+            bottom: isMobile ? '12px' : '20px',
+            left: 0,
+            right: 0,
+            paddingLeft: isMobile ? '15px' : '20px',
+            paddingRight: isMobile ? '15px' : '20px',
+            paddingBottom: isMobile ? '8px' : '12px',
+            paddingTop: '30px',
+            zIndex: 1000,
+            width: '100%',
+            opacity: isInputCentered ? 0 : 1,
+            transform: isInputCentered ? 'translateY(20px)' : 'translateY(0)',
+            transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+          }}
+        >
+          <Box 
+            className="chat-input-container chat-input-bottom"
+            style={{ 
+              maxWidth: '900px', 
+              margin: '0 auto',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+              borderRadius: isMobile ? '12px' : '16px',
+              overflow: 'hidden',
+              backgroundColor: 'white',
+              border: '1px solid rgba(0,0,0,0.06)',
+              width: '100%',
+              transition: 'box-shadow 0.2s ease, border-color 0.2s ease',
+            }}>
+            <ChatInput onSendMessage={handleSendMessage} isMobile={isMobile} />
+          </Box>
         </Box>
-      </Box>
+      )}
     </Stack>
   );
 } 

@@ -661,13 +661,14 @@ export default function Home() {
                   shadow="sm"
                   className={`card-hover scroll-animate fade-up delay-${(index + 1) * 100}`}
                   style={{
-                    background: "white",
+                    background: "var(--background-white)",
                     height: "100%",
                     border: "1px solid var(--border-color-light)",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: isMobile ? "center" : "flex-start",
                     textAlign: isMobile ? "center" : "left",
+                    transition: "all 0.3s ease",
                   }}
                 >
                   <Box
@@ -772,7 +773,7 @@ export default function Home() {
                   shadow="sm"
                   className={`card-hover scroll-animate scale-up delay-${(index + 1) * 100}`}
                   style={{
-                    background: "white",
+                    background: "var(--background-white)",
                     height: "100%",
                     border: "1px solid var(--border-color-light)",
                     display: "flex",
@@ -782,6 +783,7 @@ export default function Home() {
                     position: "relative",
                     zIndex: 2,
                     overflow: "hidden",
+                    transition: "all 0.3s ease",
                   }}
                 >
                   <Box
@@ -879,11 +881,12 @@ export default function Home() {
               style={{
                 maxWidth: "800px",
                 margin: "0 auto",
-                background: "white",
+                background: "var(--background-white)",
                 borderRadius: "16px",
                 overflow: "hidden",
-                boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
+                boxShadow: "var(--shadow-lg)",
                 border: "1px solid var(--border-color-light)",
+                transition: "all 0.3s ease",
               }}
             >
               <Accordion variant="separated">
@@ -893,11 +896,12 @@ export default function Home() {
                     value={`item-${index}`}
                     style={{
                       border: "none",
-                      backgroundColor: "white",
+                      backgroundColor: "var(--background-white)",
                       borderBottom:
                         index < faqs.length - 1
                           ? "1px solid var(--border-color-light)"
                           : "none",
+                      transition: "all 0.3s ease",
                     }}
                   >
                     <Accordion.Control
@@ -980,7 +984,13 @@ export default function Home() {
                   p={0}
                   radius="lg"
                   className={`testimonial-card scroll-animate fade-up delay-${(index + 1) * 100}`}
-                  style={{ position: "relative", zIndex: 2 }}
+                  style={{ 
+                    position: "relative", 
+                    zIndex: 2,
+                    backgroundColor: "var(--background-white)",
+                    border: "1px solid var(--border-color-light)",
+                    transition: "all 0.3s ease",
+                  }}
                 >
                   <Box p="lg">
                     <Group position="apart" mb="md" align="flex-start">

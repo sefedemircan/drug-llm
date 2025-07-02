@@ -66,22 +66,22 @@ export default function ChatInput({ onSendMessage, isMobile }) {
       radius={isActuallyMobile ? "16" : "20"}
       className="chat-input"
       style={{ 
-        backgroundColor: 'white',
+        backgroundColor: 'var(--background-white)',
         position: 'relative',
         width: '100%',
         padding: isActuallyMobile ? '12px 16px' : '16px 20px',
-        border: '1px solid rgba(25, 118, 210, 0.1)',
-        boxShadow: '0 8px 24px rgba(25, 118, 210, 0.08)',
+        border: '1px solid var(--border-color-light)',
+        boxShadow: 'var(--shadow-md)',
         transition: 'all 0.2s ease',
       }}
       sx={{
         '&:hover': {
-          borderColor: 'rgba(25, 118, 210, 0.2)',
-          boxShadow: '0 12px 32px rgba(25, 118, 210, 0.12)',
+          borderColor: 'var(--primary-light)',
+          boxShadow: 'var(--shadow-lg)',
         },
         '&:focus-within': {
-          borderColor: 'rgba(25, 118, 210, 0.3)',
-          boxShadow: '0 16px 40px rgba(25, 118, 210, 0.15)',
+          borderColor: 'var(--primary)',
+          boxShadow: 'var(--shadow-xl)',
         }
       }}
     >
@@ -93,15 +93,15 @@ export default function ChatInput({ onSendMessage, isMobile }) {
             radius="xl"
             size={isActuallyMobile ? "md" : "lg"}
             style={{
-              color: '#1976D2',
-              backgroundColor: 'rgba(25, 118, 210, 0.08)',
+              color: 'var(--primary)',
+              backgroundColor: 'var(--primary-light)',
               border: 'none',
               transition: 'all 0.2s ease',
               flexShrink: 0,
             }}
             sx={{
               '&:hover': {
-                backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                backgroundColor: 'var(--primary-hover)',
                 transform: 'scale(1.05)',
               }
             }}
@@ -121,26 +121,26 @@ export default function ChatInput({ onSendMessage, isMobile }) {
             style={{ 
               flex: 1,
             }}
-            styles={{
-              input: { 
-                border: 'none',
-                backgroundColor: 'transparent',
-                fontSize: isActuallyMobile ? '15px' : '16px',
-                color: '#374151',
-                resize: 'none',
-                overflow: 'auto',
-                fontWeight: 400,
-                padding: isActuallyMobile ? '8px 0' : '10px 0',
-                lineHeight: 1.5,
-                '&::placeholder': {
-                  color: '#9CA3AF',
+                          styles={{
+                input: { 
+                  border: 'none',
+                  backgroundColor: 'transparent',
+                  fontSize: isActuallyMobile ? '15px' : '16px',
+                  color: 'var(--text-body)',
+                  resize: 'none',
+                  overflow: 'auto',
                   fontWeight: 400,
+                  padding: isActuallyMobile ? '8px 0' : '10px 0',
+                  lineHeight: 1.5,
+                  '&::placeholder': {
+                    color: 'var(--text-muted)',
+                    fontWeight: 400,
+                  },
+                  '&:focus': {
+                    outline: 'none',
+                    boxShadow: 'none',
+                  }
                 },
-                '&:focus': {
-                  outline: 'none',
-                  boxShadow: 'none',
-                }
-              },
               wrapper: {
                 backgroundColor: 'transparent',
               },
@@ -160,13 +160,13 @@ export default function ChatInput({ onSendMessage, isMobile }) {
                 onClick={handleMicrophoneClick}
                 size={isActuallyMobile ? "md" : "lg"}
                 style={{
-                  color: isListening ? '#EF4444' : '#6B7280',
-                  backgroundColor: isListening ? 'rgba(239, 68, 68, 0.1)' : 'rgba(107, 114, 128, 0.08)',
+                  color: isListening ? '#EF4444' : 'var(--text-muted)',
+                  backgroundColor: isListening ? 'rgba(239, 68, 68, 0.1)' : 'var(--chat-bg)',
                   transition: 'all 0.2s ease',
                 }}
                 sx={{
                   '&:hover': {
-                    backgroundColor: isListening ? 'rgba(239, 68, 68, 0.15)' : 'rgba(107, 114, 128, 0.12)',
+                    backgroundColor: isListening ? 'rgba(239, 68, 68, 0.15)' : 'var(--primary-light)',
                     transform: 'scale(1.05)',
                   }
                 }}
@@ -187,17 +187,17 @@ export default function ChatInput({ onSendMessage, isMobile }) {
               disabled={!message.trim()}
               size={isActuallyMobile ? "md" : "lg"}
               style={{
-                background: message.trim() ? 'linear-gradient(135deg, #1976D2, #1565C0)' : '#E5E7EB',
-                color: message.trim() ? 'white' : '#9CA3AF',
+                background: message.trim() ? 'var(--primary)' : 'var(--border-color)',
+                color: message.trim() ? 'white' : 'var(--text-muted)',
                 border: 'none',
-                boxShadow: message.trim() ? '0 4px 12px rgba(25, 118, 210, 0.3)' : 'none',
+                boxShadow: message.trim() ? 'var(--shadow-md)' : 'none',
                 transition: 'all 0.2s ease',
                 cursor: message.trim() ? 'pointer' : 'not-allowed',
               }}
               sx={{
                 '&:hover': {
                   transform: message.trim() ? 'scale(1.05)' : 'none',
-                  boxShadow: message.trim() ? '0 6px 16px rgba(25, 118, 210, 0.4)' : 'none',
+                  boxShadow: message.trim() ? 'var(--shadow-lg)' : 'none',
                 },
                 '&:active': {
                   transform: message.trim() ? 'scale(0.95)' : 'none',

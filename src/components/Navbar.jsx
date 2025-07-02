@@ -18,6 +18,7 @@ import {
   IconMenu2,
   IconX,
 } from '@tabler/icons-react';
+import ThemeToggle from './ThemeToggle';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useDisclosure } from '@mantine/hooks';
@@ -60,8 +61,8 @@ const Navbar = () => {
     { label: 'Erken Erişim', path: '/access' },
   ];
 
-  // Sayfanın arka plan rengi - görsele göre ayarlandı
-  const pageBackgroundColor = '#f4f4f4';
+  // Sayfanın arka plan rengi - tema değişkenlerinden alınıyor
+  const pageBackgroundColor = 'var(--chat-bg)';
 
   // Oval navbar container stili - sadece konumlandırma için
   const navbarContainerStyle = {
@@ -79,13 +80,13 @@ const Navbar = () => {
 
   // Navbar arka planının olduğu div - gri oval kısım
   const navbarBackgroundStyle = {
-    background: '#f5f5f5', // Görseldeki gibi hafif gri tonu
+    background: 'var(--sidebar-bg)', // Tema değişkeninden alınıyor
     borderRadius: '9999px',
     overflow: 'hidden',
     display: 'inline-flex',
     margin: '0 auto',
-    border: '1px solid #d1d1d1', // Daha belirgin border
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)', // Hafif gölge ekledim
+    border: '1px solid var(--border-color)', // Tema değişkeninden border
+    boxShadow: 'var(--shadow-sm)', // Tema değişkeninden gölge
     ...(isTablet && { maxWidth: '95%' }), // Tablet'te boyut ayarı
   };
 
@@ -111,8 +112,8 @@ const Navbar = () => {
     alignItems: 'center',
     gap: '6px',
     transition: 'background-color 0.2s',
-    borderRight: '1px solid #d1d1d1', // Daha belirgin ayraç
-    background: '#ebebeb', // Görseldeki gibi ilk link daha koyu
+    borderRight: '1px solid var(--border-color)', // Tema değişkeninden border
+    background: 'var(--border-color-light)', // Tema değişkeninden background
   };
 
   // Orta linkler stili
@@ -120,12 +121,12 @@ const Navbar = () => {
     padding: isTablet ? '12px 18px' : '15px 25px',
     fontWeight: 500,
     fontSize: isTablet ? '14px' : '15px',
-    color: '#333',
+    color: 'var(--text-body)',
     textDecoration: 'none',
     display: 'flex',
     alignItems: 'center',
     transition: 'background-color 0.2s',
-    borderRight: '1px solid #d1d1d1', // Daha belirgin ayraç
+    borderRight: '1px solid var(--border-color)', // Tema değişkeninden border
   };
 
   // Son link stili (Erken Erişim)
@@ -133,7 +134,7 @@ const Navbar = () => {
     padding: isTablet ? '12px 18px' : '15px 25px',
     fontWeight: 500,
     fontSize: isTablet ? '14px' : '15px',
-    color: '#333',
+    color: 'var(--text-body)',
     textDecoration: 'none',
     display: 'flex',
     alignItems: 'center',
@@ -156,7 +157,7 @@ const Navbar = () => {
     alignItems: 'center',
     cursor: 'pointer',
     outline: 'none',
-    borderLeft: '1px solid #d1d1d1',
+    borderLeft: '1px solid var(--border-color)',
   };
 
   // Mobil logo stili
@@ -175,6 +176,7 @@ const Navbar = () => {
           background-color: ${pageBackgroundColor};
           margin: 0;
           padding: 0;
+          transition: background-color 0.3s ease;
         }
 
         @media (max-width: 992px) {
@@ -214,6 +216,15 @@ const Navbar = () => {
                 {item.label}
               </Link>
             ))}
+            {/* Tema toggle butonu */}
+            <div style={{
+              padding: isTablet ? '8px 12px' : '8px 15px',
+              borderLeft: '1px solid var(--border-color)',
+              display: 'flex',
+              alignItems: 'center',
+            }}>
+              <ThemeToggle size={16} />
+            </div>
           </div>
         )}
 
@@ -230,15 +241,27 @@ const Navbar = () => {
               DrugLLM
             </Link>
             
-            {/* Toggle butonu */}
-            <button 
-              onClick={toggle} 
-              className="mobile-toggle"
-              style={mobileToggleStyle}
-              aria-label="Toggle menu"
-            >
-              <IconMenu2 size={isSmallMobile ? 18 : 20} stroke={1.5} />
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              {/* Tema toggle butonu */}
+              <div style={{
+                padding: isSmallMobile ? '8px 12px' : '8px 15px',
+                borderRight: '1px solid var(--border-color)',
+                display: 'flex',
+                alignItems: 'center',
+              }}>
+                <ThemeToggle size={isSmallMobile ? 14 : 16} />
+              </div>
+              
+              {/* Menu toggle butonu */}
+              <button 
+                onClick={toggle} 
+                className="mobile-toggle"
+                style={mobileToggleStyle}
+                aria-label="Toggle menu"
+              >
+                <IconMenu2 size={isSmallMobile ? 18 : 20} stroke={1.5} />
+              </button>
+            </div>
           </div>
         )}
       </Box>
@@ -308,6 +331,12 @@ const Navbar = () => {
                 </Link>
               )
             ))}
+            
+            {/* Mobil drawer'da tema toggle */}
+            <Group position="center" mt="lg">
+              <Text size="sm" c="dimmed">Tema Seçimi</Text>
+              <ThemeToggle size={20} />
+            </Group>
           </Stack>
         </Stack>
       </Drawer>

@@ -47,6 +47,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import { useForm } from '@mantine/form';
 import { DateInput, DatePicker, DatePickerInput } from '@mantine/dates';
 import '@mantine/dates/styles.css';
+import ThemeToggle from '../../components/ThemeToggle';
 
 // SearchParams'ı işleyecek component
 function AuthPageContent() {
@@ -290,8 +291,9 @@ function AuthPageContent() {
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: 'var(--auth-bg)',
-        background: 'linear-gradient(135deg, rgba(219, 234, 254, 0.9) 0%, rgba(240, 247, 255, 0.95) 50%, rgba(243, 244, 246, 0.8) 100%)',
-        overflow: 'hidden'
+        background: 'var(--auth-bg)',
+        overflow: 'hidden',
+        transition: 'all 0.3s ease'
       }}
     >
       <Container 
@@ -313,14 +315,15 @@ function AuthPageContent() {
           radius="xl"
           p={0}
           style={{
-            backgroundColor: 'white',
+            backgroundColor: 'var(--background-white)',
             maxWidth: isMobile ? '100%' : (isSmallMobile ? '320px' : '800px'),
             width: '100%',
-            border: '1px solid rgba(25, 118, 210, 0.1)',
+            border: '1px solid var(--border-color-light)',
             overflow: 'hidden',
             maxHeight: isMobile ? 'calc(100vh - 32px)' : 'calc(100vh - 48px)',
             display: 'flex',
-            flexDirection: isMobile ? 'column' : 'row'
+            flexDirection: isMobile ? 'column' : 'row',
+            transition: 'all 0.3s ease'
           }}
         >
           <Box 
@@ -333,7 +336,7 @@ function AuthPageContent() {
             {/* Sol taraf - bilgi paneli */}
             <Box 
               style={{
-                background: `linear-gradient(135deg, var(--primary), #0D47A1)`,
+                background: `linear-gradient(135deg, var(--primary), var(--text-title))`,
                 position: 'relative',
                 flex: isMobile ? '0 0 180px' : '0 0 40%',
                 padding: isSmallMobile ? '20px 16px' : (isMobile ? '24px 20px' : '32px 24px'),
@@ -342,7 +345,8 @@ function AuthPageContent() {
                 justifyContent: isMobile ? 'center' : 'space-between',
                 color: 'white',
                 overflow: 'hidden',
-                minHeight: isMobile ? '180px' : 'auto'
+                minHeight: isMobile ? '180px' : 'auto',
+                transition: 'all 0.3s ease'
               }}
             >
               {/* Dekoratif elementler */}
@@ -369,21 +373,23 @@ function AuthPageContent() {
               }} />
               
               <div style={{ position: 'relative', zIndex: 1 }}>
-                <Title 
-                  order={2} 
-                  mb={isMobile ? "sm" : "xl"}
-                  style={{
-                    fontSize: isMobile ? '1.6rem' : '2.2rem',
-                    fontWeight: 900,
-                    letterSpacing: '-0.02em',
-                    background: 'linear-gradient(to right, #ffffff, #d0e8ff)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    textShadow: '0 10px 30px rgba(0,0,0,0.15)'
-                  }}
-                >
-                  DrugLLM
-                </Title>
+                <Group position="apart" align="flex-start" mb={isMobile ? "sm" : "xl"}>
+                  <Title 
+                    order={2} 
+                    style={{
+                      fontSize: isMobile ? '1.6rem' : '2.2rem',
+                      fontWeight: 900,
+                      letterSpacing: '-0.02em',
+                      background: 'linear-gradient(to right, #ffffff, #d0e8ff)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      textShadow: '0 10px 30px rgba(0,0,0,0.15)'
+                    }}
+                  >
+                    DrugLLM
+                  </Title>
+                  <ThemeToggle size={18} variant="subtle" />
+                </Group>
                 
                 {!isMobile && (
                   <>
@@ -460,9 +466,10 @@ function AuthPageContent() {
                 padding: isSmallMobile ? '20px 16px' : (isMobile ? '24px 20px' : '32px'),
                 display: 'flex',
                 flexDirection: 'column',
-                backgroundColor: 'white',
+                backgroundColor: 'var(--background-white)',
                 overflow: 'auto',
-                maxHeight: isMobile ? 'calc(100vh - 232px)' : 'calc(100vh - 48px)'
+                maxHeight: isMobile ? 'calc(100vh - 232px)' : 'calc(100vh - 48px)',
+                transition: 'all 0.3s ease'
               }}
             >
               <Tabs 
@@ -479,9 +486,10 @@ function AuthPageContent() {
                     paddingBottom: '12px',
                     transition: 'all 0.2s ease',
                     opacity: 0.7,
+                    color: 'var(--text-body)',
                     '&:hover': {
                       opacity: 1,
-                      backgroundColor: 'rgba(25, 118, 210, 0.05)',
+                      backgroundColor: 'var(--primary-light)',
                     }
                   },
                   tabActive: {
@@ -648,13 +656,14 @@ function AuthPageContent() {
                         size={isMobile ? "md" : "lg"}
                         radius="md"
                         style={{
-                          borderColor: '#EAEEF5',
+                          borderColor: 'var(--border-color-light)',
                           color: 'var(--text-body)',
+                          backgroundColor: 'var(--background-white)',
                           height: isMobile ? '42px' : '48px',
                           fontWeight: 500,
                           transition: 'all 0.2s ease',
                           '&:hover': {
-                            backgroundColor: '#F5F9FF',
+                            backgroundColor: 'var(--chat-bg)',
                             borderColor: 'var(--primary-light)',
                           }
                         }}
@@ -863,7 +872,7 @@ function AuthPageContent() {
                                 mt="md"
                                 clearable={false}
                                 firstDayOfWeek={1}
-                                icon={<IconCalendar size={16} color="#1976d2" />}
+                                icon={<IconCalendar size={16} style={{ color: 'var(--text-body)' }} />}
                                 valueFormat="DD.MM.YYYY"
                                 {...profileForm.getInputProps('birthDate')}
                                 styles={{
@@ -871,6 +880,9 @@ function AuthPageContent() {
                                     height: '42px',
                                     fontSize: '0.95rem',
                                     fontWeight: 500,
+                                    backgroundColor: 'var(--background-white)',
+                                    borderColor: 'var(--border-color-light)',
+                                    color: 'var(--text-body)',
                                     '&:focus': {
                                       borderColor: 'var(--primary)',
                                       boxShadow: '0 0 0 2px rgba(25, 118, 210, 0.2)'
@@ -882,22 +894,67 @@ function AuthPageContent() {
                                     fontSize: '0.9rem',
                                     color: 'var(--text-title)'
                                   },
+                                  rightSection: {
+                                    color: 'var(--text-body)'
+                                  },
+                                  dropdown: {
+                                    backgroundColor: 'var(--background-white)',
+                                    borderColor: 'var(--border-color)',
+                                    boxShadow: 'var(--shadow-md)'
+                                  },
                                   calendarHeaderControl: {
-                                    color: 'var(--primary)'
+                                    color: 'var(--text-body)',
+                                    backgroundColor: 'transparent',
+                                    '&:hover': {
+                                      backgroundColor: 'var(--primary-light)',
+                                      color: 'var(--text-title)'
+                                    }
+                                  },
+                                  calendarHeaderLevel: {
+                                    color: 'var(--text-title)',
+                                    '&:hover': {
+                                      backgroundColor: 'var(--primary-light)'
+                                    }
                                   },
                                   day: {
-                                    '&[dataSelected]': {
-                                      backgroundColor: 'var(--primary)'
+                                    color: 'var(--text-body)',
+                                    backgroundColor: 'transparent',
+                                    '&:hover': {
+                                      backgroundColor: 'var(--primary-light)',
+                                      color: 'var(--text-title)'
+                                    },
+                                    '&[data-selected]': {
+                                      backgroundColor: 'var(--primary)',
+                                      color: 'white'
+                                    },
+                                    '&[data-today]': {
+                                      backgroundColor: 'var(--chat-bg)',
+                                      color: 'var(--primary)',
+                                      borderColor: 'var(--primary)'
                                     }
                                   },
                                   month: {
-                                    '&[dataSelected]': {
-                                      backgroundColor: 'var(--primary)'
+                                    color: 'var(--text-body)',
+                                    backgroundColor: 'transparent',
+                                    '&:hover': {
+                                      backgroundColor: 'var(--primary-light)',
+                                      color: 'var(--text-title)'
+                                    },
+                                    '&[data-selected]': {
+                                      backgroundColor: 'var(--primary)',
+                                      color: 'white'
                                     }
                                   },
                                   year: {
-                                    '&[dataSelected]': {
-                                      backgroundColor: 'var(--primary)'
+                                    color: 'var(--text-body)',
+                                    backgroundColor: 'transparent',
+                                    '&:hover': {
+                                      backgroundColor: 'var(--primary-light)',
+                                      color: 'var(--text-title)'
+                                    },
+                                    '&[data-selected]': {
+                                      backgroundColor: 'var(--primary)',
+                                      color: 'white'
                                     }
                                   }
                                 }}
@@ -1052,7 +1109,9 @@ function AuthPageContent() {
                               style={{
                                 borderRadius: '10px',
                                 border: '1px solid var(--border-color-light)',
-                                boxShadow: '0 4px 15px rgba(0,0,0,0.04)'
+                                boxShadow: 'var(--shadow-sm)',
+                                backgroundColor: 'var(--background-white)',
+                                transition: 'all 0.3s ease'
                               }}
                             >
                               <Title 
@@ -1097,10 +1156,11 @@ function AuthPageContent() {
                                 style={{
                                   border: '1px solid var(--border-color)',
                                   color: 'var(--text-body)',
+                                  backgroundColor: 'var(--background-white)',
                                   fontWeight: 500,
                                   transition: 'all 0.2s ease',
                                   '&:hover': {
-                                    backgroundColor: '#F5F9FF',
+                                    backgroundColor: 'var(--chat-bg)',
                                     borderColor: 'var(--primary-light)',
                                   }
                                 }}
@@ -1140,8 +1200,28 @@ function AuthPageContent() {
                           handleSubmit(e);
                         }}>
                           <Stack spacing="md">
-                            <Paper shadow="xs" p="md" withBorder mb="lg">
-                              <Title order={4} mb="md">Temel Sağlık Bilgileri</Title>
+                            <Paper 
+                              shadow="xs" 
+                              p="md" 
+                              withBorder 
+                              mb="lg"
+                              style={{
+                                borderRadius: '10px',
+                                border: '1px solid var(--border-color-light)',
+                                boxShadow: 'var(--shadow-sm)',
+                                backgroundColor: 'var(--background-white)',
+                                transition: 'all 0.3s ease'
+                              }}
+                            >
+                              <Title 
+                                order={4} 
+                                mb="md"
+                                style={{
+                                  color: 'var(--text-title)',
+                                  fontWeight: 700,
+                                  fontSize: '1.1rem'
+                                }}
+                              >Temel Sağlık Bilgileri</Title>
                               
                               <Select
                                 label="Kan Grubu"
@@ -1176,8 +1256,28 @@ function AuthPageContent() {
                               />
                             </Paper>
                             
-                            <Paper shadow="xs" p="md" withBorder mb="lg">
-                              <Title order={4} mb="md">Alerjiler</Title>
+                            <Paper 
+                              shadow="xs" 
+                              p="md" 
+                              withBorder 
+                              mb="lg"
+                              style={{
+                                borderRadius: '10px',
+                                border: '1px solid var(--border-color-light)',
+                                boxShadow: 'var(--shadow-sm)',
+                                backgroundColor: 'var(--background-white)',
+                                transition: 'all 0.3s ease'
+                              }}
+                            >
+                              <Title 
+                                order={4} 
+                                mb="md"
+                                style={{
+                                  color: 'var(--text-title)',
+                                  fontWeight: 700,
+                                  fontSize: '1.1rem'
+                                }}
+                              >Alerjiler</Title>
                               
                               <MultiSelect
                                 label="İlaç Alerjileri"
@@ -1201,8 +1301,28 @@ function AuthPageContent() {
                               />
                             </Paper>
                             
-                            <Paper shadow="xs" p="md" withBorder mb="lg">
-                              <Title order={4} mb="md">Sağlık Geçmişi</Title>
+                            <Paper 
+                              shadow="xs" 
+                              p="md" 
+                              withBorder 
+                              mb="lg"
+                              style={{
+                                borderRadius: '10px',
+                                border: '1px solid var(--border-color-light)',
+                                boxShadow: 'var(--shadow-sm)',
+                                backgroundColor: 'var(--background-white)',
+                                transition: 'all 0.3s ease'
+                              }}
+                            >
+                              <Title 
+                                order={4} 
+                                mb="md"
+                                style={{
+                                  color: 'var(--text-title)',
+                                  fontWeight: 700,
+                                  fontSize: '1.1rem'
+                                }}
+                              >Sağlık Geçmişi</Title>
                               
                               <Textarea
                                 label="Tıbbi Geçmiş"

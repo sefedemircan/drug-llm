@@ -4,6 +4,7 @@ import "@mantine/core/styles.css";
 import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
 import { ChatProvider } from "../context/ChatContext";
+import { ThemeProvider } from "../context/ThemeContext";
 import { Montserrat, Open_Sans } from "next/font/google";
 
 const geistSans = Geist({
@@ -101,13 +102,15 @@ export default function RootLayout({ children }) {
   return (
     <html lang="tr">
       <body className={`${geistSans.variable} ${geistMono.variable} ${montserrat.variable} ${openSans.variable}`}>
-        <MantineProvider theme={theme} defaultColorScheme="light">
-          <AuthProvider>
-            <ChatProvider>
-              {children}
-            </ChatProvider>
-          </AuthProvider>
-        </MantineProvider>
+        <ThemeProvider>
+          <MantineProvider theme={theme} defaultColorScheme="light">
+            <AuthProvider>
+              <ChatProvider>
+                {children}
+              </ChatProvider>
+            </AuthProvider>
+          </MantineProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

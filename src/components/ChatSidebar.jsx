@@ -104,11 +104,21 @@ export default function ChatSidebar({ isMobile, onClose }) {
             leftSection={<IconArrowLeft size={16} />}
             onClick={onClose}
             size="xs"
+            style={{
+              color: 'var(--text-body)',
+              backgroundColor: 'transparent',
+              border: 'none',
+              transition: 'all 0.2s ease',
+            }}
             styles={{
               root: {
                 padding: '4px 8px',
                 height: 'auto',
-                minHeight: '28px'
+                minHeight: '28px',
+                '&:hover': {
+                  backgroundColor: 'var(--primary-light)',
+                  color: 'var(--text-title)',
+                }
               }
             }}
           >
@@ -122,9 +132,12 @@ export default function ChatSidebar({ isMobile, onClose }) {
           fullWidth 
           leftSection={<IconPlus size={16} />}
           onClick={handleNewChat}
-          color="var(--primary)"
           style={{
-            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+            backgroundColor: 'var(--primary)',
+            color: 'white',
+            border: 'none',
+            boxShadow: 'var(--shadow-sm)',
+            transition: 'all 0.2s ease',
           }}
         >
           Yeni Sohbet
@@ -205,13 +218,19 @@ export default function ChatSidebar({ isMobile, onClose }) {
                                 style={{
                                   opacity: 0.7,
                                   cursor: 'pointer',
-                                  transition: 'opacity 0.2s ease'
+                                  transition: 'all 0.2s ease',
+                                  color: 'var(--text-muted)',
+                                  backgroundColor: 'transparent',
                                 }}
                                 onMouseEnter={(e) => {
                                   e.target.style.opacity = '1';
+                                  e.target.style.backgroundColor = 'var(--primary-light)';
+                                  e.target.style.color = 'var(--text-title)';
                                 }}
                                 onMouseLeave={(e) => {
                                   e.target.style.opacity = '0.7';
+                                  e.target.style.backgroundColor = 'transparent';
+                                  e.target.style.color = 'var(--text-muted)';
                                 }}
                               >
                                 {deletingChatId === chat.id ? (
@@ -255,7 +274,8 @@ export default function ChatSidebar({ isMobile, onClose }) {
                       marginBottom: '4px',
                       color: 'var(--text-body)',
                       cursor: 'pointer',
-                      transition: 'all 0.2s ease'
+                      transition: 'all 0.2s ease',
+                      backgroundColor: 'transparent',
                     }}
                     active={currentChat?.id === chat.id}
                     color="primary"

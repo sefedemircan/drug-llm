@@ -164,9 +164,10 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
       style={{ 
         backgroundColor: 'var(--chat-bg)',
         position: 'relative',
-        backgroundImage: 'linear-gradient(to bottom, rgba(225, 245, 254, 0.3), rgba(224, 247, 234, 0.2))',
+        backgroundImage: 'var(--chat-bg-gradient)',
         width: '100%',
         minHeight: isMobile ? 'calc(100vh - 60px)' : '100vh',
+        transition: 'all 0.3s ease',
       }}
     >
       <Box
@@ -255,11 +256,11 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
               boxSizing: 'border-box'
             }}>
               <div style={{
-                background: 'linear-gradient(135deg, #1976D2, #00C853)',
+                background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
                 borderRadius: '50%',
                 padding: isMobile ? '18px' : '24px',
                 marginBottom: isMobile ? '20px' : '32px',
-                boxShadow: '0 12px 40px rgba(25, 118, 210, 0.25)',
+                boxShadow: 'var(--shadow-xl)',
                 animation: 'float 3s ease-in-out infinite',
                 position: 'relative',
               }}>
@@ -270,7 +271,7 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
                   right: '-2px',
                   width: '12px',
                   height: '12px',
-                  background: '#00C853',
+                  background: 'var(--secondary)',
                   borderRadius: '50%',
                   border: '2px solid white',
                   animation: 'pulse 2s infinite'
@@ -278,7 +279,7 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
               </div>
               
               <Text size={isMobile ? "xl" : "32px"} fw={700} style={{ 
-                color: '#1976D2',
+                color: 'var(--primary)',
                 marginBottom: isMobile ? '12px' : '16px',
                 fontSize: isMobile ? '24px' : '32px',
                 fontWeight: 700,
@@ -291,7 +292,7 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
                 maxWidth: isMobile ? '100%' : '650px', 
                 lineHeight: 1.6,
                 marginBottom: isMobile ? '24px' : '32px',
-                color: '#6B7280',
+                color: 'var(--text-body)',
                 fontSize: isMobile ? '15px' : '17px',
                 transition: 'margin-bottom 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
                 fontWeight: 400,
@@ -307,11 +308,11 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
                   style={{ 
                     maxWidth: isMobile ? '100%' : '750px', 
                     width: '100%',
-                    boxShadow: '0 16px 48px rgba(25, 118, 210, 0.12)',
+                    boxShadow: 'var(--shadow-xl)',
                     borderRadius: isMobile ? '16px' : '20px',
                     overflow: 'hidden',
-                    backgroundColor: 'white',
-                    border: '1px solid rgba(25, 118, 210, 0.1)',
+                    backgroundColor: 'var(--background-white)',
+                    border: '1px solid var(--border-color-light)',
                     transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
                     transform: 'translateY(0)',
                     opacity: 1,
@@ -364,7 +365,7 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
       {!isInputCentered && (
         <Box 
           style={{ 
-            background: 'linear-gradient(to top, var(--chat-bg) 90%, rgba(247, 249, 252, 0.8) 100%)',
+            background: 'var(--chat-bg-gradient)',
             position: 'absolute',
             bottom: isMobile ? '12px' : '20px',
             left: 0,
@@ -385,11 +386,11 @@ export default function ChatArea({ isMobile, navbarOpened, sidebarWidth = 0, onO
             style={{ 
               maxWidth: '900px', 
               margin: '0 auto',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+              boxShadow: 'var(--shadow-lg)',
               borderRadius: isMobile ? '12px' : '16px',
               overflow: 'hidden',
-              backgroundColor: 'white',
-              border: '1px solid rgba(0,0,0,0.06)',
+              backgroundColor: 'var(--background-white)',
+              border: '1px solid var(--border-color-light)',
               width: '100%',
               transition: 'box-shadow 0.2s ease, border-color 0.2s ease',
             }}>

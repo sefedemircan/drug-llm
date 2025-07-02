@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../utils/supabase';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import ThemeToggle from '../../components/ThemeToggle';
 import { 
   Box, 
   Container, 
@@ -130,8 +131,8 @@ export default function ProfilePage() {
     <Box 
       style={{ 
         minHeight: '100vh', 
-        backgroundColor: '#f8fafc',
-        background: 'linear-gradient(180deg, rgba(235,244,255,0.8) 0%, rgba(240,248,255,0.4) 100%)',
+        backgroundColor: 'var(--background-primary)',
+        background: 'var(--profile-bg-gradient)',
         paddingBottom: '40px'
       }}
     >
@@ -166,16 +167,19 @@ export default function ProfilePage() {
                 Profilim
               </Title>
             </Group>
-            <Tooltip label="Profili Düzenle">
-              <ActionIcon 
-                size="lg" 
-                radius="xl" 
-                variant="light" 
-                color="blue"
-              >
-                <IconEdit size={20} />
-              </ActionIcon>
-            </Tooltip>
+            <Group>
+              <ThemeToggle />
+              <Tooltip label="Profili Düzenle">
+                <ActionIcon 
+                  size="lg" 
+                  radius="xl" 
+                  variant="light" 
+                  color="blue"
+                >
+                  <IconEdit size={20} />
+                </ActionIcon>
+              </Tooltip>
+            </Group>
           </Group>
           
           <Alert 
@@ -184,8 +188,9 @@ export default function ProfilePage() {
             mb="xl"
             icon={<IconAlertCircle size={16} />}
             sx={{
-              border: '1px solid rgba(25, 118, 210, 0.2)',
-              background: 'rgba(25, 118, 210, 0.05)'
+              border: '1px solid var(--primary-light)',
+              background: 'var(--primary-bg)',
+              color: 'var(--text-body)'
             }}
           >
             Bilgileriniz ilaç tavsiyelerini kişiselleştirmek için kullanılacak ve güvenle saklanacaktır.
@@ -219,8 +224,9 @@ export default function ProfilePage() {
           mb="xl"
           padding="xl"
           sx={{ 
-            background: 'linear-gradient(135deg, #f5f9ff 0%, #ffffff 100%)',
-            borderColor: 'rgba(25, 118, 210, 0.2)',
+            background: 'var(--card-bg-gradient)',
+            backgroundColor: 'var(--background-white)',
+            borderColor: 'var(--border-color-light)',
             overflow: 'visible'
           }}
         >
@@ -233,8 +239,8 @@ export default function ProfilePage() {
                 style={{ 
                   fontSize: '2.5rem', 
                   fontWeight: 700,
-                  boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
-                  border: '4px solid white',
+                  boxShadow: 'var(--shadow-lg)',
+                  border: '4px solid var(--background-white)',
                   backgroundColor: 'var(--primary)',
                   marginBottom: '16px'
                 }}
@@ -252,8 +258,7 @@ export default function ProfilePage() {
                 size="lg" 
                 radius="sm" 
                 style={{
-                  
-                  background: 'linear-gradient(90deg, var(--primary) 0%, #1a95e9 100%)',
+                  background: 'var(--primary-gradient)',
                   padding: '8px 16px'
                 }}
               >
@@ -313,8 +318,9 @@ export default function ProfilePage() {
               radius="md" 
               padding="lg"
               sx={{
-                borderColor: 'rgba(25, 118, 210, 0.2)',
-                background: 'linear-gradient(135deg, #f5f9ff 0%, #ffffff 100%)',
+                borderColor: 'var(--border-color-light)',
+                background: 'var(--card-bg-gradient)',
+                backgroundColor: 'var(--background-white)',
               }}
             >
               <Card.Section bg="var(--primary)" py="sm" px="lg">
@@ -340,7 +346,7 @@ export default function ProfilePage() {
                       padding: '16px 24px', 
                       fontSize: '1.2rem', 
                       fontWeight: 700,
-                      background: 'linear-gradient(45deg, #ff5757 0%, #ff4040 100%)',
+                      background: 'var(--error-gradient)',
                     }}
                   >
                     Kan Grubu: {healthData.blood_type}
@@ -379,8 +385,9 @@ export default function ProfilePage() {
               radius="md" 
               padding="lg"
               sx={{
-                borderColor: 'rgba(25, 118, 210, 0.2)',
-                background: 'linear-gradient(135deg, #f5f9ff 0%, #ffffff 100%)',
+                borderColor: 'var(--border-color-light)',
+                background: 'var(--card-bg-gradient)',
+                backgroundColor: 'var(--background-white)',
               }}
             >
               <Card.Section bg="var(--secondary)" py="sm" px="lg">
@@ -477,8 +484,8 @@ function ProfileInfoItem({ label, value, fullWidth = false, important = false })
       p="xs" 
       style={{ 
         borderRadius: '8px',
-        backgroundColor: important ? 'rgba(25, 118, 210, 0.08)' : 'transparent',
-        border: important ? '1px dashed rgba(25, 118, 210, 0.3)' : 'none'
+        backgroundColor: important ? 'var(--primary-bg)' : 'transparent',
+        border: important ? '1px dashed var(--primary-light)' : 'none'
       }}
     >
       <Text 

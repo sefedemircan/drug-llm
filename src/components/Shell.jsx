@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Box, Burger, Group, Title, Flex, ActionIcon, Portal, Overlay, Button, Transition } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconChevronLeft, IconChevronRight, IconX, IconLogout, IconUser } from '@tabler/icons-react';
+import ThemeToggle from './ThemeToggle';
 import ChatSidebar from './ChatSidebar';
 import ChatArea from './ChatArea';
 import { useAuth } from '../context/AuthContext';
@@ -165,6 +166,8 @@ export default function Shell() {
           </Group>
           
           <Group spacing="sm">
+            <ThemeToggle size={16} />
+            
             {!isSmallMobile && (
               <Button 
                 variant="subtle" 

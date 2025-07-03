@@ -682,7 +682,7 @@ export default function Home() {
                       justifyContent: "center",
                       marginBottom: "16px",
                       background:
-                        "linear-gradient(135deg, var(--primary-light) 0%, #BBDEFB 100%)",
+                        "var(--primary-light)",
                       color: "var(--primary)",
                       boxShadow: "0 8px 16px rgba(25, 118, 210, 0.15)",
                     }}
@@ -797,7 +797,7 @@ export default function Home() {
                       justifyContent: "center",
                       marginBottom: "16px",
                       background:
-                        "linear-gradient(135deg, var(--primary-light) 0%, #BBDEFB 100%)",
+                        "var(--primary-light)",
                       color: "var(--primary)",
                       boxShadow: "0 8px 16px rgba(25, 118, 210, 0.15)",
                     }}

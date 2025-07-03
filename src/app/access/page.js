@@ -147,7 +147,7 @@ export default function AccessPage() {
       <Box 
         style={{ 
           minHeight: '100vh',
-          backgroundColor: '#f8fafc',
+          backgroundColor: 'var(--chat-bg)',
           paddingTop: isMobile ? '100px' : '120px'
         }}
       >

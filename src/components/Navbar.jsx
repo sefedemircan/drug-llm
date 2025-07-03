@@ -55,7 +55,7 @@ const Navbar = () => {
   // Görseldeki navbar öğeleri
   const navItems = [
     { label: 'DrugLLM', path: '/', icon: <IconPill size={16} /> },
-    { label: 'Ana Sayfa', path: '/docs' },
+    { label: 'Ana Sayfa', path: '/' },
     { label: 'Blog', path: '/blog' },
     { label: 'İletişim', path: '/contact' },
     { label: 'Erken Erişim', path: '/access' },
@@ -204,7 +204,7 @@ const Navbar = () => {
           <div style={navbarBackgroundStyle}>
             {navItems.map((item, index) => (
               <Link
-                key={item.path}
+                key={`${item.label}-${index}`}
                 href={item.path}
                 className="navbar-link"
                 style={{
@@ -304,7 +304,7 @@ const Navbar = () => {
             {navItems.map((item, index) => (
               index > 0 && (
                 <Link
-                  key={item.path}
+                  key={`mobile-${item.label}-${index}`}
                   href={item.path}
                   onClick={close}
                   style={{

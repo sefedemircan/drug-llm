@@ -123,7 +123,7 @@ export default function BlogPage() {
       <Box 
         style={{ 
           minHeight: '100vh',
-          backgroundColor: '#f8fafc',
+          backgroundColor: 'var(--chat-bg)',
           paddingTop: isMobile ? '100px' : '120px'
         }}
       >
@@ -194,13 +194,13 @@ export default function BlogPage() {
                         <Box
                           style={{
                             height: '200px',
-                            backgroundColor: '#e9ecef',
+                            backgroundColor: 'var(--border-color-light)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center'
                           }}
                         >
-                          <IconBook size={48} color="#adb5bd" />
+                          <IconBook size={48} color="var(--text-muted)" />
                         </Box>
                       </Card.Section>
 
@@ -235,11 +235,11 @@ export default function BlogPage() {
                           
                           <Group spacing="md">
                             <Group spacing={4}>
-                              <IconEye size={16} color="#868e96" />
+                              <IconEye size={16} color="var(--text-muted)" />
                               <Text size="xs" color="dimmed">{post.views}</Text>
                             </Group>
                             <Group spacing={4}>
-                              <IconHeart size={16} color="#868e96" />
+                              <IconHeart size={16} color="var(--text-muted)" />
                               <Text size="xs" color="dimmed">{post.likes}</Text>
                             </Group>
                             <ActionIcon variant="subtle">
@@ -268,13 +268,13 @@ export default function BlogPage() {
                       <Box
                         style={{
                           height: '150px',
-                          backgroundColor: '#e9ecef',
+                          backgroundColor: 'var(--border-color-light)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center'
                         }}
                       >
-                        <IconPill size={36} color="#adb5bd" />
+                        <IconPill size={36} color="var(--text-muted)" />
                       </Box>
                     </Card.Section>
 
@@ -306,11 +306,11 @@ export default function BlogPage() {
                         
                         <Group spacing="sm">
                           <Group spacing={2}>
-                            <IconEye size={14} color="#868e96" />
+                            <IconEye size={14} color="var(--text-muted)" />
                             <Text size="xs" color="dimmed">{post.views}</Text>
                           </Group>
                           <Group spacing={2}>
-                            <IconHeart size={14} color="#868e96" />
+                            <IconHeart size={14} color="var(--text-muted)" />
                             <Text size="xs" color="dimmed">{post.likes}</Text>
                           </Group>
                         </Group>

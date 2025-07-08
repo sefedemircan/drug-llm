@@ -48,6 +48,7 @@ import { useEffect, useState, useRef } from "react";
 import { useMediaQuery } from "@mantine/hooks";
 import Navbar from "../components/Navbar";
 import ScrollToTop from "../components/ScrollToTop";
+import { useTheme } from "../context/ThemeContext";
 
 // Optimized custom hook for scroll animations
 const useScrollAnimation = () => {
@@ -106,6 +107,7 @@ const useScrollAnimation = () => {
 
 export default function Home() {
   const theme = useMantineTheme();
+  const { isDark } = useTheme();
   // Medya sorguları ile ekran boyutlarını kontrol et
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isSmallMobile = useMediaQuery("(max-width: 480px)");
@@ -493,21 +495,21 @@ export default function Home() {
                   href="/login"
                   size={isMobile ? "md" : "lg"}
                   radius="md"
-                  className="cta-button"
+                  className="cta-button login-button"
                   style={{
-                    backgroundColor: "var(--secondary)",
+                    backgroundColor: isDark ? "#7c2d92" : "var(--secondary)",
                     color: "white",
                     padding: isMobile ? "0 20px" : "0 24px",
                     height: isMobile ? "42px" : "48px",
                     fontWeight: 600,
                     letterSpacing: "0.3px",
-                    boxShadow: "0 8px 15px rgba(0, 200, 83, 0.25)",
+                    boxShadow: isDark ? "0 8px 15px rgba(124, 45, 146, 0.25)" : "0 8px 15px rgba(0, 200, 83, 0.25)",
                     border: "none",
                     transition: "all 0.3s ease",
                     "&:hover": {
-                      backgroundColor: "var(--secondary)",
+                      backgroundColor: isDark ? "#8e3aa3" : "var(--secondary)",
                       transform: "translateY(-3px)",
-                      boxShadow: "0 12px 20px rgba(0, 200, 83, 0.35)",
+                      boxShadow: isDark ? "0 12px 20px rgba(124, 45, 146, 0.35)" : "0 12px 20px rgba(0, 200, 83, 0.35)",
                     },
                     fontSize: isMobile ? "0.9rem" : "1rem",
                   }}

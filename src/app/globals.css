@@ -120,6 +120,22 @@ html[data-theme="dark"] .home-hero {
   box-shadow: 0 20px 40px rgba(79, 156, 249, 0.15);
 }
 
+/* Dark modda giriş yap butonu için özel renk - daha yüksek öncelik */
+html[data-theme="dark"] .login-button.mantine-Button-root,
+html[data-theme="dark"] .cta-button.login-button {
+  background-color: #00c753 !important;
+  box-shadow: 0 8px 15px rgba(124, 45, 146, 0.25) !important;
+  border-color: #00c753 !important;
+}
+
+html[data-theme="dark"] .login-button.mantine-Button-root:hover,
+html[data-theme="dark"] .cta-button.login-button:hover {
+  background-color: #00c753 !important;
+  box-shadow: 0 12px 20px rgba(124, 45, 146, 0.35) !important;
+  border-color: #00c753 !important;
+  transform: translateY(-3px) !important;
+}
+
 html[data-theme="dark"] .home-section.primary-light {
   background-color: #25262b;
 }

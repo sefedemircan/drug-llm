@@ -103,7 +103,7 @@ const Navbar = () => {
 
   // İlk link stili (DrugLLM) - ilk link biraz daha koyu gri
   const firstLinkStyle = {
-    padding: isTablet ? '12px 18px' : '15px 25px',
+    padding: isTablet ? '14px 18px' : '18px 25px', // Padding artırıldı
     fontWeight: 500,
     fontSize: isTablet ? '14px' : '15px',
     color: 'var(--primary)',
@@ -114,11 +114,12 @@ const Navbar = () => {
     transition: 'background-color 0.2s',
     borderRight: '1px solid var(--border-color)', // Tema değişkeninden border
     background: 'var(--border-color-light)', // Tema değişkeninden background
+    height: '100%', // Tam yükseklik
   };
 
   // Orta linkler stili
   const middleLinkStyle = {
-    padding: isTablet ? '12px 18px' : '15px 25px',
+    padding: isTablet ? '14px 18px' : '18px 25px', // Padding artırıldı
     fontWeight: 500,
     fontSize: isTablet ? '14px' : '15px',
     color: 'var(--text-body)',
@@ -131,7 +132,7 @@ const Navbar = () => {
 
   // Son link stili (Erken Erişim)
   const lastLinkStyle = {
-    padding: isTablet ? '12px 18px' : '15px 25px',
+    padding: isTablet ? '14px 18px' : '18px 25px', // Padding artırıldı
     fontWeight: 500,
     fontSize: isTablet ? '14px' : '15px',
     color: 'var(--text-body)',
@@ -158,6 +159,8 @@ const Navbar = () => {
     cursor: 'pointer',
     outline: 'none',
     borderLeft: '1px solid var(--border-color)',
+    color: 'var(--text-body)',
+    transition: 'all 0.2s ease',
   };
 
   // Mobil logo stili
@@ -165,7 +168,9 @@ const Navbar = () => {
     ...firstLinkStyle,
     borderRight: 'none',
     fontSize: isSmallMobile ? '13px' : '15px',
-    padding: isSmallMobile ? '12px 15px' : '15px 25px',
+    padding: isSmallMobile ? '16px 15px' : '20px 25px', // Padding daha da artırıldı
+    height: 'auto', // Mobilde auto yükseklik
+    minHeight: isSmallMobile ? '48px' : '54px', // Minimum yükseklik artırıldı
   };
 
   return (
@@ -181,7 +186,7 @@ const Navbar = () => {
 
         @media (max-width: 992px) {
           .navbar-link {
-            padding: 12px 18px !important;
+            padding: 14px 18px !important;
             font-size: 14px !important;
           }
         }
@@ -189,16 +194,22 @@ const Navbar = () => {
         @media (max-width: 480px) {
           .mobile-logo {
             font-size: 13px !important;
-            padding: 12px 15px !important;
+            padding: 16px 15px !important;
           }
           .mobile-toggle {
-            padding: 12px 15px !important;
+            padding: 16px 15px !important;
           }
         }
       `}</style>
 
       {/* Ana navbar */}
-      <Box style={navbarContainerStyle}>
+      <Box style={{
+        ...navbarContainerStyle,
+        opacity: opened && isMobile ? 0 : 1, // Drawer açıkken navbar'ı tamamen gizle
+        visibility: opened && isMobile ? 'hidden' : 'visible', // Tamamen gizle
+        transition: 'all 0.3s ease',
+        pointerEvents: opened && isMobile ? 'none' : 'auto',
+      }}>
         {/* Masaüstü için normal oval navbar */}
         {!isMobile && (
           <div style={navbarBackgroundStyle}>
@@ -252,12 +263,12 @@ const Navbar = () => {
                 <ThemeToggle size={isSmallMobile ? 14 : 16} />
               </div>
               
-              {/* Menu toggle butonu */}
+              {/* Menu toggle butonu - sadece drawer kapalıyken görünür */}
               <button 
                 onClick={toggle} 
                 className="mobile-toggle"
                 style={mobileToggleStyle}
-                aria-label="Toggle menu"
+                aria-label="Menüyü aç"
               >
                 <IconMenu2 size={isSmallMobile ? 18 : 20} stroke={1.5} />
               </button>
@@ -273,72 +284,144 @@ const Navbar = () => {
       <Drawer
         opened={opened}
         onClose={close}
-        padding={isSmallMobile ? "md" : "xl"}
+        padding={0}
         size="100%"
         position="right"
-        styles={{
-          body: { padding: isSmallMobile ? '15px' : '20px' },
-          inner: { height: '100vh' },
-          root: { zIndex: 2000 }
-        }}
+        withCloseButton={false}
+        styles={(theme) => ({
+          body: { 
+            padding: 0,
+            backgroundColor: 'var(--sidebar-bg)',
+            margin: 0,
+          },
+          inner: { 
+            height: '100vh',
+            backgroundColor: 'var(--sidebar-bg)',
+          },
+          root: { 
+            zIndex: 2000,
+            backgroundColor: 'var(--sidebar-bg)',
+          },
+          content: {
+            backgroundColor: 'var(--sidebar-bg)',
+            border: 'none',
+            boxShadow: 'none',
+          },
+          overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+          },
+          header: {
+            backgroundColor: 'var(--sidebar-bg)',
+            border: 'none',
+            margin: 0,
+            padding: 0,
+            height: 0,
+          }
+        })}
         closeButtonProps={{ display: 'none' }}
       >
-        <Stack gap={isSmallMobile ? "md" : "xl"}>
-          {/* Logo ve Kapat */}
-          <Group position="apart">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <IconPill size={isSmallMobile ? 20 : 24} />
-              <Text fw={600} size={isSmallMobile ? "md" : "lg"}>DrugLLM</Text>
-            </div>
-            <ActionIcon 
-              variant="subtle" 
-              onClick={close} 
-              radius="xl"
-              size={isSmallMobile ? "md" : "lg"}
-            >
-              <IconX size={isSmallMobile ? 18 : 20} />
-            </ActionIcon>
-          </Group>
+        <div style={{
+          padding: isSmallMobile ? '15px' : '20px',
+          backgroundColor: 'var(--sidebar-bg)',
+          height: '100vh',
+          width: '100%',
+          margin: 0,
+          border: 'none',
+          boxSizing: 'border-box',
+          position: 'relative',
+        }}>
+          {/* Sağ üst köşedeki X butonu */}
+          <button
+            onClick={close}
+            style={{
+              position: 'absolute',
+              top: isSmallMobile ? '15px' : '20px',
+              right: isSmallMobile ? '15px' : '20px',
+              background: 'var(--border-color-light)',
+              border: '1px solid var(--border-color)',
+              borderRadius: '50%',
+              width: isSmallMobile ? '40px' : '44px',
+              height: isSmallMobile ? '40px' : '44px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              color: 'var(--text-body)',
+              transition: 'all 0.2s ease',
+              zIndex: 10,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--border-color)';
+              e.currentTarget.style.color = 'var(--primary)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--border-color-light)';
+              e.currentTarget.style.color = 'var(--text-body)';
+            }}
+            aria-label="Menüyü kapat"
+          >
+            <IconX size={isSmallMobile ? 18 : 20} stroke={1.5} />
+          </button>
 
-          <Stack gap={isSmallMobile ? "xs" : "md"}>
-            {navItems.map((item, index) => (
-              index > 0 && (
-                <Link
-                  key={`mobile-${item.label}-${index}`}
-                  href={item.path}
-                  onClick={close}
-                  style={{
-                    display: 'block',
-                    padding: isSmallMobile ? '12px' : '16px',
-                    color: isActive(item.path) ? theme.colors.primary[7] : theme.colors.dark[7],
-                    fontWeight: isActive(item.path) ? 600 : 500,
-                    textDecoration: 'none',
-                    transition: 'all 0.2s ease',
-                    backgroundColor: isActive(item.path) ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
-                    borderRadius: theme.radius.md,
-                    fontSize: isSmallMobile ? '14px' : '16px',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = isActive(item.path) 
-                      ? 'rgba(0, 0, 0, 0.05)' 
-                      : 'transparent';
-                  }}
-                >
-                  {item.icon && item.icon} {item.label}
-                </Link>
-              )
-            ))}
-            
-            {/* Mobil drawer'da tema toggle */}
-            <Group position="center" mt="lg">
-              <Text size="sm" c="dimmed">Tema Seçimi</Text>
-              <ThemeToggle size={20} />
-            </Group>
+          <Stack gap={isSmallMobile ? "md" : "xl"} style={{ backgroundColor: 'var(--sidebar-bg)', marginTop: isSmallMobile ? '60px' : '70px' }}>
+            {/* Logo */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+              <IconPill size={isSmallMobile ? 20 : 24} style={{ color: 'var(--primary)' }} />
+              <Text fw={600} size={isSmallMobile ? "md" : "lg"} style={{ color: 'var(--text-title)' }}>
+                DrugLLM
+              </Text>
+            </div>
+
+            <Stack gap={isSmallMobile ? "xs" : "md"} style={{ backgroundColor: 'var(--sidebar-bg)' }}>
+              {navItems.map((item, index) => (
+                index > 0 && (
+                  <Link
+                    key={`mobile-${item.label}-${index}`}
+                    href={item.path}
+                    onClick={close}
+                    style={{
+                      display: 'block',
+                      padding: isSmallMobile ? '12px' : '16px',
+                      color: isActive(item.path) ? 'var(--primary)' : 'var(--text-body)',
+                      fontWeight: isActive(item.path) ? 600 : 500,
+                      textDecoration: 'none',
+                      transition: 'all 0.2s ease',
+                      backgroundColor: isActive(item.path) ? 'var(--primary-light)' : 'transparent',
+                      borderRadius: '8px',
+                      fontSize: isSmallMobile ? '14px' : '16px',
+                      border: '1px solid transparent',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isActive(item.path)) {
+                        e.currentTarget.style.backgroundColor = 'var(--border-color-light)';
+                        e.currentTarget.style.borderColor = 'var(--border-color)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isActive(item.path)) {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.borderColor = 'transparent';
+                      }
+                    }}
+                  >
+                    {item.icon && item.icon} {item.label}
+                  </Link>
+                )
+              ))}
+              
+              {/* Mobil drawer'da tema toggle */}
+              <Group justify="center" mt="lg" style={{
+                padding: '16px',
+                backgroundColor: 'var(--border-color-light)',
+                borderRadius: '8px',
+                border: '1px solid var(--border-color)',
+              }}>
+                <Text size="sm" style={{ color: 'var(--text-muted)' }}>Tema Seçimi</Text>
+                <ThemeToggle size={20} />
+              </Group>
+            </Stack>
           </Stack>
-        </Stack>
+        </div>
       </Drawer>
     </>
   );

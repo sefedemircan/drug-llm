@@ -313,7 +313,7 @@ export async function POST(request) {
 					//console.log('🌊 Starting streaming response...');
 					
 					const stream = await client.chat.completions.create({
-						model: "meta-llama/llama-4-maverick:free",
+						model: "google/gemini-2.0-flash-exp:free",
 						messages: messages,
 						temperature: 0.7,
 						max_tokens: 1000,

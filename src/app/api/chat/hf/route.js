@@ -243,7 +243,7 @@ async function generateChatResponse(userMessage, chatHistory = [], profileData =
 			//model: "meta-llama/Meta-Llama-3.1-8B-Instruct-fast",
 			//model:"meta-llama/Llama-3.3-70B-Instruct",
 			//model:"deepseek/deepseek-r1-distill-llama-70b:free",
-			model:"meta-llama/llama-4-maverick:free",
+			model:"google/gemini-2.0-flash-exp:free",
 			messages: messages,
 			temperature: 0.7,
 			max_tokens: 1000,

@@ -279,7 +279,20 @@ function AuthPageContent() {
     { value: 'Siprofloksasin', label: 'Siprofloksasin' },
     { value: 'Amoksisilin', label: 'Amoksisilin' },
     { value: 'Azitromisin', label: 'Azitromisin' },
-    { value: 'Prednizolon', label: 'Prednizolon' }
+    { value: 'Prednizolon', label: 'Prednizolon' },
+    { value: 'Metformin', label: 'Metformin' },
+    { value: 'Lisinopril', label: 'Lisinopril' },
+    { value: 'Atorvastatin', label: 'Atorvastatin' },
+    { value: 'Omeprazol', label: 'Omeprazol' },
+    { value: 'Levotiroksin', label: 'Levotiroksin' },
+    { value: 'Amlodipin', label: 'Amlodipin' },
+    { value: 'Metoprolol', label: 'Metoprolol' },
+    { value: 'Sertralin', label: 'Sertralin' },
+    { value: 'Alprazolam', label: 'Alprazolam' },
+    { value: 'Gabapentin', label: 'Gabapentin' },
+    { value: 'Tramadol', label: 'Tramadol' },
+    { value: 'Diklofenak', label: 'Diklofenak' },
+    { value: 'Ranitidin', label: 'Ranitidin' },
   ];
 
   return (

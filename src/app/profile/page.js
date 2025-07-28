@@ -323,7 +323,7 @@ export default function ProfilePage() {
                 backgroundColor: 'var(--background-white)',
               }}
             >
-              <Card.Section bg="var(--primary)" py="sm" px="lg">
+              <Card.Section bg="var(--foreground-light)" py="sm" px="lg">
                 <Group position="apart">
                   <Group>
                     <ThemeIcon size="lg" radius="md" color="white" variant="light">
@@ -390,7 +390,7 @@ export default function ProfilePage() {
                 backgroundColor: 'var(--background-white)',
               }}
             >
-              <Card.Section bg="var(--secondary)" py="sm" px="lg">
+              <Card.Section bg="var(--foreground-light)" py="sm" px="lg">
                 <Group position="apart">
                   <Group>
                     <ThemeIcon size="lg" radius="md" color="white" variant="light">
@@ -462,8 +462,8 @@ export default function ProfilePage() {
           </Button>
           
           <Button 
-            variant="gradient" 
-            gradient={{ from: 'blue', to: 'cyan' }}
+            variant="light"
+            color="var(--primary)"
             radius="md"
             onClick={() => fetchUserData()}
             size={isMobile ? "sm" : "md"}

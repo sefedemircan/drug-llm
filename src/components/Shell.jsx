@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import { Box, Burger, Group, Title, Flex, ActionIcon, Portal, Overlay, Button, Transition } from '@mantine/core';
+import { Box, Burger, Group, Title, Flex, ActionIcon, Portal, Overlay, Button, Transition, Menu } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconChevronLeft, IconChevronRight, IconX, IconLogout, IconUser } from '@tabler/icons-react';
+import { IconChevronLeft, IconChevronRight, IconX, IconLogout, IconUser, IconHome, IconSettings } from '@tabler/icons-react';
 import ThemeToggle from './ThemeToggle';
 import ChatSidebar from './ChatSidebar';
 import ChatArea from './ChatArea';
@@ -50,6 +50,10 @@ export default function Shell() {
 
   const handleProfileClick = () => {
     router.push('/profile');
+  };
+
+  const handleHomeClick = () => {
+    router.push('/');
   };
 
   // Mobilde chat area'dan sidebar'ı açmak için
@@ -168,28 +172,87 @@ export default function Shell() {
           <Group spacing="sm">
             <ThemeToggle size={16} />
             
-            {!isSmallMobile && (
-              <Button 
-                variant="subtle" 
-                color="blue" 
-                leftSection={<IconUser size={16} />}
-                onClick={handleProfileClick}
-              >
-                Profil
-              </Button>
-            )}
-            
-            <Button 
-              variant="subtle" 
-              color="gray" 
-              leftSection={<IconLogout size={16} />}
-              onClick={logout}
-              style={{
-                padding: isSmallMobile ? '0 8px' : undefined
-              }}
+            <Menu
+              shadow="md"
+              width={200}
+              position="bottom-end"
+              transitionProps={{ transition: 'pop' }}
+              withinPortal={false}
             >
-              {isSmallMobile ? '' : 'Çıkış Yap'}
-            </Button>
+              <Menu.Target>
+                <ActionIcon
+                  variant="subtle"
+                  color="gray"
+                  size="lg"
+                  style={{
+                    backgroundColor: 'var(--background-white)',
+                    border: '1px solid var(--border-color)',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--primary-light)';
+                    e.currentTarget.style.borderColor = 'var(--primary)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--background-white)';
+                    e.currentTarget.style.borderColor = 'var(--border-color)';
+                  }}
+                >
+                  <IconSettings size={18} />
+                </ActionIcon>
+              </Menu.Target>
+
+              <Menu.Dropdown
+                style={{
+                  backgroundColor: 'var(--background-white)',
+                  border: '1px solid var(--border-color)',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                <Menu.Item
+                  leftSection={<IconHome size={16} />}
+                  onClick={handleHomeClick}
+                  style={{
+                    color: 'var(--text-body)',
+                    fontSize: '14px',
+                    padding: '8px 12px',
+                  }}
+                >
+                  Ana Sayfa
+                </Menu.Item>
+                
+                <Menu.Item
+                  leftSection={<IconUser size={16} />}
+                  onClick={handleProfileClick}
+                  style={{
+                    color: 'var(--text-body)',
+                    fontSize: '14px',
+                    padding: '8px 12px',
+                  }}
+                >
+                  Profil
+                </Menu.Item>
+                
+                <Menu.Divider 
+                  style={{ 
+                    borderColor: 'var(--border-color-light)',
+                    margin: '4px 0'
+                  }} 
+                />
+                
+                <Menu.Item
+                  leftSection={<IconLogout size={16} />}
+                  onClick={logout}
+                  color="red"
+                  style={{
+                    fontSize: '14px',
+                    padding: '8px 12px',
+                  }}
+                >
+                  Çıkış Yap
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
           </Group>
         </Box>
 

@@ -1218,20 +1218,17 @@ h6, .h6 {
 
 /* Yukarı çıkma butonu için yeni basit CSS */
 #scrollTopButton {
-  opacity: 0;
-  visibility: hidden;
+  opacity: 1 !important;
+  visibility: visible !important;
   transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
-  background-color: #1976D2 !important;
+  background-color: var(--primary) !important;
   color: white !important;
   font-size: 24px !important;
   line-height: 1 !important;
   padding: 0 !important;
-}
-
-#scrollTopButton[style*="display: flex"] {
-  opacity: 1 !important;
-  visibility: visible !important;
-  animation: fadeInButton 0.5s forwards;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 @keyframes fadeInButton {
@@ -1247,12 +1244,12 @@ h6, .h6 {
 
 #scrollTopButton:hover {
   background-color: #1565C0 !important;
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(25, 118, 210, 0.6) !important;
+  transform: translateY(-3px) scale(1.05) !important;
+  box-shadow: 0 8px 25px rgba(25, 118, 210, 0.4) !important;
 }
 
 #scrollTopButton:active {
-  transform: translateY(-2px);
+  transform: translateY(-1px) scale(1.02) !important;
   box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4) !important;
 }
 
@@ -1263,7 +1260,8 @@ h6, .h6 {
     height: 50px !important;
     bottom: 20px !important;
     right: 20px !important;
-    font-size: 20px !important;
+    font-size: 18px !important;
+    z-index: 9999 !important;
   }
 }
 

@@ -3,17 +3,13 @@ import { ActionIcon } from '@mantine/core';
 import { IconArrowUp } from '@tabler/icons-react';
 
 const ScrollToTop = () => {
-  const [isVisible, setIsVisible] = useState(true); // Test için başlangıçta görünür
-
-  // Debug için
-  //console.log('ScrollToTop rendered, isVisible:', isVisible);
+  const [isVisible, setIsVisible] = useState(false); // Başlangıçta gizli olmalı
 
   // Scroll olayını izle
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const newIsVisible = scrollTop > 100; // Daha düşük threshold
-      //console.log('Scroll position:', scrollTop, 'Will be visible:', newIsVisible);
+      const newIsVisible = scrollTop > 100; // 100px'den sonra görünür olsun
       setIsVisible(newIsVisible);
     };
 
@@ -63,6 +59,7 @@ const ScrollToTop = () => {
 
   return (
     <ActionIcon
+      id="scrollTopButton"
       size="xl"
       radius="xl"
       variant="filled"
@@ -73,10 +70,12 @@ const ScrollToTop = () => {
         position: 'fixed',
         bottom: '30px',
         right: '30px',
-        zIndex: 1000,
+        zIndex: 9999, // Çok yüksek z-index
         boxShadow: '0 4px 15px rgba(25, 118, 210, 0.3)',
         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         animation: 'fadeInSlideUp 0.3s ease-out',
+        backgroundColor: 'var(--primary)',
+        color: 'white',
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-3px) scale(1.05)';

@@ -97,22 +97,22 @@ export default function ContactPage() {
     {
       icon: <IconMail size={24} />,
       title: 'E-posta',
-      info: 'info@drugllm.com',
-      subInfo: 'Destek için: support@drugllm.com',
+      info: 'drugllm@trizglobal.com.tr',
+      subInfo: 'Destek için: info@trizglobal.com.tr',
       color: 'blue'
     },
     {
       icon: <IconPhone size={24} />,
       title: 'Telefon',
-      info: '+90 (212) 555-0123',
+      info: '+90 (264) 000 00 00',
       subInfo: 'Pazartesi - Cuma: 09:00 - 18:00',
       color: 'green'
     },
     {
       icon: <IconMapPin size={24} />,
       title: 'Adres',
-      info: 'Maslak Mah. Bilim Sok. No:15',
-      subInfo: 'Sarıyer, İstanbul, Türkiye',
+      info: 'Yazlık Mah. 4429.Sokak',
+      subInfo: 'Serdivan, Sakarya, Türkiye',
       color: 'red'
     },
     {

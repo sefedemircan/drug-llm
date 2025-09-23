@@ -55,19 +55,19 @@ export default function AccessPage() {
 
   const professionOptions = [
     { value: 'doctor', label: 'Doktor' },
-    { value: 'pharmacist', label: 'Eczaci' },
-    { value: 'nurse', label: 'Hemsire' },
+    { value: 'pharmacist', label: 'Eczacı' },
+    { value: 'nurse', label: 'Hemşire' },
     { value: 'researcher', label: 'Arastirmaci' },
-    { value: 'student', label: 'Ogrenci' },
-    { value: 'other', label: 'Diger' }
+    { value: 'student', label: 'Öğrenci' },
+    { value: 'other', label: 'Diğer' }
   ];
 
   const useCaseOptions = [
-    { value: 'clinical', label: 'Klinik Karar Destegi' },
-    { value: 'education', label: 'Egitim ve Ogretim' },
-    { value: 'research', label: 'Arastirma' },
-    { value: 'personal', label: 'Kisisel Kullanim' },
-    { value: 'other', label: 'Diger' }
+    { value: 'clinical', label: 'Klinik Karar Desteği' },
+    { value: 'education', label: 'Egitim ve Öğretim' },
+    { value: 'research', label: 'Araştırma' },
+    { value: 'personal', label: 'Kişisel Kullanım' },
+    { value: 'other', label: 'Diğer' }
   ];
 
   const handleInputChange = (field, value) => {
@@ -124,20 +124,20 @@ export default function AccessPage() {
   ];
 
   const features = [
-    'Gelismis AI ilac analizi',
-    'Kisisellestirilmis oneriler',
-    'Etkilesim kontrolu',
-    'Yan etki uyarilari',
+    'Gelişmiş AI ilaç analizi',
+    'Kişiselleştirilmiş öneriler',
+    'Etkileşim kontrolu',
+    'Yan etki uyarıları',
     'Dozaj hesaplayicisi',
-    'Literatur taramasi',
-    'Klinik karar destegi',
-    'API erisimi'
+    'Literatür taraması',
+    'Klinik karar desteği',
+    'API erişimi'
   ];
 
   const stats = [
-    { label: 'Beta Kullanicisi', value: 1247, suffix: '+' },
-    { label: 'Ilac Bilgisi', value: 25000, suffix: '+' },
-    { label: 'Gunluk Soru', value: 850, suffix: '+' },
+    { label: 'Beta Kullanıcısı', value: 1247, suffix: '+' },
+    { label: 'İlaç Bilgisi', value: 25000, suffix: '+' },
+    { label: 'Günlük Soru', value: 850, suffix: '+' },
     { label: 'Memnuniyet', value: 96, suffix: '%' }
   ];
 
@@ -179,8 +179,8 @@ export default function AccessPage() {
                 lineHeight: 1.6 
               }}
             >
-              Gelecegin ilac bilgi sistemini simdiden deneyimleyin. 
-              Beta programimiza katilin ve ozel avantajlardan yararlanin.
+              Geleceğin ilaç bilgi sistemini şimdiden deneyimleyin. 
+              Beta programımıza katılın ve özel avantajlardan yararlanın.
             </Text>
           </Box>
 
@@ -207,9 +207,9 @@ export default function AccessPage() {
                     <IconCrown size={24} />
                   </ThemeIcon>
                   <Box>
-                    <Title order={2}>Beta Programina Katilin</Title>
+                    <Title order={2}>Beta Programına Katılın</Title>
                     <Text color="dimmed">
-                      Formu doldurun ve oncelikli erisim kazanin
+                      Formu doldurun ve öncelikli erisim kazanin
                     </Text>
                   </Box>
                 </Group>
@@ -218,13 +218,13 @@ export default function AccessPage() {
                   <Alert 
                     icon={<IconCheck size={16} />} 
                     color="green" 
-                    title="Basvurunuz alindi!"
+                    title="Başvurunuz alindi!"
                   >
                     <Text mb="sm">
-                      Basvurunuz basariyla kaydedildi. En kisa surede size geri donus yapacagiz.
+                      Başvurunuz başarıyla kaydedildi. En kısa sürede size geri dönüş yapacagiz.
                     </Text>
                     <Text size="sm" color="dimmed">
-                      Beta erisim kodu e-posta adresinize gonderilecektir.
+                      Beta erisim kodu e-posta adresinize gönderilecektir.
                     </Text>
                   </Alert>
                 ) : (
@@ -234,7 +234,7 @@ export default function AccessPage() {
                         <Grid.Col span={isMobile ? 12 : 6}>
                           <TextInput
                             label="Ad Soyad"
-                            placeholder="Adinizi ve soyadinizi girin"
+                            placeholder="Adınızı ve soyadınızı girin"
                             value={formData.name}
                             onChange={(e) => handleInputChange('name', e.target.value)}
                             required
@@ -258,7 +258,7 @@ export default function AccessPage() {
                         <Grid.Col span={isMobile ? 12 : 6}>
                           <Select
                             label="Meslek"
-                            placeholder="Mesleginizi secin"
+                            placeholder="Mesleginizi seçin"
                             data={professionOptions}
                             value={formData.profession}
                             onChange={(value) => handleInputChange('profession', value)}
@@ -269,7 +269,7 @@ export default function AccessPage() {
                         <Grid.Col span={isMobile ? 12 : 6}>
                           <TextInput
                             label="Kurum/Organizasyon"
-                            placeholder="Calistiginiz kurum"
+                            placeholder="Çalıştığınız kurum"
                             value={formData.organization}
                             onChange={(e) => handleInputChange('organization', e.target.value)}
                           />
@@ -279,7 +279,7 @@ export default function AccessPage() {
                       <Grid>
                         <Grid.Col span={isMobile ? 12 : 6}>
                           <NumberInput
-                            label="Deneyim (Yil)"
+                            label="Deneyim (Yıl)"
                             placeholder="0"
                             value={formData.experience}
                             onChange={(value) => handleInputChange('experience', value)}
@@ -289,8 +289,8 @@ export default function AccessPage() {
                         </Grid.Col>
                         <Grid.Col span={isMobile ? 12 : 6}>
                           <Select
-                            label="Kullanim Amaci"
-                            placeholder="Nasil kullanmayi planliyor sunuz?"
+                            label="Kullanım Amacı"
+                            placeholder="Nasıl kullanmayı planlıyorsunuz?"
                             data={useCaseOptions}
                             value={formData.useCase}
                             onChange={(value) => handleInputChange('useCase', value)}
@@ -305,8 +305,8 @@ export default function AccessPage() {
                         variant="light"
                       >
                         <Text size="sm">
-                          Beta programi sinirli sayida kullanici ile gerceklestirilmektedir. 
-                          Basvurunuz degerlendirildi kten sonra size bilgi verilecektir.
+                          Beta programı sınırlı sayıda kullanıcı ile gerçekleştirilmektedir. 
+                          Başvurunuz değerlendirildikten sonra size bilgi verilecektir.
                         </Text>
                       </Alert>
 
@@ -317,7 +317,7 @@ export default function AccessPage() {
                           leftSection={<IconRocket size={16} />}
                           size="md"
                         >
-                          {isSubmitting ? 'Gonderiliyor...' : 'Beta Programina Katil'}
+                          {isSubmitting ? 'Gönderiliyor...' : 'Beta Programına Katıl'}
                         </Button>
                       </Group>
                     </Stack>
@@ -332,7 +332,7 @@ export default function AccessPage() {
                   <Title order={3} mb="md">
                     <Group spacing="sm">
                       <IconStar size={20} color="var(--primary)" />
-                      Beta Avantajlari
+                      Beta Avantajları
                     </Group>
                   </Title>
                   <Stack spacing="sm">
@@ -358,7 +358,7 @@ export default function AccessPage() {
                   <Title order={3} mb="md">
                     <Group spacing="sm">
                       <IconHeartbeat size={20} color="var(--primary)" />
-                      Beta Ozellikleri
+                      Beta Özellikleri
                     </Group>
                   </Title>
                   <List spacing="xs" size="sm">
@@ -373,13 +373,13 @@ export default function AccessPage() {
                 <Paper shadow="sm" radius="md" p="md">
                   <Group spacing="sm" mb="md">
                     <IconShield size={20} color="var(--primary)" />
-                    <Title order={3}>Guvenlik & Gizlilik</Title>
+                    <Title order={3}>Güvenlik & Gizlilik</Title>
                   </Group>
                   <Stack spacing="xs">
-                    <Text size="sm">✓ End-to-end sifreleme</Text>
-                    <Text size="sm">✓ GDPR uyumlu veri isleme</Text>
-                    <Text size="sm">✓ Turkiye sunucularinda depolama</Text>
-                    <Text size="sm">✓ Kisisel veri korumasi</Text>
+                    <Text size="sm">✓ End-to-end şifreleme</Text>
+                    <Text size="sm">✓ GDPR uyumlu veri işleme</Text>
+                    <Text size="sm">✓ Türkiye sunucularında depolama</Text>
+                    <Text size="sm">✓ Kişisel veri koruması</Text>
                   </Stack>
                 </Paper>
               </Stack>
@@ -397,9 +397,9 @@ export default function AccessPage() {
               color: 'white'
             }}
           >
-            <Title order={3} mb="md">Hazir misiniz?</Title>
+            <Title order={3} mb="md">Hazır mısınız?</Title>
             <Text mb="lg" style={{ opacity: 0.9 }}>
-              Saglik teknolojisinin gelecegini sekillendiren bu yolculuga katilin.
+              Sağlık teknolojisinin gelecegini sekillendiren bu yolculuga katilin.
             </Text>
             <Group position="center">
               <Button 
@@ -410,7 +410,7 @@ export default function AccessPage() {
                 size="md"
                 leftSection={<IconRocket size={16} />}
               >
-                Simdi Deneyin
+                Şimdi Deneyin
               </Button>
               <Button 
                 component={Link} 
@@ -419,7 +419,7 @@ export default function AccessPage() {
                 size="md"
                 style={{ borderColor: 'white', color: 'white' }}
               >
-                Dokumantasyon
+                Dokümantasyon
               </Button>
             </Group>
           </Paper>

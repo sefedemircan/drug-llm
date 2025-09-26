@@ -412,15 +412,6 @@ export default function AccessPage() {
               >
                 Şimdi Deneyin
               </Button>
-              <Button 
-                component={Link} 
-                href="/docs" 
-                variant="outline" 
-                size="md"
-                style={{ borderColor: 'white', color: 'white' }}
-              >
-                Dokümantasyon
-              </Button>
             </Group>
           </Paper>
         </Container>

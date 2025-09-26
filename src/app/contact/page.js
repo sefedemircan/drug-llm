@@ -320,9 +320,6 @@ export default function ContactPage() {
                     Hızlı Linkler
                   </Text>
                   <Stack spacing="xs">
-                    <Anchor component={Link} href="/docs" size="sm">
-                      Dokümantasyon
-                    </Anchor>
                     <Anchor component={Link} href="/blog" size="sm">
                       Blog
                     </Anchor>

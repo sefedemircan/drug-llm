@@ -1444,21 +1444,6 @@ export default function Home() {
                       >
                         <Text
                           component={Link}
-                          href="/docs"
-                          size="sm"
-                          style={{
-                            color: "var(--text-body)",
-                            textDecoration: "none",
-                            transition: "color 0.3s ease",
-                            "&:hover": {
-                              color: "var(--primary)",
-                            },
-                          }}
-                        >
-                          Dokümantasyon
-                        </Text>
-                        <Text
-                          component={Link}
                           href="/blog"
                           size="sm"
                           style={{

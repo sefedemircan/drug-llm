@@ -183,7 +183,7 @@ async function generateChatResponse(userMessage, chatHistory = [], profileData =
 	}
 	
 	try {
-		//console.log('Sending request to Llama 3.1 model...');
+		
 		
 		// Chat geçmişini mesaj formatına çevir
 		const messages = [
@@ -362,16 +362,9 @@ export async function POST(request) {
 			//console.log('⚠️ No user data found, model will respond without personalization');
 		}
 
-		//console.log('🎯 Final profile data source:', supabaseProfileData ? 'Supabase' : (frontendProfileData ? 'Frontend' : 'None'));
-		//console.log('🎯 Final health data source:', supabaseHealthData ? 'Supabase' : (frontendHealthData ? 'Frontend' : 'None'));
 
 		try {
-			// Debug: System prompt'u logla
-			//const systemPrompt = createSystemPrompt(finalProfileData, finalHealthData);
-			//console.log('Generated system prompt length:', systemPrompt.length);
-			//console.log('Has user data for prompt:', !!(finalProfileData || finalHealthData));
 			
-			// Llama 3.1 modeli ile yanıt oluştur (chat geçmişini de gönder)
 			const botReply = await generateChatResponse(userMessage, chatHistory, finalProfileData, finalHealthData);
 			
 			// Boş yanıt kontrolü
@@ -381,9 +374,7 @@ export async function POST(request) {
 					reply: "Üzgünüm, şu anda yanıt oluşturamıyorum. Lütfen daha sonra tekrar deneyin." 
 				}, { status: 200 });
 			}
-			
-			//console.log('✅ Bot reply generated successfully, length:', botReply.length);
-			//console.log('📄 Bot reply preview:', botReply.substring(0, 200) + '...');
+
 			
 			return NextResponse.json({ reply: botReply }, { status: 200 });
 		} catch (apiError) {

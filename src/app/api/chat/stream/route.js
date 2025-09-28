@@ -212,11 +212,6 @@ export async function POST(request) {
 		const frontendProfileData = body.profileData || null;
 		const frontendHealthData = body.healthData || null;
 
-		//console.error('=== STREAMING API DEBUG ===');
-		//console.error('Received message:', userMessage);
-		//console.error('Received userId:', userId);
-		//console.error('Received sessionId:', sessionId);
-
 		// Kullanıcı verilerini Supabase'den çek
 		let supabaseProfileData = null;
 		let supabaseHealthData = null;

@@ -244,6 +244,7 @@ async function generateChatResponse(userMessage, chatHistory = [], profileData =
 			//model:"meta-llama/Llama-3.3-70B-Instruct",
 			//model:"deepseek/deepseek-r1-distill-llama-70b:free",
 			//model:"google/gemini-2.0-flash-exp:free",
+			//model:"openai/gpt-oss-120b:free",
 			model:"x-ai/grok-4-fast:free",
 			messages: messages,
 			temperature: 0.7,
